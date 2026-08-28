@@ -1159,7 +1159,7 @@ function renderStochSVG(history){
 function render(data){
   ALL_STOCKS = data.stocks;
   const updateDateOnly = (data.updated_at || '').split(' ')[0];
-  document.getElementById('updated-at').textContent = `업데이트: ${updateDateOnly}`;
+  document.getElementById('updated-at').textContent = `기준 종가일: ${updateDateOnly}`;
 
   // 신호 있는 종목을 위로 정렬
   const stocks = [...data.stocks].sort((a, b) => {
