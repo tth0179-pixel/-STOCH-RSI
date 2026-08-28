@@ -148,6 +148,11 @@
     border-color: rgba(214,57,74,0.4);
     color: var(--up);
   }
+  .ov-tab-avoid.active{
+    background: rgba(37,99,235,0.10);
+    border-color: rgba(37,99,235,0.4);
+    color: var(--down);
+  }
 
   .ov-row{
     display:grid;
@@ -410,6 +415,7 @@
   </div>
   <div class="ov-sort-tabs">
     <button class="ov-sort-tab ov-tab-recommend" id="ov-sort-recommend" onclick="setOverviewSort('recommend')">추천</button>
+    <button class="ov-sort-tab ov-tab-avoid" id="ov-sort-avoid" onclick="setOverviewSort('avoid')">비추천</button>
     <button class="ov-sort-tab active" id="ov-sort-daily" onclick="setOverviewSort('daily')">일봉 %K 기준</button>
     <button class="ov-sort-tab" id="ov-sort-weekly" onclick="setOverviewSort('weekly')">주봉 %K 기준</button>
   </div>
@@ -420,7 +426,8 @@
 
 <footer>
   종가 기준 하루 지연 데이터 · Stoch RSI(14,14,3,3) · %K가 20 이하 구간에서 %D를 상향 돌파하면 &quot;신호&quot; 배지가 표시됩니다.<br>
-  &quot;추천&quot;은 일봉 Stoch RSI %K가 전일 대비 상승 중이면서 종가가 5일 이동평균선(MA5) 위에 있는 종목입니다.<br>
+  &quot;추천&quot;은 일봉 Stoch RSI %K가 전일 대비 상승 중이면서 종가가 5일 이동평균선(MA5) 위에 있는 종목,<br>
+  &quot;비추천&quot;은 반대로 %K가 하락 중이면서 종가가 MA5 아래에 있는 종목입니다.<br>
   이 페이지는 개인 참고용이며 투자 조언이 아닙니다.
 </footer>
 
@@ -909,6 +916,7 @@ let OV_SORT = 'daily';
 function setOverviewSort(mode){
   OV_SORT = mode;
   document.getElementById('ov-sort-recommend').classList.toggle('active', mode === 'recommend');
+  document.getElementById('ov-sort-avoid').classList.toggle('active', mode === 'avoid');
   document.getElementById('ov-sort-daily').classList.toggle('active', mode === 'daily');
   document.getElementById('ov-sort-weekly').classList.toggle('active', mode === 'weekly');
   renderOverview(OV_STOCKS);
@@ -926,6 +934,18 @@ function isRecommended(s){
   return risingK && aboveMA5;
 }
 
+function isAvoid(s){
+  const h = s.history && s.history.daily;
+  if (!h || h.length < 2) return false;
+  const last = h[h.length - 1];
+  const prev = h[h.length - 2];
+  if (last.k === undefined || prev.k === undefined) return false;
+  if (last.ma5 === undefined) return false;
+  const fallingK = last.k < prev.k;      // 일봉 Stoch RSI %K 하락 중
+  const belowMA5 = last.c < last.ma5;    // 종가가 MA5 아래
+  return fallingK && belowMA5;
+}
+
 function renderOverview(stocks){
   OV_STOCKS = stocks;
 
@@ -937,6 +957,14 @@ function renderOverview(stocks){
       const momA = ha[ha.length-1].k - ha[ha.length-2].k;
       const momB = hb[hb.length-1].k - hb[hb.length-2].k;
       return momB - momA; // 상승폭이 큰 순
+    });
+  } else if (OV_SORT === 'avoid'){
+    const valid = stocks.filter(s => !s.error && s.daily && isAvoid(s));
+    sorted = [...valid].sort((a, b) => {
+      const ha = a.history.daily, hb = b.history.daily;
+      const momA = ha[ha.length-1].k - ha[ha.length-2].k;
+      const momB = hb[hb.length-1].k - hb[hb.length-2].k;
+      return momA - momB; // 하락폭이 큰 순
     });
   } else {
     const sortKey = OV_SORT; // 'daily' or 'weekly'
