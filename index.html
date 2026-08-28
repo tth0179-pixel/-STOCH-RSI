@@ -1049,7 +1049,7 @@ function buildChartHTML(stock){
       <button class="chart-tab ${tf==='daily'?'active':''}" onclick="switchChartTF('daily')">일봉</button>
       <button class="chart-tab ${tf==='weekly'?'active':''}" onclick="switchChartTF('weekly')">주봉</button>
     </div>
-    <div class="chart-price-now mono">${stock.close.toLocaleString()} <span class="${change.cls}">${change.text}</span></div>
+    <div class="chart-price-now mono"><span class="change ${change.cls}">${stock.close.toLocaleString()} ${change.text}</span></div>
     <div class="chart-legend">
       <span><i style="background:var(--up)"></i>MA5</span>
       <span><i style="background:var(--signal)"></i>MA20</span>
@@ -1158,7 +1158,8 @@ function renderStochSVG(history){
 
 function render(data){
   ALL_STOCKS = data.stocks;
-  document.getElementById('updated-at').textContent = `업데이트: ${data.updated_at}`;
+  const updateDateOnly = (data.updated_at || '').split(' ')[0];
+  document.getElementById('updated-at').textContent = `업데이트: ${updateDateOnly}`;
 
   // 신호 있는 종목을 위로 정렬
   const stocks = [...data.stocks].sort((a, b) => {
