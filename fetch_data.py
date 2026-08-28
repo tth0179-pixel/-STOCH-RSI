@@ -83,8 +83,8 @@ def calc_stochrsi(df, return_series=False):
     return latest, result[[k_cols[0], d_cols[0]]].rename(columns={k_cols[0]: "k", d_cols[0]: "d"})
 
 
-def build_daily_history(df, stoch_series, n=90):
-    """차트용: 최근 n개 일봉의 OHLC + 이동평균(5/20/60) + Stoch %K/%D"""
+def build_history(df, stoch_series, n=90):
+    """차트용: 최근 n개 봉(일/주 공용)의 OHLC + 이동평균(5/20/60) + Stoch %K/%D"""
     merged = df[["시가", "고가", "저가", "종가"]].copy()
     merged["ma5"] = df["종가"].rolling(5).mean()
     merged["ma20"] = df["종가"].rolling(20).mean()
@@ -134,9 +134,12 @@ def main():
             df = df[df["종가"] > 0]
 
             daily, daily_stoch_series = calc_stochrsi(df, return_series=True)
-            weekly = calc_stochrsi(resample_ohlcv(df, "W"))
+            weekly_df = resample_ohlcv(df, "W")
+            weekly, weekly_stoch_series = calc_stochrsi(weekly_df, return_series=True)
             monthly = calc_stochrsi(resample_ohlcv(df, "ME"))
-            history = build_daily_history(df, daily_stoch_series, n=90)
+
+            history_daily = build_history(df, daily_stoch_series, n=90)
+            history_weekly = build_history(weekly_df, weekly_stoch_series, n=78)  # 약 1.5년치
 
             last_row = df.iloc[-1]
             prev_close = df.iloc[-2]["종가"] if len(df) > 1 else last_row["종가"]
@@ -150,7 +153,10 @@ def main():
                 "daily": daily,
                 "weekly": weekly,
                 "monthly": monthly,
-                "history": history,
+                "history": {
+                    "daily": history_daily,
+                    "weekly": history_weekly,
+                },
             })
             print(f"OK  {name}({code})")
         except Exception as e:

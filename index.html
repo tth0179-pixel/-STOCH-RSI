@@ -333,6 +333,27 @@
   .chart-price-now{ font-size: 15px; font-weight: 600; margin-bottom: 2px; }
   .chart-sub-label{ font-size: 11px; color: var(--text-faint); margin: 10px 0 2px; }
 
+  .chart-tabs{
+    display:flex; gap: 6px;
+    margin-bottom: 10px;
+  }
+  .chart-tab{
+    flex: 1;
+    padding: 7px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+  }
+  .chart-tab.active{
+    background: var(--signal-dim);
+    border-color: rgba(199,137,30,0.4);
+    color: var(--signal);
+  }
+
   @media (max-width: 420px){
     h1{ font-size: 23px; }
     main{ grid-template-columns: 1fr; }
@@ -874,9 +895,15 @@ function renderOverview(stocks){
   document.getElementById('overview-chart').innerHTML = rows;
 }
 
+let CHART_CODE = null;
+let CHART_TF = 'daily';
+
 function openChart(code){
   const stock = ALL_STOCKS.find(s => s.code === code);
-  if (!stock || !stock.history || stock.history.length === 0) return;
+  if (!stock || !stock.history) return;
+
+  CHART_CODE = code;
+  CHART_TF = 'daily';
 
   document.getElementById('chart-name').textContent = stock.name;
   document.getElementById('chart-code').textContent = stock.code;
@@ -885,18 +912,41 @@ function openChart(code){
   document.body.style.overflow = 'hidden';
 }
 
+function switchChartTF(tf){
+  CHART_TF = tf;
+  const stock = ALL_STOCKS.find(s => s.code === CHART_CODE);
+  if (!stock) return;
+  document.getElementById('chart-body').innerHTML = buildChartHTML(stock);
+}
+
 function closeChart(){
   document.getElementById('chart-modal').classList.remove('open');
   document.body.style.overflow = '';
 }
 
 function buildChartHTML(stock){
-  const h = stock.history;
+  const tf = CHART_TF;
+  const h = (stock.history && stock.history[tf]) ? stock.history[tf] : [];
   const change = fmtChange(stock.change_pct);
+  const tfLabel = tf === 'daily' ? '일봉' : '주봉';
+
+  if (h.length === 0){
+    return `
+      <div class="chart-tabs">
+        <button class="chart-tab ${tf==='daily'?'active':''}" onclick="switchChartTF('daily')">일봉</button>
+        <button class="chart-tab ${tf==='weekly'?'active':''}" onclick="switchChartTF('weekly')">주봉</button>
+      </div>
+      <div class="no-data" style="padding: 20px 0;">${tfLabel} 데이터가 부족합니다.</div>`;
+  }
+
   const priceChart = renderCandleSVG(h);
   const stochChart = renderStochSVG(h);
 
   return `
+    <div class="chart-tabs">
+      <button class="chart-tab ${tf==='daily'?'active':''}" onclick="switchChartTF('daily')">일봉</button>
+      <button class="chart-tab ${tf==='weekly'?'active':''}" onclick="switchChartTF('weekly')">주봉</button>
+    </div>
     <div class="chart-price-now mono">${stock.close.toLocaleString()} <span class="${change.cls}">${change.text}</span></div>
     <div class="chart-legend">
       <span><i style="background:var(--up)"></i>MA5</span>
@@ -904,7 +954,7 @@ function buildChartHTML(stock){
       <span><i style="background:var(--flat)"></i>MA60</span>
     </div>
     ${priceChart}
-    <div class="chart-sub-label">Stoch RSI (14,14,3,3) · 일봉 최근 ${h.length}개</div>
+    <div class="chart-sub-label">Stoch RSI (14,14,3,3) · ${tfLabel} 최근 ${h.length}개</div>
     <div class="chart-legend">
       <span><i style="background:var(--down)"></i>%K</span>
       <span><i style="background:var(--text-faint)"></i>%D</span>
