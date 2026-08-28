@@ -1,0 +1,3 @@
+pykrx
+pandas
+pandas-ta

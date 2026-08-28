@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>코스피 TOP 20 · Stoch RSI</title>
+<link rel="apple-touch-icon" href="data:image/png;base64,">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0A0D10">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0D10;
+    --bg-elevated: #0F1319;
+    --card: #12161C;
+    --card-hover: #161B22;
+    --border: #1E242C;
+    --border-soft: #181D24;
+    --text: #EAEDEF;
+    --text-dim: #7C8794;
+    --text-faint: #4B5561;
+    --up: #E5484D;
+    --down: #3E7BFA;
+    --flat: #5C6672;
+    --signal: #E8B33D;
+    --signal-dim: rgba(232,179,61,0.12);
+    --zone-over: rgba(229,72,77,0.10);
+    --zone-under: rgba(62,123,250,0.10);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(232,179,61,0.05), transparent 40%),
+      radial-gradient(circle at 85% 10%, rgba(62,123,250,0.04), transparent 45%);
+    color: var(--text);
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    padding: 20px 14px 60px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono{ font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+  header{
+    max-width: 980px;
+    margin: 0 auto 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .eyebrow{
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--signal);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  h1{
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  h1 span.count{
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+  }
+
+  .meta-row{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .meta-row .updated{
+    display:flex; align-items:center; gap:6px;
+  }
+  .dot-live{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 3px var(--signal-dim);
+  }
+
+  .legend{
+    display:flex; gap:14px; font-size: 11px; color: var(--text-faint);
+  }
+  .legend span{ display:flex; align-items:center; gap:5px; }
+  .legend i{ width:8px; height:8px; border-radius:2px; display:inline-block; }
+
+  main{
+    max-width: 980px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+  }
+
+  .card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 14px 12px;
+    position: relative;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .card.has-signal{
+    border-color: rgba(232,179,61,0.35);
+    background: linear-gradient(180deg, var(--signal-dim), var(--card) 60%);
+  }
+
+  .card-top{
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .name-block{ display:flex; flex-direction:column; gap:2px; }
+  .name{ font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .code{ font-size: 11px; color: var(--text-faint); }
+
+  .price-block{ text-align: right; }
+  .price{ font-size: 15px; font-weight: 600; }
+  .change{ font-size: 12px; font-weight: 600; margin-top:1px; }
+  .change.up{ color: var(--up); }
+  .change.down{ color: var(--down); }
+  .change.flat{ color: var(--flat); }
+
+  .signal-badge{
+    position:absolute;
+    top: 12px; right: 12px;
+    background: var(--signal);
+    color: #1A1300;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+  }
+  .card.has-signal .price-block{ margin-right: 46px; }
+
+  .tf-rows{ display:flex; flex-direction:column; gap: 7px; }
+
+  .tf-row{ display:grid; grid-template-columns: 34px 1fr 66px; align-items:center; gap: 8px; }
+  .tf-label{ font-size: 10.5px; color: var(--text-dim); font-weight: 600; }
+
+  .gauge{
+    position: relative;
+    height: 14px;
+    background: var(--bg-elevated);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+  }
+  .gauge .zone-oversold{
+    position:absolute; left:0; top:0; bottom:0; width:20%;
+    background: var(--zone-under);
+    border-right: 1px dashed rgba(62,123,250,0.25);
+  }
+  .gauge .zone-overbought{
+    position:absolute; right:0; top:0; bottom:0; width:20%;
+    background: var(--zone-over);
+    border-left: 1px dashed rgba(229,72,77,0.25);
+  }
+  .gauge .bar-d{
+    position:absolute; top:0; bottom:0; left:0;
+    background: rgba(124,135,148,0.35);
+    border-radius: 4px;
+  }
+  .gauge .marker-k{
+    position:absolute; top:-1px; bottom:-1px; width:3px;
+    background: var(--text);
+    border-radius: 2px;
+    transform: translateX(-50%);
+  }
+  .gauge .marker-k.signal-on{ background: var(--signal); box-shadow: 0 0 6px rgba(232,179,61,0.7); }
+
+  .tf-vals{
+    font-size: 10.5px;
+    text-align: right;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  .tf-vals b{ color: var(--text); font-weight: 600; }
+
+  .no-data{ font-size: 11px; color: var(--text-faint); font-style: italic; }
+
+  footer{
+    max-width: 980px;
+    margin: 26px auto 0;
+    font-size: 11px;
+    color: var(--text-faint);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 420px){
+    h1{ font-size: 19px; }
+    main{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Personal Screener</div>
+  <h1>코스피 시총 TOP 20 <span class="count">· Stoch RSI 일 / 주 / 월</span></h1>
+  <div class="meta-row">
+    <div class="updated"><span class="dot-live"></span><span id="updated-at">불러오는 중…</span></div>
+    <div class="legend">
+      <span><i style="background:var(--zone-under)"></i>과매도(20↓)</span>
+      <span><i style="background:var(--signal)"></i>신호</span>
+      <span><i style="background:var(--zone-over)"></i>과매수(80↑)</span>
+    </div>
+  </div>
+</header>
+
+<main id="grid"></main>
+
+<footer>
+  종가 기준 하루 지연 데이터 · Stoch RSI(14,14,3,3) · %K가 20 이하 구간에서 %D를 상향 돌파하면 &quot;신호&quot; 배지가 표시됩니다.<br>
+  이 페이지는 개인 참고용이며 투자 조언이 아닙니다.
+</footer>
+
+<script>
+const TF_LABELS = { daily: '일봉', weekly: '주봉', monthly: '월봉' };
+
+function fmtChange(pct){
+  if (pct === undefined || pct === null) return { text: '-', cls: 'flat' };
+  if (pct > 0) return { text: `▲ ${pct.toFixed(2)}%`, cls: 'up' };
+  if (pct < 0) return { text: `▼ ${Math.abs(pct).toFixed(2)}%`, cls: 'down' };
+  return { text: '0.00%', cls: 'flat' };
+}
+
+function isSignal(tf){
+  // %K가 과매도 구간(20 이하)이면서 %D보다 위(상향 돌파 근처)인 경우를 매수 신호로 간주
+  if (!tf) return false;
+  return tf.k <= 20 && tf.k >= tf.d;
+}
+
+function gaugeHTML(tf){
+  if (!tf){
+    return `<div class="gauge"><div class="zone-oversold"></div><div class="zone-overbought"></div></div>`;
+  }
+  const signal = isSignal(tf);
+  const dWidth = Math.max(0, Math.min(100, tf.d));
+  return `
+    <div class="gauge">
+      <div class="zone-oversold"></div>
+      <div class="zone-overbought"></div>
+      <div class="bar-d" style="width:${dWidth}%"></div>
+      <div class="marker-k ${signal ? 'signal-on' : ''}" style="left:${tf.k}%"></div>
+    </div>`;
+}
+
+function tfRow(key, tf){
+  const label = TF_LABELS[key];
+  if (!tf){
+    return `
+      <div class="tf-row">
+        <div class="tf-label">${label}</div>
+        ${gaugeHTML(null)}
+        <div class="no-data">데이터 부족</div>
+      </div>`;
+  }
+  return `
+    <div class="tf-row">
+      <div class="tf-label">${label}</div>
+      ${gaugeHTML(tf)}
+      <div class="tf-vals mono"><b>${tf.k.toFixed(1)}</b> / ${tf.d.toFixed(1)}</div>
+    </div>`;
+}
+
+function cardHTML(stock){
+  if (stock.error){
+    return `
+      <div class="card">
+        <div class="card-top">
+          <div class="name-block">
+            <div class="name">${stock.name}</div>
+            <div class="code mono">${stock.code}</div>
+          </div>
+        </div>
+        <div class="no-data">데이터를 불러오지 못했습니다</div>
+      </div>`;
+  }
+
+  const hasSignal = isSignal(stock.daily) || isSignal(stock.weekly) || isSignal(stock.monthly);
+  const change = fmtChange(stock.change_pct);
+
+  return `
+    <div class="card ${hasSignal ? 'has-signal' : ''}">
+      ${hasSignal ? '<div class="signal-badge">신호</div>' : ''}
+      <div class="card-top">
+        <div class="name-block">
+          <div class="name">${stock.name}</div>
+          <div class="code mono">${stock.code}</div>
+        </div>
+        <div class="price-block">
+          <div class="price mono">${stock.close.toLocaleString()}</div>
+          <div class="change ${change.cls} mono">${change.text}</div>
+        </div>
+      </div>
+      <div class="tf-rows">
+        ${tfRow('daily', stock.daily)}
+        ${tfRow('weekly', stock.weekly)}
+        ${tfRow('monthly', stock.monthly)}
+      </div>
+    </div>`;
+}
+
+// data.json이 없거나 (예: 이 파일을 단독으로 미리보기 할 때) 불러오기 실패 시
+// 화면이 비어 보이지 않도록 쓰는 예시 데이터입니다.
+// 실제 배포(GitHub Pages) 상태에서는 항상 같은 폴더의 data.json이 먼저 사용됩니다.
+const FALLBACK_DATA = {
+  "updated_at": "2026-08-27 16:30",
+  "stocks": [
+    {
+      "code": "005930",
+      "name": "삼성전자",
+      "close": 89400,
+      "change_pct": 1.24,
+      "daily": {
+        "k": 78.3,
+        "d": 65.1
+      },
+      "weekly": {
+        "k": 42.5,
+        "d": 38.2
+      },
+      "monthly": {
+        "k": 55.0,
+        "d": 51.3
+      }
+    },
+    {
+      "code": "000660",
+      "name": "SK하이닉스",
+      "close": 251500,
+      "change_pct": 3.15,
+      "daily": {
+        "k": 92.1,
+        "d": 81.4
+      },
+      "weekly": {
+        "k": 88.7,
+        "d": 79.9
+      },
+      "monthly": {
+        "k": 71.2,
+        "d": 66.8
+      }
+    },
+    {
+      "code": "373220",
+      "name": "LG에너지솔루션",
+      "close": 412000,
+      "change_pct": -0.85,
+      "daily": {
+        "k": 15.2,
+        "d": 21.8
+      },
+      "weekly": {
+        "k": 18.9,
+        "d": 24.3
+      },
+      "monthly": {
+        "k": 30.5,
+        "d": 33.1
+      }
+    },
+    {
+      "code": "207940",
+      "name": "삼성바이오로직스",
+      "close": 985000,
+      "change_pct": 0.41,
+      "daily": {
+        "k": 61.0,
+        "d": 58.2
+      },
+      "weekly": {
+        "k": 49.3,
+        "d": 47.1
+      },
+      "monthly": {
+        "k": 44.0,
+        "d": 46.5
+      }
+    },
+    {
+      "code": "005380",
+      "name": "현대차",
+      "close": 231000,
+      "change_pct": -1.12,
+      "daily": {
+        "k": 8.4,
+        "d": 12.6
+      },
+      "weekly": {
+        "k": 14.1,
+        "d": 19.8
+      },
+      "monthly": {
+        "k": 22.7,
+        "d": 27.4
+      }
+    },
+    {
+      "code": "000270",
+      "name": "기아",
+      "close": 118500,
+      "change_pct": 0.68,
+      "daily": {
+        "k": 33.9,
+        "d": 30.1
+      },
+      "weekly": {
+        "k": 27.6,
+        "d": 25.0
+      },
+      "monthly": {
+        "k": 40.2,
+        "d": 38.9
+      }
+    },
+    {
+      "code": "068270",
+      "name": "셀트리온",
+      "close": 189700,
+      "change_pct": 2.03,
+      "daily": {
+        "k": 85.5,
+        "d": 74.2
+      },
+      "weekly": {
+        "k": 63.8,
+        "d": 59.4
+      },
+      "monthly": {
+        "k": 58.1,
+        "d": 55.6
+      }
+    },
+    {
+      "code": "005490",
+      "name": "POSCO홀딩스",
+      "close": 402500,
+      "change_pct": -0.32,
+      "daily": {
+        "k": 19.6,
+        "d": 23.4
+      },
+      "weekly": {
+        "k": 35.2,
+        "d": 31.7
+      },
+      "monthly": {
+        "k": 48.9,
+        "d": 45.2
+      }
+    },
+    {
+      "code": "035420",
+      "name": "NAVER",
+      "close": 224000,
+      "change_pct": 1.58,
+      "daily": {
+        "k": 70.2,
+        "d": 62.5
+      },
+      "weekly": {
+        "k": 54.4,
+        "d": 50.9
+      },
+      "monthly": {
+        "k": 39.6,
+        "d": 41.0
+      }
+    },
+    {
+      "code": "006400",
+      "name": "삼성SDI",
+      "close": 356000,
+      "change_pct": -2.14,
+      "daily": {
+        "k": 5.1,
+        "d": 9.8
+      },
+      "weekly": {
+        "k": 11.3,
+        "d": 16.5
+      },
+      "monthly": {
+        "k": 25.8,
+        "d": 29.9
+      }
+    },
+    {
+      "code": "051910",
+      "name": "LG화학",
+      "close": 298500,
+      "change_pct": 0.17,
+      "daily": {
+        "k": 46.7,
+        "d": 44.3
+      },
+      "weekly": {
+        "k": 41.9,
+        "d": 39.6
+      },
+      "monthly": {
+        "k": 36.4,
+        "d": 37.8
+      }
+    },
+    {
+      "code": "105560",
+      "name": "KB금융",
+      "close": 112300,
+      "change_pct": 0.9,
+      "daily": {
+        "k": 66.3,
+        "d": 60.7
+      },
+      "weekly": {
+        "k": 72.5,
+        "d": 68.1
+      },
+      "monthly": {
+        "k": 63.9,
+        "d": 60.2
+      }
+    },
+    {
+      "code": "055550",
+      "name": "신한지주",
+      "close": 78900,
+      "change_pct": 1.35,
+      "daily": {
+        "k": 81.9,
+        "d": 71.0
+      },
+      "weekly": {
+        "k": 68.4,
+        "d": 63.8
+      },
+      "monthly": {
+        "k": 57.3,
+        "d": 54.0
+      }
+    },
+    {
+      "code": "035720",
+      "name": "카카오",
+      "close": 43200,
+      "change_pct": -1.6,
+      "daily": {
+        "k": 12.8,
+        "d": 18.1
+      },
+      "weekly": {
+        "k": 9.7,
+        "d": 14.9
+      },
+      "monthly": {
+        "k": 20.1,
+        "d": 24.6
+      }
+    },
+    {
+      "code": "012330",
+      "name": "현대모비스",
+      "close": 267000,
+      "change_pct": 0.53,
+      "daily": {
+        "k": 53.6,
+        "d": 51.2
+      },
+      "weekly": {
+        "k": 45.8,
+        "d": 43.1
+      },
+      "monthly": {
+        "k": 42.2,
+        "d": 40.7
+      }
+    },
+    {
+      "code": "003550",
+      "name": "LG",
+      "close": 82400,
+      "change_pct": -0.24,
+      "daily": {
+        "k": 37.4,
+        "d": 40.6
+      },
+      "weekly": {
+        "k": 33.0,
+        "d": 35.5
+      },
+      "monthly": {
+        "k": 31.9,
+        "d": 34.0
+      }
+    },
+    {
+      "code": "096770",
+      "name": "SK이노베이션",
+      "close": 128900,
+      "change_pct": 2.87,
+      "daily": {
+        "k": 95.3,
+        "d": 86.7
+      },
+      "weekly": {
+        "k": 79.1,
+        "d": 73.5
+      },
+      "monthly": {
+        "k": 65.7,
+        "d": 61.9
+      }
+    },
+    {
+      "code": "086790",
+      "name": "하나금융지주",
+      "close": 71500,
+      "change_pct": 0.71,
+      "daily": {
+        "k": 59.8,
+        "d": 56.4
+      },
+      "weekly": {
+        "k": 50.7,
+        "d": 48.9
+      },
+      "monthly": {
+        "k": 47.5,
+        "d": 46.1
+      }
+    },
+    {
+      "code": "000810",
+      "name": "삼성화재",
+      "close": 412000,
+      "change_pct": -0.58,
+      "daily": {
+        "k": 22.0,
+        "d": 26.9
+      },
+      "weekly": {
+        "k": 28.4,
+        "d": 32.0
+      },
+      "monthly": {
+        "k": 35.6,
+        "d": 38.3
+      }
+    },
+    {
+      "code": "066570",
+      "name": "LG전자",
+      "close": 96800,
+      "change_pct": 1.92,
+      "daily": {
+        "k": 88.4,
+        "d": 76.3
+      },
+      "weekly": {
+        "k": 60.2,
+        "d": 55.8
+      },
+      "monthly": {
+        "k": 52.8,
+        "d": 49.4
+      }
+    }
+  ]
+};
+
+function render(data){
+  document.getElementById('updated-at').textContent = `업데이트: ${data.updated_at}`;
+
+  // 신호 있는 종목을 위로 정렬
+  const stocks = [...data.stocks].sort((a, b) => {
+    const sa = !a.error && (isSignal(a.daily) || isSignal(a.weekly) || isSignal(a.monthly));
+    const sb = !b.error && (isSignal(b.daily) || isSignal(b.weekly) || isSignal(b.monthly));
+    return (sb ? 1 : 0) - (sa ? 1 : 0);
+  });
+
+  document.getElementById('grid').innerHTML = stocks.map(cardHTML).join('');
+}
+
+async function load(){
+  try{
+    const res = await fetch('./data.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('data.json 응답 오류');
+    const data = await res.json();
+    render(data);
+  } catch(e){
+    // data.json을 못 불러오면(단독 미리보기 등) 내장된 예시 데이터로 표시
+    render(FALLBACK_DATA);
+  }
+}
+
+load();
+</script>
+
+</body>
+</html>
