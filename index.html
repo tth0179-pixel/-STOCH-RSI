@@ -109,6 +109,66 @@
     gap: 10px;
   }
 
+  .overview-wrap{
+    max-width: 980px;
+    margin: 0 auto 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px 6px;
+  }
+  .overview-head{
+    display:flex; justify-content: space-between; align-items:center;
+    margin-bottom: 8px; flex-wrap: wrap; gap: 6px;
+  }
+  .overview-title{ font-size: 12px; font-weight: 600; color: var(--text-dim); }
+  .overview-legend{ display:flex; gap: 12px; font-size: 10.5px; color: var(--text-faint); }
+  .overview-legend span{ display:flex; align-items:center; gap:5px; }
+  .overview-legend i{ width:8px; height:8px; border-radius:2px; display:inline-block; }
+
+  .ov-row{
+    display:grid;
+    grid-template-columns: 74px 1fr;
+    align-items:center;
+    gap: 8px;
+    padding: 4px 0;
+    cursor: default;
+  }
+  .ov-name{
+    font-size: 11px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ov-name.ov-signal{ color: var(--signal); font-weight: 700; }
+  .ov-track{
+    position: relative;
+    height: 12px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-soft);
+    border-radius: 3px;
+    overflow: visible;
+  }
+  .ov-zone-under{ position:absolute; left:0; top:0; bottom:0; width:20%; background: var(--zone-under); }
+  .ov-zone-over{ position:absolute; right:0; top:0; bottom:0; width:20%; background: var(--zone-over); }
+  .ov-dot-daily{
+    position:absolute; top:50%; width:8px; height:8px; border-radius:50%;
+    background: var(--down);
+    transform: translate(-50%, -50%);
+    border: 1.5px solid var(--bg-elevated);
+    z-index: 2;
+  }
+  .ov-dot-daily.ov-cross{ background: var(--signal); box-shadow: 0 0 5px rgba(232,179,61,0.8); }
+  .ov-dot-weekly{
+    position:absolute; top:50%; width:6px; height:6px; border-radius:50%;
+    background: var(--signal);
+    opacity: 0.55;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--bg-elevated);
+    z-index: 1;
+  }
+
   .card{
     background: var(--card);
     border: 1px solid var(--border);
@@ -157,6 +217,27 @@
 
   .tf-row{ display:grid; grid-template-columns: 34px 1fr 66px; align-items:center; gap: 8px; }
   .tf-label{ font-size: 10.5px; color: var(--text-dim); font-weight: 600; }
+
+  .tf-cross-row{
+    display:grid; grid-template-columns: 34px 1fr; gap: 8px;
+    margin-top: -2px; margin-bottom: 2px;
+  }
+  .cross-badge{
+    justify-self: end;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+    background: var(--signal-dim);
+    color: var(--signal);
+    letter-spacing: 0.01em;
+  }
+  .cross-badge.cross-off{
+    background: transparent;
+    color: var(--text-faint);
+    font-weight: 500;
+    padding: 1px 7px 1px 0;
+  }
 
   .gauge{
     position: relative;
@@ -228,6 +309,17 @@
   </div>
 </header>
 
+<section class="overview-wrap">
+  <div class="overview-head">
+    <span class="overview-title">한눈에 보기 · 일봉 %K 기준 정렬</span>
+    <div class="overview-legend">
+      <span><i style="background:var(--down)"></i>일봉 %K</span>
+      <span><i style="background:var(--signal)"></i>주봉 %K</span>
+    </div>
+  </div>
+  <div id="overview-chart"></div>
+</section>
+
 <main id="grid"></main>
 
 <footer>
@@ -268,6 +360,8 @@ function gaugeHTML(tf){
 
 function tfRow(key, tf){
   const label = TF_LABELS[key];
+  const showCross = (key === 'daily' || key === 'weekly'); // 일봉/주봉만 골드크로스 표시
+
   if (!tf){
     return `
       <div class="tf-row">
@@ -276,12 +370,19 @@ function tfRow(key, tf){
         <div class="no-data">데이터 부족</div>
       </div>`;
   }
+
+  const crossed = showCross && isSignal(tf);
+  const crossBadge = crossed
+    ? `<span class="cross-badge">골드크로스</span>`
+    : (showCross ? `<span class="cross-badge cross-off">-</span>` : '');
+
   return `
     <div class="tf-row">
       <div class="tf-label">${label}</div>
       ${gaugeHTML(tf)}
       <div class="tf-vals mono"><b>${tf.k.toFixed(1)}</b> / ${tf.d.toFixed(1)}</div>
-    </div>`;
+    </div>
+    ${showCross ? `<div class="tf-cross-row"><span></span>${crossBadge}</div>` : ''}`;
 }
 
 function cardHTML(stock){
@@ -298,7 +399,7 @@ function cardHTML(stock){
       </div>`;
   }
 
-  const hasSignal = isSignal(stock.daily) || isSignal(stock.weekly) || isSignal(stock.monthly);
+  const hasSignal = isSignal(stock.daily) || isSignal(stock.weekly);
   const change = fmtChange(stock.change_pct);
 
   return `
@@ -691,17 +792,41 @@ const FALLBACK_DATA = {
   ]
 };
 
+function renderOverview(stocks){
+  const valid = stocks.filter(s => !s.error && s.daily);
+  const sorted = [...valid].sort((a, b) => a.daily.k - b.daily.k);
+
+  const rows = sorted.map(s => {
+    const dailyCross = isSignal(s.daily);
+    const weeklyK = s.weekly ? s.weekly.k : null;
+    const nameCls = (dailyCross || isSignal(s.weekly)) ? 'ov-name ov-signal' : 'ov-name';
+    return `
+      <div class="ov-row">
+        <div class="${nameCls}">${s.name}</div>
+        <div class="ov-track">
+          <div class="ov-zone-under"></div>
+          <div class="ov-zone-over"></div>
+          ${weeklyK !== null ? `<div class="ov-dot-weekly" style="left:${weeklyK}%"></div>` : ''}
+          <div class="ov-dot-daily ${dailyCross ? 'ov-cross' : ''}" style="left:${s.daily.k}%"></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('overview-chart').innerHTML = rows;
+}
+
 function render(data){
   document.getElementById('updated-at').textContent = `업데이트: ${data.updated_at}`;
 
   // 신호 있는 종목을 위로 정렬
   const stocks = [...data.stocks].sort((a, b) => {
-    const sa = !a.error && (isSignal(a.daily) || isSignal(a.weekly) || isSignal(a.monthly));
-    const sb = !b.error && (isSignal(b.daily) || isSignal(b.weekly) || isSignal(b.monthly));
+    const sa = !a.error && (isSignal(a.daily) || isSignal(a.weekly));
+    const sb = !b.error && (isSignal(b.daily) || isSignal(b.weekly));
     return (sb ? 1 : 0) - (sa ? 1 : 0);
   });
 
   document.getElementById('grid').innerHTML = stocks.map(cardHTML).join('');
+  renderOverview(data.stocks);
 }
 
 async function load(){
