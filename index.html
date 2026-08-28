@@ -126,6 +126,24 @@
   .overview-legend span{ display:flex; align-items:center; gap:5px; }
   .overview-legend i{ width:8px; height:8px; border-radius:2px; display:inline-block; }
 
+  .ov-sort-tabs{ display:flex; gap: 6px; margin-bottom: 10px; }
+  .ov-sort-tab{
+    flex: 1;
+    padding: 6px 0;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-dim);
+    font-size: 12.5px;
+    font-weight: 600;
+    font-family: inherit;
+  }
+  .ov-sort-tab.active{
+    background: var(--signal-dim);
+    border-color: rgba(199,137,30,0.4);
+    color: var(--signal);
+  }
+
   .ov-row{
     display:grid;
     grid-template-columns: 88px 1fr;
@@ -377,11 +395,15 @@
 
 <section class="overview-wrap">
   <div class="overview-head">
-    <span class="overview-title">한눈에 보기 · 일봉 %K 기준 정렬</span>
+    <span class="overview-title">한눈에 보기</span>
     <div class="overview-legend">
       <span><i style="background:var(--down)"></i>일봉 %K</span>
       <span><i style="background:var(--signal)"></i>주봉 %K</span>
     </div>
+  </div>
+  <div class="ov-sort-tabs">
+    <button class="ov-sort-tab active" id="ov-sort-daily" onclick="setOverviewSort('daily')">일봉 %K 기준</button>
+    <button class="ov-sort-tab" id="ov-sort-weekly" onclick="setOverviewSort('weekly')">주봉 %K 기준</button>
   </div>
   <div id="overview-chart"></div>
 </section>
@@ -872,9 +894,21 @@ const FALLBACK_DATA = {
   ]
 };
 
+let OV_STOCKS = [];
+let OV_SORT = 'daily';
+
+function setOverviewSort(mode){
+  OV_SORT = mode;
+  document.getElementById('ov-sort-daily').classList.toggle('active', mode === 'daily');
+  document.getElementById('ov-sort-weekly').classList.toggle('active', mode === 'weekly');
+  renderOverview(OV_STOCKS);
+}
+
 function renderOverview(stocks){
-  const valid = stocks.filter(s => !s.error && s.daily);
-  const sorted = [...valid].sort((a, b) => a.daily.k - b.daily.k);
+  OV_STOCKS = stocks;
+  const sortKey = OV_SORT; // 'daily' or 'weekly'
+  const valid = stocks.filter(s => !s.error && s[sortKey]);
+  const sorted = [...valid].sort((a, b) => a[sortKey].k - b[sortKey].k);
 
   const rows = sorted.map(s => {
     const dailyCross = isSignal(s.daily);
