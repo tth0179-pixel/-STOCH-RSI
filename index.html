@@ -175,13 +175,15 @@
     background: var(--down);
     transform: translate(-50%, -50%);
     border: 1.5px solid var(--bg-elevated);
-    z-index: 2;
+    z-index: 3;
   }
-  .ov-dot-daily.ov-cross{ background: var(--signal); box-shadow: 0 0 5px rgba(232,179,61,0.8); }
+  .ov-dot-daily.ov-cross{
+    box-shadow: 0 0 0 3px var(--signal), 0 0 6px rgba(199,137,30,0.7);
+  }
   .ov-dot-weekly{
     position:absolute; top:50%; width:6px; height:6px; border-radius:50%;
     background: var(--signal);
-    opacity: 0.55;
+    opacity: 0.7;
     transform: translate(-50%, -50%);
     border: 1px solid var(--bg-elevated);
     z-index: 1;
