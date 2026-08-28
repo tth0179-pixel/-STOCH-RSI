@@ -56,28 +56,59 @@ def get_top20_codes():
     return codes
 
 
-def calc_stochrsi(df):
-    """OHLCV DataFrame(일/주/월봉 공용) -> 최근 %K, %D 값"""
+def calc_stochrsi(df, return_series=False):
+    """OHLCV DataFrame(일/주/월봉 공용) -> 최근 %K, %D 값 (return_series=True면 전체 시계열도 함께 반환)"""
     if df is None or len(df) < 30:
-        return None
+        return (None, None) if return_series else None
     try:
         result = ta.stochrsi(df["종가"], length=14, rsi_length=14, k=3, d=3)
     except Exception:
-        return None
+        return (None, None) if return_series else None
     if result is None or result.empty:
-        return None
+        return (None, None) if return_series else None
 
     k_cols = [c for c in result.columns if c.startswith("STOCHRSIk")]
     d_cols = [c for c in result.columns if c.startswith("STOCHRSId")]
     if not k_cols or not d_cols:
-        return None
+        return (None, None) if return_series else None
 
     last = result.iloc[-1]
     k_val, d_val = last[k_cols[0]], last[d_cols[0]]
     if pd.isna(k_val) or pd.isna(d_val):
-        return None
+        return (None, None) if return_series else None
 
-    return {"k": round(float(k_val), 2), "d": round(float(d_val), 2)}
+    latest = {"k": round(float(k_val), 2), "d": round(float(d_val), 2)}
+    if not return_series:
+        return latest
+    return latest, result[[k_cols[0], d_cols[0]]].rename(columns={k_cols[0]: "k", d_cols[0]: "d"})
+
+
+def build_daily_history(df, stoch_series, n=90):
+    """차트용: 최근 n개 일봉의 OHLC + 20일 이동평균 + Stoch %K/%D"""
+    ma20 = df["종가"].rolling(20).mean()
+    merged = df[["시가", "고가", "저가", "종가"]].copy()
+    merged["ma20"] = ma20
+    if stoch_series is not None:
+        merged = merged.join(stoch_series)
+    merged = merged.tail(n)
+
+    history = []
+    for idx, row in merged.iterrows():
+        entry = {
+            "date": idx.strftime("%Y-%m-%d"),
+            "o": round(float(row["시가"])),
+            "h": round(float(row["고가"])),
+            "l": round(float(row["저가"])),
+            "c": round(float(row["종가"])),
+        }
+        if pd.notna(row.get("ma20")):
+            entry["ma20"] = round(float(row["ma20"]))
+        if "k" in merged.columns and pd.notna(row.get("k")):
+            entry["k"] = round(float(row["k"]), 2)
+        if "d" in merged.columns and pd.notna(row.get("d")):
+            entry["d"] = round(float(row["d"]), 2)
+        history.append(entry)
+    return history
 
 
 def resample_ohlcv(df, rule):
@@ -100,9 +131,10 @@ def main():
             df.index = pd.to_datetime(df.index)
             df = df[df["종가"] > 0]
 
-            daily = calc_stochrsi(df)
+            daily, daily_stoch_series = calc_stochrsi(df, return_series=True)
             weekly = calc_stochrsi(resample_ohlcv(df, "W"))
             monthly = calc_stochrsi(resample_ohlcv(df, "ME"))
+            history = build_daily_history(df, daily_stoch_series, n=90)
 
             last_row = df.iloc[-1]
             prev_close = df.iloc[-2]["종가"] if len(df) > 1 else last_row["종가"]
@@ -116,6 +148,7 @@ def main():
                 "daily": daily,
                 "weekly": weekly,
                 "monthly": monthly,
+                "history": history,
             })
             print(f"OK  {name}({code})")
         except Exception as e:
