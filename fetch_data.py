@@ -27,8 +27,22 @@ def get_top20_codes():
         with open(CODES_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
 
-    today = datetime.now().strftime("%Y%m%d")
-    cap_df = stock.get_market_cap(today, market="KOSPI")
+    # 장중에 실행되면 당일 시가총액이 아직 확정되지 않아 빈 데이터가 올 수 있으므로,
+    # 데이터가 나올 때까지 하루씩 뒤로 가며 재시도 (최대 10일)
+    cap_df = None
+    for i in range(10):
+        try_date = (datetime.now() - timedelta(days=i)).strftime("%Y%m%d")
+        try:
+            candidate = stock.get_market_cap(try_date, market="KOSPI")
+        except Exception:
+            candidate = None
+        if candidate is not None and not candidate.empty and "시가총액" in candidate.columns:
+            cap_df = candidate
+            break
+
+    if cap_df is None:
+        raise RuntimeError("최근 10일 내 시가총액 데이터를 찾지 못했습니다.")
+
     cap_df = cap_df.sort_values("시가총액", ascending=False).head(20)
 
     codes = []
