@@ -1,198 +1,198 @@
 {
-  "updated_at": "2026-08-28 04:49",
+  "updated_at": "2026-08-28 05:52",
   "stocks": [
     {
       "code": "005930",
       "name": "삼성전자",
-      "close": 258750,
-      "change_pct": -2.73,
+      "close": 257000,
+      "change_pct": -3.38,
       "daily": {
-        "k": 59.77,
-        "d": 57.11
+        "k": 58.49,
+        "d": 56.68
       },
       "weekly": {
-        "k": 20.07,
-        "d": 15.39
+        "k": 19.77,
+        "d": 15.29
       },
       "monthly": null
     },
     {
       "code": "000660",
       "name": "SK하이닉스",
-      "close": 1682000,
-      "change_pct": -2.77,
+      "close": 1671000,
+      "change_pct": -3.41,
       "daily": {
-        "k": 90.43,
-        "d": 88.92
+        "k": 89.2,
+        "d": 88.51
       },
       "weekly": {
-        "k": 13.03,
-        "d": 8.52
+        "k": 12.84,
+        "d": 8.46
       },
       "monthly": null
     },
     {
       "code": "005935",
       "name": "삼성전자우",
-      "close": 187550,
-      "change_pct": -3.47,
+      "close": 186300,
+      "change_pct": -4.12,
       "daily": {
-        "k": 51.72,
-        "d": 56.53
+        "k": 50.38,
+        "d": 56.09
       },
       "weekly": {
-        "k": 22.86,
-        "d": 19.15
+        "k": 22.43,
+        "d": 19.01
       },
       "monthly": null
     },
     {
       "code": "402340",
       "name": "SK스퀘어",
-      "close": 1044000,
-      "change_pct": -2.25,
+      "close": 1028000,
+      "change_pct": -3.75,
       "daily": {
-        "k": 58.27,
-        "d": 60.73
+        "k": 55.44,
+        "d": 59.79
       },
       "weekly": {
-        "k": 12.86,
-        "d": 9.64
+        "k": 12.42,
+        "d": 9.49
       },
       "monthly": null
     },
     {
       "code": "009150",
       "name": "삼성전기",
-      "close": 1422000,
-      "change_pct": 2.67,
+      "close": 1415000,
+      "change_pct": 2.17,
       "daily": {
-        "k": 40.21,
-        "d": 34.71
+        "k": 39.2,
+        "d": 34.38
       },
       "weekly": {
-        "k": 10.79,
-        "d": 9.35
+        "k": 10.7,
+        "d": 9.32
       },
       "monthly": null
     },
     {
       "code": "373220",
       "name": "LG에너지솔루션",
-      "close": 373000,
-      "change_pct": 0.67,
+      "close": 369000,
+      "change_pct": -0.4,
       "daily": {
-        "k": 66.97,
-        "d": 48.21
+        "k": 62.58,
+        "d": 46.74
       },
       "weekly": {
-        "k": 42.78,
-        "d": 34.82
+        "k": 41.6,
+        "d": 34.43
       },
       "monthly": null
     },
     {
       "code": "005380",
       "name": "현대차",
-      "close": 399750,
-      "change_pct": 0.44,
+      "close": 398000,
+      "change_pct": 0.0,
       "daily": {
-        "k": 15.17,
-        "d": 29.0
+        "k": 13.71,
+        "d": 28.51
       },
       "weekly": {
-        "k": 13.9,
-        "d": 11.32
+        "k": 13.75,
+        "d": 11.27
       },
       "monthly": null
     },
     {
       "code": "207940",
       "name": "삼성바이오로직스",
-      "close": 1493000,
-      "change_pct": -6.34,
+      "close": 1481000,
+      "change_pct": -7.09,
       "daily": {
         "k": 38.18,
         "d": 46.94
       },
       "weekly": {
-        "k": 91.53,
-        "d": 95.19
+        "k": 90.34,
+        "d": 94.79
       },
       "monthly": null
     },
     {
       "code": "032830",
       "name": "삼성생명",
-      "close": 308000,
-      "change_pct": 0.33,
+      "close": 307500,
+      "change_pct": 0.16,
       "daily": {
-        "k": 71.63,
-        "d": 61.34
+        "k": 71.34,
+        "d": 61.24
       },
       "weekly": {
-        "k": 12.25,
-        "d": 7.99
+        "k": 12.19,
+        "d": 7.97
       },
       "monthly": null
     },
     {
       "code": "028260",
       "name": "삼성물산",
-      "close": 377000,
-      "change_pct": 0.4,
+      "close": 373500,
+      "change_pct": -0.53,
       "daily": {
-        "k": 64.91,
-        "d": 61.82
+        "k": 62.7,
+        "d": 61.08
       },
       "weekly": {
-        "k": 23.33,
-        "d": 15.87
+        "k": 22.68,
+        "d": 15.65
       },
       "monthly": null
     },
     {
       "code": "105560",
       "name": "KB금융",
-      "close": 170750,
-      "change_pct": 1.58,
+      "close": 170800,
+      "change_pct": 1.61,
       "daily": {
         "k": 72.48,
         "d": 57.48
       },
       "weekly": {
-        "k": 29.95,
-        "d": 37.21
+        "k": 29.99,
+        "d": 37.23
       },
       "monthly": null
     },
     {
       "code": "012450",
       "name": "한화에어로스페이스",
-      "close": 1125000,
-      "change_pct": -2.17,
+      "close": 1150000,
+      "change_pct": 0.0,
       "daily": {
-        "k": 24.49,
-        "d": 17.88
+        "k": 32.33,
+        "d": 20.49
       },
       "weekly": {
-        "k": 86.31,
-        "d": 73.15
+        "k": 89.42,
+        "d": 74.19
       },
       "monthly": null
     },
     {
       "code": "034020",
       "name": "두산에너빌리티",
-      "close": 87700,
-      "change_pct": 2.1,
+      "close": 88500,
+      "change_pct": 3.03,
       "daily": {
         "k": 100.0,
         "d": 84.46
       },
       "weekly": {
-        "k": 47.75,
-        "d": 32.57
+        "k": 48.44,
+        "d": 32.8
       },
       "monthly": null
     },
@@ -214,11 +214,11 @@
     {
       "code": "000270",
       "name": "기아",
-      "close": 127900,
-      "change_pct": 1.43,
+      "close": 127600,
+      "change_pct": 1.19,
       "daily": {
-        "k": 9.43,
-        "d": 17.87
+        "k": 8.54,
+        "d": 17.57
       },
       "weekly": {
         "k": 12.25,
@@ -229,53 +229,53 @@
     {
       "code": "329180",
       "name": "HD현대중공업",
-      "close": 455500,
-      "change_pct": -3.09,
+      "close": 451500,
+      "change_pct": -3.94,
       "daily": {
-        "k": 21.39,
-        "d": 20.72
+        "k": 19.58,
+        "d": 20.12
       },
       "weekly": {
-        "k": 6.29,
-        "d": 9.27
+        "k": 5.78,
+        "d": 9.1
       },
       "monthly": null
     },
     {
       "code": "006400",
       "name": "삼성SDI",
-      "close": 577000,
-      "change_pct": 1.41,
+      "close": 569000,
+      "change_pct": 0.0,
       "daily": {
         "k": 93.19,
         "d": 87.84
       },
       "weekly": {
-        "k": 39.1,
-        "d": 28.61
+        "k": 38.52,
+        "d": 28.42
       },
       "monthly": null
     },
     {
       "code": "068270",
       "name": "셀트리온",
-      "close": 189700,
-      "change_pct": -0.84,
+      "close": 189300,
+      "change_pct": -1.05,
       "daily": {
         "k": 7.59,
         "d": 7.78
       },
       "weekly": {
-        "k": 79.76,
-        "d": 90.3
+        "k": 79.39,
+        "d": 90.17
       },
       "monthly": null
     },
     {
       "code": "012330",
       "name": "현대모비스",
-      "close": 449500,
-      "change_pct": -0.44,
+      "close": 448500,
+      "change_pct": -0.66,
       "daily": {
         "k": 0.0,
         "d": 2.28
@@ -289,15 +289,15 @@
     {
       "code": "034730",
       "name": "SK",
-      "close": 535000,
-      "change_pct": -3.78,
+      "close": 533000,
+      "change_pct": -4.14,
       "daily": {
-        "k": 45.75,
-        "d": 52.38
+        "k": 44.8,
+        "d": 52.07
       },
       "weekly": {
-        "k": 12.59,
-        "d": 9.8
+        "k": 12.43,
+        "d": 9.75
       },
       "monthly": null
     }
