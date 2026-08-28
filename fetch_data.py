@@ -84,10 +84,11 @@ def calc_stochrsi(df, return_series=False):
 
 
 def build_daily_history(df, stoch_series, n=90):
-    """차트용: 최근 n개 일봉의 OHLC + 20일 이동평균 + Stoch %K/%D"""
-    ma20 = df["종가"].rolling(20).mean()
+    """차트용: 최근 n개 일봉의 OHLC + 이동평균(5/20/60) + Stoch %K/%D"""
     merged = df[["시가", "고가", "저가", "종가"]].copy()
-    merged["ma20"] = ma20
+    merged["ma5"] = df["종가"].rolling(5).mean()
+    merged["ma20"] = df["종가"].rolling(20).mean()
+    merged["ma60"] = df["종가"].rolling(60).mean()
     if stoch_series is not None:
         merged = merged.join(stoch_series)
     merged = merged.tail(n)
@@ -101,8 +102,9 @@ def build_daily_history(df, stoch_series, n=90):
             "l": round(float(row["저가"])),
             "c": round(float(row["종가"])),
         }
-        if pd.notna(row.get("ma20")):
-            entry["ma20"] = round(float(row["ma20"]))
+        for ma_key in ("ma5", "ma20", "ma60"):
+            if pd.notna(row.get(ma_key)):
+                entry[ma_key] = round(float(row[ma_key]))
         if "k" in merged.columns and pd.notna(row.get("k")):
             entry["k"] = round(float(row["k"]), 2)
         if "d" in merged.columns and pd.notna(row.get("d")):

@@ -899,8 +899,9 @@ function buildChartHTML(stock){
   return `
     <div class="chart-price-now mono">${stock.close.toLocaleString()} <span class="${change.cls}">${change.text}</span></div>
     <div class="chart-legend">
-      <span><i style="background:var(--text-dim)"></i>종가</span>
+      <span><i style="background:var(--up)"></i>MA5</span>
       <span><i style="background:var(--signal)"></i>MA20</span>
+      <span><i style="background:var(--flat)"></i>MA60</span>
     </div>
     ${priceChart}
     <div class="chart-sub-label">Stoch RSI (14,14,3,3) · 일봉 최근 ${h.length}개</div>
@@ -921,8 +922,8 @@ function renderCandleSVG(history){
 
   let lo = Infinity, hi = -Infinity;
   history.forEach(d => {
-    lo = Math.min(lo, d.l, d.ma20 ?? d.l);
-    hi = Math.max(hi, d.h, d.ma20 ?? d.h);
+    lo = Math.min(lo, d.l, d.ma5 ?? d.l, d.ma20 ?? d.l, d.ma60 ?? d.l);
+    hi = Math.max(hi, d.h, d.ma5 ?? d.h, d.ma20 ?? d.h, d.ma60 ?? d.h);
   });
   const pad = (hi - lo) * 0.06 || 1;
   lo -= pad; hi += pad;
@@ -943,13 +944,19 @@ function renderCandleSVG(history){
     candles += `<rect x="${cx - candleW/2}" y="${bodyTop}" width="${candleW}" height="${bodyH}" fill="${color}"/>`;
   });
 
-  // MA20 라인
-  let maPath = '';
-  history.forEach((d, i) => {
-    if (d.ma20 === undefined) return;
-    const cmd = maPath === '' ? 'M' : 'L';
-    maPath += `${cmd}${x(i)},${y(d.ma20)} `;
-  });
+  // 이동평균선 (5/20/60)
+  function maPathFor(key){
+    let path = '';
+    history.forEach((d, i) => {
+      if (d[key] === undefined) return;
+      const cmd = path === '' ? 'M' : 'L';
+      path += `${cmd}${x(i)},${y(d[key])} `;
+    });
+    return path.trim();
+  }
+  const ma5Path = maPathFor('ma5');
+  const ma20Path = maPathFor('ma20');
+  const ma60Path = maPathFor('ma60');
 
   // y축 라벨 (최고/최저/중간)
   const yTicks = [hi - pad, (hi + lo) / 2, lo + pad];
@@ -959,7 +966,9 @@ function renderCandleSVG(history){
     <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="display:block; overflow: visible;">
       ${yLabels}
       ${candles}
-      ${maPath ? `<path d="${maPath.trim()}" fill="none" stroke="var(--signal)" stroke-width="1.3"/>` : ''}
+      ${ma60Path ? `<path d="${ma60Path}" fill="none" stroke="var(--flat)" stroke-width="1.2"/>` : ''}
+      ${ma20Path ? `<path d="${ma20Path}" fill="none" stroke="var(--signal)" stroke-width="1.3"/>` : ''}
+      ${ma5Path ? `<path d="${ma5Path}" fill="none" stroke="var(--up)" stroke-width="1.2"/>` : ''}
     </svg>`;
 }
 
