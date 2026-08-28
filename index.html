@@ -414,9 +414,9 @@
     </div>
   </div>
   <div class="ov-sort-tabs">
-    <button class="ov-sort-tab ov-tab-recommend" id="ov-sort-recommend" onclick="setOverviewSort('recommend')">추천</button>
+    <button class="ov-sort-tab ov-tab-recommend active" id="ov-sort-recommend" onclick="setOverviewSort('recommend')">추천</button>
     <button class="ov-sort-tab ov-tab-avoid" id="ov-sort-avoid" onclick="setOverviewSort('avoid')">비추천</button>
-    <button class="ov-sort-tab active" id="ov-sort-daily" onclick="setOverviewSort('daily')">일봉 %K 기준</button>
+    <button class="ov-sort-tab" id="ov-sort-daily" onclick="setOverviewSort('daily')">일봉 %K 기준</button>
     <button class="ov-sort-tab" id="ov-sort-weekly" onclick="setOverviewSort('weekly')">주봉 %K 기준</button>
   </div>
   <div id="overview-chart"></div>
@@ -911,7 +911,7 @@ const FALLBACK_DATA = {
 };
 
 let OV_STOCKS = [];
-let OV_SORT = 'daily';
+let OV_SORT = 'recommend';
 
 function setOverviewSort(mode){
   OV_SORT = mode;
