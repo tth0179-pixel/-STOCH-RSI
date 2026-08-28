@@ -56,7 +56,7 @@
   }
 
   .eyebrow{
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: 0.14em;
     color: var(--signal);
     font-weight: 600;
@@ -64,7 +64,7 @@
   }
 
   h1{
-    font-size: 22px;
+    font-size: 27px;
     font-weight: 700;
     letter-spacing: -0.01em;
     display: flex;
@@ -73,7 +73,7 @@
     flex-wrap: wrap;
   }
   h1 span.count{
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 500;
     color: var(--text-dim);
   }
@@ -83,7 +83,7 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 8px;
-    font-size: 12px;
+    font-size: 15px;
     color: var(--text-faint);
   }
   .meta-row .updated{
@@ -96,7 +96,7 @@
   }
 
   .legend{
-    display:flex; gap:14px; font-size: 11px; color: var(--text-faint);
+    display:flex; gap:14px; font-size: 14px; color: var(--text-faint);
   }
   .legend span{ display:flex; align-items:center; gap:5px; }
   .legend i{ width:8px; height:8px; border-radius:2px; display:inline-block; }
@@ -121,21 +121,21 @@
     display:flex; justify-content: space-between; align-items:center;
     margin-bottom: 8px; flex-wrap: wrap; gap: 6px;
   }
-  .overview-title{ font-size: 12px; font-weight: 600; color: var(--text-dim); }
-  .overview-legend{ display:flex; gap: 12px; font-size: 10.5px; color: var(--text-faint); }
+  .overview-title{ font-size: 15px; font-weight: 600; color: var(--text-dim); }
+  .overview-legend{ display:flex; gap: 12px; font-size: 13.5px; color: var(--text-faint); }
   .overview-legend span{ display:flex; align-items:center; gap:5px; }
   .overview-legend i{ width:8px; height:8px; border-radius:2px; display:inline-block; }
 
   .ov-row{
     display:grid;
-    grid-template-columns: 74px 1fr;
+    grid-template-columns: 88px 1fr;
     align-items:center;
     gap: 8px;
     padding: 4px 0;
     cursor: default;
   }
   .ov-name{
-    font-size: 11px;
+    font-size: 14px;
     color: var(--text);
     white-space: nowrap;
     overflow: hidden;
@@ -190,12 +190,12 @@
   }
 
   .name-block{ display:flex; flex-direction:column; gap:2px; }
-  .name{ font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
-  .code{ font-size: 11px; color: var(--text-faint); }
+  .name{ font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .code{ font-size: 14px; color: var(--text-faint); }
 
   .price-block{ text-align: right; }
-  .price{ font-size: 15px; font-weight: 600; }
-  .change{ font-size: 12px; font-weight: 600; margin-top:1px; }
+  .price{ font-size: 19px; font-weight: 600; }
+  .change{ font-size: 15px; font-weight: 600; margin-top:1px; }
   .change.up{ color: var(--up); }
   .change.down{ color: var(--down); }
   .change.flat{ color: var(--flat); }
@@ -205,9 +205,9 @@
     top: 12px; right: 12px;
     background: var(--signal);
     color: #1A1300;
-    font-size: 10px;
+    font-size: 13px;
     font-weight: 700;
-    padding: 2px 7px;
+    padding: 3px 9px;
     border-radius: 20px;
     letter-spacing: 0.02em;
   }
@@ -215,18 +215,18 @@
 
   .tf-rows{ display:flex; flex-direction:column; gap: 7px; }
 
-  .tf-row{ display:grid; grid-template-columns: 34px 1fr 66px; align-items:center; gap: 8px; }
-  .tf-label{ font-size: 10.5px; color: var(--text-dim); font-weight: 600; }
+  .tf-row{ display:grid; grid-template-columns: 42px 1fr 82px; align-items:center; gap: 8px; }
+  .tf-label{ font-size: 14px; color: var(--text-dim); font-weight: 600; }
 
   .tf-cross-row{
-    display:grid; grid-template-columns: 34px 1fr; gap: 8px;
+    display:grid; grid-template-columns: 42px 1fr; gap: 8px;
     margin-top: -2px; margin-bottom: 2px;
   }
   .cross-badge{
     justify-self: end;
-    font-size: 9.5px;
+    font-size: 12.5px;
     font-weight: 700;
-    padding: 1px 7px;
+    padding: 2px 9px;
     border-radius: 10px;
     background: var(--signal-dim);
     color: var(--signal);
@@ -271,25 +271,25 @@
   .gauge .marker-k.signal-on{ background: var(--signal); box-shadow: 0 0 6px rgba(232,179,61,0.7); }
 
   .tf-vals{
-    font-size: 10.5px;
+    font-size: 14px;
     text-align: right;
     color: var(--text-dim);
     white-space: nowrap;
   }
   .tf-vals b{ color: var(--text); font-weight: 600; }
 
-  .no-data{ font-size: 11px; color: var(--text-faint); font-style: italic; }
+  .no-data{ font-size: 14px; color: var(--text-faint); font-style: italic; }
 
   footer{
     max-width: 980px;
     margin: 26px auto 0;
-    font-size: 11px;
+    font-size: 13px;
     color: var(--text-faint);
     line-height: 1.6;
   }
 
   @media (max-width: 420px){
-    h1{ font-size: 19px; }
+    h1{ font-size: 23px; }
     main{ grid-template-columns: 1fr; }
   }
 </style>
