@@ -145,6 +145,11 @@
     cursor: pointer;
     background: var(--bg-elevated);
   }
+  .holding-card-danger{
+    border: 1.5px solid #D97706;
+    background: linear-gradient(180deg, rgba(217,119,6,0.10), var(--bg-elevated) 65%);
+    box-shadow: 0 0 0 3px rgba(217,119,6,0.10);
+  }
   .holding-top{
     display:flex; justify-content: space-between; align-items:flex-start;
     margin-bottom: 8px;
@@ -163,10 +168,17 @@
   }
   .holding-status-rec{ background: rgba(214,57,74,0.10); color: var(--up); }
   .holding-status-avoid{ background: rgba(37,99,235,0.10); color: var(--down); }
-  .holding-status-danger{ background: rgba(217,119,6,0.12); color: #B45309; }
+  .holding-status-danger{
+    background: #D97706;
+    color: #FFFFFF;
+    font-size: 14px;
+    padding: 5px 14px;
+    box-shadow: 0 0 0 3px rgba(217,119,6,0.18);
+  }
   .holding-status-flat{ background: var(--bg); color: var(--text-faint); }
   .holding-reasons{ display:flex; flex-direction:column; gap: 3px; }
   .holding-reason-line{ font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+  .holding-reason-line-danger{ font-size: 13px; color: #92400E; font-weight: 600; line-height: 1.6; }
   .overview-head{
     display:flex; justify-content: space-between; align-items:center;
     margin-bottom: 12px; flex-wrap: wrap; gap: 6px;
@@ -487,7 +499,6 @@
   </div>
   <div class="overview-legend overview-legend-wrap">
     <span><i style="background:var(--zone-under)"></i>과매도(20↓)</span>
-    <span><i style="background:var(--up)"></i>신호</span>
     <span><i style="background:var(--zone-over)"></i>과매수(80↑)</span>
     <span><i style="background:var(--down)"></i>일봉 %K</span>
     <span><i style="background:var(--signal)"></i>주봉 %K</span>
@@ -1102,12 +1113,15 @@ function classifyHolding(s){
     };
   }
   if (isDanger(s)){
+    const reverseParts = [];
+    if (last.ma5 < last.ma20) reverseParts.push('5일선이 20일선보다');
+    if (last.ma5 < last.ma60) reverseParts.push('5일선이 60일선보다');
+    if (last.ma20 < last.ma60) reverseParts.push('20일선이 60일선보다');
+    const reverseText = reverseParts.join(', ') + ' 낮아진';
     return {
       label: '위험진입', cls: 'danger',
       lines: [
-        `${mark(!kAboveD)} %K(${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 아래`,
-        `${mark(!aboveMA5)} 종가(${last.c.toLocaleString()})가 MA5(${Math.round(last.ma5).toLocaleString()}) 아래`,
-        `${mark(reverseAligned)} MA5/MA20/MA60 중 일부 역배열 (MA5<MA20 또는 MA5<MA60 또는 MA20<MA60)`,
+        `RSI(%K ${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 낮아 하락 전환했고, 종가(${last.c.toLocaleString()})가 5일 이동평균선(${Math.round(last.ma5).toLocaleString()}) 아래로 떨어졌으며, ${reverseText} 역배열 상태라 위험합니다.`,
       ],
     };
   }
@@ -1138,8 +1152,11 @@ function renderHoldings(allStocks){
     }
     const change = fmtChange(s.change_pct);
     const status = classifyHolding(s);
+    const cardClass = status.cls === 'danger' ? 'holding-card holding-card-danger' : 'holding-card';
+    const badgeLabel = status.cls === 'danger' ? '⚠️ 위험진입' : status.label;
+    const reasonLineClass = status.cls === 'danger' ? 'holding-reason-line-danger' : 'holding-reason-line';
     return `
-      <div class="holding-card" onclick="openChart('${s.code}')">
+      <div class="${cardClass}" onclick="openChart('${s.code}')">
         <div class="holding-top">
           <div>
             <div class="holding-name">${s.name}</div>
@@ -1150,9 +1167,9 @@ function renderHoldings(allStocks){
             <div class="change ${change.cls} mono" style="font-size:12.5px;">${change.text}</div>
           </div>
         </div>
-        <div class="holding-status holding-status-${status.cls}">${status.label}</div>
+        <div class="holding-status holding-status-${status.cls}">${badgeLabel}</div>
         <div class="holding-reasons">
-          ${status.lines.map(l => `<div class="holding-reason-line">${escapeHtml(l)}</div>`).join('')}
+          ${status.lines.map(l => `<div class="${reasonLineClass}">${escapeHtml(l)}</div>`).join('')}
         </div>
       </div>`;
   }).join('');
