@@ -1054,6 +1054,13 @@ function isDanger(s){
   return kBelowD && belowMA5 && reverseAligned;
 }
 
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function classifyHolding(s){
   const h = s.history && s.history.daily;
   const last = h && h.length ? h[h.length - 1] : null;
@@ -1145,7 +1152,7 @@ function renderHoldings(allStocks){
         </div>
         <div class="holding-status holding-status-${status.cls}">${status.label}</div>
         <div class="holding-reasons">
-          ${status.lines.map(l => `<div class="holding-reason-line">${l}</div>`).join('')}
+          ${status.lines.map(l => `<div class="holding-reason-line">${escapeHtml(l)}</div>`).join('')}
         </div>
       </div>`;
   }).join('');
