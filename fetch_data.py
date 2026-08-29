@@ -1,9 +1,9 @@
 """
-코스피 시가총액 상위 20개 종목 Stoch RSI 계산 스크립트
+코스피 시가총액 상위 30개 종목 Stoch RSI 계산 스크립트
 
-- 최초 실행 시 시총 상위 20개 종목을 확정하여 top20_codes.json 에 저장합니다.
+- 최초 실행 시 시총 상위 30개 종목을 확정하여 top30_codes.json 에 저장합니다.
   (이후에는 이 파일이 있으면 재계산하지 않고 그대로 사용 -> "고정 리스트")
-  리스트를 다시 뽑고 싶으면 top20_codes.json 을 삭제하고 재실행하세요.
+  리스트를 다시 뽑고 싶으면 top30_codes.json 을 삭제하고 재실행하세요.
 - 종목별 일봉 데이터를 받아 주봉/월봉으로 리샘플링합니다.
 - Stoch RSI(14,14,3,3) 를 일봉/주봉/월봉 기준으로 각각 계산합니다.
 - 결과를 data.json 으로 저장합니다. index.html 이 이 파일을 읽어서 화면에 표시합니다.
@@ -17,12 +17,12 @@ import pandas as pd
 import pandas_ta as ta
 from pykrx import stock
 
-CODES_FILE = "top20_codes.json"
+CODES_FILE = "top30_codes.json"
 OUTPUT_FILE = "data.json"
 HISTORY_DAYS = 450  # 월봉 지표 계산까지 안정적으로 나오려면 넉넉한 기간이 필요
 
 
-def get_top20_codes():
+def get_top30_codes():
     if os.path.exists(CODES_FILE):
         with open(CODES_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -43,7 +43,7 @@ def get_top20_codes():
     if cap_df is None:
         raise RuntimeError("최근 10일 내 시가총액 데이터를 찾지 못했습니다.")
 
-    cap_df = cap_df.sort_values("시가총액", ascending=False).head(20)
+    cap_df = cap_df.sort_values("시가총액", ascending=False).head(30)
 
     codes = []
     for code in cap_df.index:
@@ -119,7 +119,7 @@ def resample_ohlcv(df, rule):
 
 
 def main():
-    codes = get_top20_codes()
+    codes = get_top30_codes()
 
     end = datetime.now()
     start = end - timedelta(days=HISTORY_DAYS)

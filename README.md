@@ -1,11 +1,11 @@
-# 코스피 TOP 20 Stoch RSI 스크리너
+# 코스피 TOP 30 Stoch RSI 스크리너
 
-코스피 시가총액 상위 20개 종목(최초 실행 시 고정)을 대상으로 일봉/주봉/월봉 Stoch RSI를 계산해
+코스피 시가총액 상위 30개 종목(최초 실행 시 고정)을 대상으로 일봉/주봉/월봉 Stoch RSI를 계산해
 아이폰 사파리에서도 볼 수 있는 웹페이지로 보여주는 개인용 도구입니다.
 
 ## 구성
 - `fetch_data.py` — pykrx로 시세를 받아 Stoch RSI를 계산하고 `data.json`으로 저장
-- `top20_codes.json` — 처음 실행 시 확정된 시총 20위 종목 코드 (고정 리스트)
+- `top30_codes.json` — 처음 실행 시 확정된 시총 30위 종목 코드 (고정 리스트)
 - `data.json` — 계산 결과 (지금 들어있는 값은 화면 미리보기용 샘플입니다)
 - `index.html` — `data.json`을 읽어 보여주는 대시보드 화면
 - `.github/workflows/update.yml` — 매 평일 장마감 후 자동으로 데이터 갱신
@@ -26,11 +26,11 @@
 ## 로컬에서 먼저 테스트하고 싶다면
 ```bash
 pip install -r requirements.txt
-python fetch_data.py   # data.json, top20_codes.json 생성
+python fetch_data.py   # data.json, top30_codes.json 생성
 python -m http.server 8000
 # 브라우저에서 http://localhost:8000 접속
 ```
 
 ## 참고
 - "신호" 배지는 %K가 20 이하 과매도 구간에 있으면서 %D 이상으로 올라온 종목에 표시됩니다 (매수 관심 신호).
-- 시총 20위 종목을 다시 새로 뽑고 싶으면 `top20_codes.json`을 삭제하고 워크플로우를 다시 실행하세요.
+- 시총 30위 종목을 다시 새로 뽑고 싶으면 `top30_codes.json`을 삭제하고 워크플로우를 다시 실행하세요.
