@@ -27,8 +27,9 @@ def get_top30_codes():
         with open(CODES_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
 
-    # 장중에 실행되면 당일 시가총액이 아직 확정되지 않아 빈 데이터가 올 수 있으므로,
-    # 데이터가 나올 때까지 하루씩 뒤로 가며 재시도 (최대 10일)
+    # 장중에 실행되면 당일 시가총액이 아직 확정되지 않아 빈 데이터가 올 수 있고,
+    # 최근 KRX 정책 변경으로 일부 종목의 시가총액이 0/결측으로 내려오는 경우도 있어
+    # "유효한 시가총액이 30개 이상 확보될 때까지" 하루씩 뒤로 가며 재시도 (최대 10일)
     cap_df = None
     for i in range(10):
         try_date = (datetime.now() - timedelta(days=i)).strftime("%Y%m%d")
@@ -36,14 +37,29 @@ def get_top30_codes():
             candidate = stock.get_market_cap(try_date, market="KOSPI")
         except Exception:
             candidate = None
-        if candidate is not None and not candidate.empty and "시가총액" in candidate.columns:
+
+        if candidate is None or candidate.empty or "시가총액" not in candidate.columns:
+            continue
+
+        candidate = candidate.copy()
+        candidate["시가총액"] = pd.to_numeric(candidate["시가총액"], errors="coerce")
+        candidate = candidate[candidate["시가총액"] > 0]
+
+        if len(candidate) >= 30:
             cap_df = candidate
+            print(f"시가총액 기준일 확정: {try_date} (유효 종목 {len(candidate)}개)")
             break
+        else:
+            print(f"{try_date}: 유효 시가총액 {len(candidate)}개 (30개 미만) -> 이전 날짜로 재시도")
 
     if cap_df is None:
-        raise RuntimeError("최근 10일 내 시가총액 데이터를 찾지 못했습니다.")
+        raise RuntimeError("최근 10일 내 유효한 시가총액 데이터(30개 이상)를 찾지 못했습니다.")
 
     cap_df = cap_df.sort_values("시가총액", ascending=False).head(30)
+
+    # 디버그: 실제로 시총 상위 종목이 맞는지 로그로 확인
+    for code, cap in cap_df["시가총액"].head(5).items():
+        print(f"  상위: {code} {stock.get_market_ticker_name(code)}  시총={cap:,.0f}")
 
     codes = []
     for code in cap_df.index:
