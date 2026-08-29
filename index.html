@@ -458,7 +458,7 @@
 <footer>
   종가 기준 하루 지연 데이터 · Stoch RSI(14,14,3,3) · %K가 20 이하 구간에서 %D를 상향 돌파하면 &quot;신호&quot; 배지가 표시됩니다.<br>
   &quot;추천&quot;은 일봉 기준 ①%K가 %D보다 위, ②종가가 MA5 위, ③MA5가 MA20보다 위 3가지를 모두 만족하는 종목,<br>
-  &quot;위험진입&quot;은 일봉 %K가 과매수 구간(80 이상)이면서 종가가 MA5 아래로 내려오고, MA5&lt;MA20 / MA5&lt;MA60 / MA20&lt;MA60 중 하나라도 역배열인 종목(과매수 상태에서 추세 반전 위험),<br>
+  &quot;위험진입&quot;은 일봉 %K가 %D보다 아래이면서 종가가 MA5 아래로 내려오고, MA5&lt;MA20 / MA5&lt;MA60 / MA20&lt;MA60 중 하나라도 역배열인 종목(추세 반전 위험),<br>
   &quot;비추천&quot;은 반대로 ①%K가 %D보다 아래, ②종가가 MA5 아래, ③MA5가 MA20보다 아래인 종목입니다.<br>
   이 페이지는 개인 참고용이며 투자 조언이 아닙니다.
 </footer>
@@ -981,21 +981,21 @@ function isAvoid(s){
 }
 
 function isDanger(s){
-  // 위험진입 = ①일봉 %K ≥ 80(과매수) AND ②종가 < MA5 AND
+  // 위험진입 = ①일봉 %K < %D AND ②종가 < MA5 AND
   //           ③(MA5<MA20 OR MA5<MA60 OR MA20<MA60) 중 하나라도 해당
-  if (!s.daily || s.daily.k === undefined) return false;
+  if (!s.daily || s.daily.k === undefined || s.daily.d === undefined) return false;
   const h = s.history && s.history.daily;
   if (!h || h.length < 1) return false;
   const last = h[h.length - 1];
   if (last.ma5 === undefined || last.ma20 === undefined || last.ma60 === undefined) return false;
 
-  const overbought = s.daily.k >= 80;                 // ① 과매수
+  const kBelowD = s.daily.k < s.daily.d;               // ① %K < %D
   const belowMA5 = last.c < last.ma5;                  // ② 종가 < MA5
   const reverseAligned =                               // ③ 아래 3가지 중 하나라도 참
     (last.ma5 < last.ma20) ||
     (last.ma5 < last.ma60) ||
     (last.ma20 < last.ma60);
-  return overbought && belowMA5 && reverseAligned;
+  return kBelowD && belowMA5 && reverseAligned;
 }
 
 function renderOverview(stocks){
