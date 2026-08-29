@@ -150,6 +150,11 @@
     background: linear-gradient(180deg, rgba(217,119,6,0.10), var(--bg-elevated) 65%);
     box-shadow: 0 0 0 3px rgba(217,119,6,0.10);
   }
+  .holding-card-rec{
+    border: 1.5px solid #16A34A;
+    background: linear-gradient(180deg, rgba(22,163,74,0.10), var(--bg-elevated) 65%);
+    box-shadow: 0 0 0 3px rgba(22,163,74,0.10);
+  }
   .holding-top{
     display:flex; justify-content: space-between; align-items:flex-start;
     margin-bottom: 8px;
@@ -166,7 +171,13 @@
     border-radius: 20px;
     margin-bottom: 8px;
   }
-  .holding-status-rec{ background: rgba(214,57,74,0.10); color: var(--up); }
+  .holding-status-rec{
+    background: #16A34A;
+    color: #FFFFFF;
+    font-size: 14px;
+    padding: 5px 14px;
+    box-shadow: 0 0 0 3px rgba(22,163,74,0.18);
+  }
   .holding-status-avoid{ background: rgba(37,99,235,0.10); color: var(--down); }
   .holding-status-danger{
     background: #D97706;
@@ -179,6 +190,7 @@
   .holding-reasons{ display:flex; flex-direction:column; gap: 3px; }
   .holding-reason-line{ font-size: 12px; color: var(--text-dim); line-height: 1.5; }
   .holding-reason-line-danger{ font-size: 13px; color: #92400E; font-weight: 600; line-height: 1.6; }
+  .holding-reason-line-rec{ font-size: 13px; color: #166534; font-weight: 600; line-height: 1.6; }
   .overview-head{
     display:flex; justify-content: space-between; align-items:center;
     margin-bottom: 12px; flex-wrap: wrap; gap: 6px;
@@ -1149,9 +1161,15 @@ function renderHoldings(allStocks){
     }
     const change = fmtChange(s.change_pct);
     const status = classifyHolding(s);
-    const cardClass = status.cls === 'danger' ? 'holding-card holding-card-danger' : 'holding-card';
-    const badgeLabel = status.cls === 'danger' ? '⚠️ 위험진입' : status.label;
-    const reasonLineClass = status.cls === 'danger' ? 'holding-reason-line-danger' : 'holding-reason-line';
+    const cardClass = status.cls === 'danger' ? 'holding-card holding-card-danger'
+      : status.cls === 'rec' ? 'holding-card holding-card-rec'
+      : 'holding-card';
+    const badgeLabel = status.cls === 'danger' ? '⚠️ 위험진입'
+      : status.cls === 'rec' ? '✅ 추천'
+      : status.label;
+    const reasonLineClass = status.cls === 'danger' ? 'holding-reason-line-danger'
+      : status.cls === 'rec' ? 'holding-reason-line-rec'
+      : 'holding-reason-line';
     return `
       <div class="${cardClass}" onclick="openChart('${s.code}')">
         <div class="holding-top">
