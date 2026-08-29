@@ -450,8 +450,8 @@
 
 <footer>
   종가 기준 하루 지연 데이터 · Stoch RSI(14,14,3,3) · %K가 20 이하 구간에서 %D를 상향 돌파하면 &quot;신호&quot; 배지가 표시됩니다.<br>
-  &quot;추천&quot;은 일봉 Stoch RSI %K가 전일 대비 상승 중이면서 종가가 5일 이동평균선(MA5) 위에 있는 종목,<br>
-  &quot;비추천&quot;은 반대로 %K가 하락 중이면서 종가가 MA5 아래에 있는 종목입니다.<br>
+  &quot;추천&quot;은 일봉 기준 ①%K가 %D보다 위, ②종가가 MA5 위, ③MA5가 MA20보다 위 3가지를 모두 만족하는 종목,<br>
+  &quot;비추천&quot;은 반대로 ①%K가 %D보다 아래, ②종가가 MA5 아래, ③MA5가 MA20보다 아래인 종목입니다.<br>
   이 페이지는 개인 참고용이며 투자 조언이 아닙니다.
 </footer>
 
@@ -949,26 +949,26 @@ function setOverviewSort(mode){
 
 function isRecommended(s){
   const h = s.history && s.history.daily;
-  if (!h || h.length < 2) return false;
+  if (!h || h.length < 1) return false;
   const last = h[h.length - 1];
-  const prev = h[h.length - 2];
-  if (last.k === undefined || prev.k === undefined) return false;
-  if (last.ma5 === undefined) return false;
-  const risingK = last.k > prev.k;       // 일봉 Stoch RSI %K 상승 중
-  const aboveMA5 = last.c > last.ma5;    // 종가가 MA5 위
-  return risingK && aboveMA5;
+  if (last.k === undefined || last.d === undefined) return false;
+  if (last.ma5 === undefined || last.ma20 === undefined) return false;
+  const kAboveD = last.k > last.d;         // 일봉 %K가 %D보다 위
+  const aboveMA5 = last.c > last.ma5;      // 종가가 MA5 위
+  const ma5AboveMa20 = last.ma5 > last.ma20; // MA5가 MA20보다 위
+  return kAboveD && aboveMA5 && ma5AboveMa20;
 }
 
 function isAvoid(s){
   const h = s.history && s.history.daily;
-  if (!h || h.length < 2) return false;
+  if (!h || h.length < 1) return false;
   const last = h[h.length - 1];
-  const prev = h[h.length - 2];
-  if (last.k === undefined || prev.k === undefined) return false;
-  if (last.ma5 === undefined) return false;
-  const fallingK = last.k < prev.k;      // 일봉 Stoch RSI %K 하락 중
-  const belowMA5 = last.c < last.ma5;    // 종가가 MA5 아래
-  return fallingK && belowMA5;
+  if (last.k === undefined || last.d === undefined) return false;
+  if (last.ma5 === undefined || last.ma20 === undefined) return false;
+  const kBelowD = last.k < last.d;         // 일봉 %K가 %D보다 아래
+  const belowMA5 = last.c < last.ma5;      // 종가가 MA5 아래
+  const ma5BelowMa20 = last.ma5 < last.ma20; // MA5가 MA20보다 아래
+  return kBelowD && belowMA5 && ma5BelowMa20;
 }
 
 function renderOverview(stocks){
@@ -978,18 +978,16 @@ function renderOverview(stocks){
   if (OV_SORT === 'recommend'){
     const valid = stocks.filter(s => !s.error && s.daily && isRecommended(s));
     sorted = [...valid].sort((a, b) => {
-      const ha = a.history.daily, hb = b.history.daily;
-      const momA = ha[ha.length-1].k - ha[ha.length-2].k;
-      const momB = hb[hb.length-1].k - hb[hb.length-2].k;
-      return momB - momA; // 상승폭이 큰 순
+      const la = a.history.daily[a.history.daily.length-1];
+      const lb = b.history.daily[b.history.daily.length-1];
+      return (lb.k - lb.d) - (la.k - la.d); // %K-%D 격차가 큰 순
     });
   } else if (OV_SORT === 'avoid'){
     const valid = stocks.filter(s => !s.error && s.daily && isAvoid(s));
     sorted = [...valid].sort((a, b) => {
-      const ha = a.history.daily, hb = b.history.daily;
-      const momA = ha[ha.length-1].k - ha[ha.length-2].k;
-      const momB = hb[hb.length-1].k - hb[hb.length-2].k;
-      return momA - momB; // 하락폭이 큰 순
+      const la = a.history.daily[a.history.daily.length-1];
+      const lb = b.history.daily[b.history.daily.length-1];
+      return (la.k - la.d) - (lb.k - lb.d); // %K-%D 격차가 (음수로) 큰 순
     });
   } else {
     const sortKey = OV_SORT; // 'daily' or 'weekly'
