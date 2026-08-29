@@ -1029,13 +1029,14 @@ function buildChartHTML(stock){
   const tf = CHART_TF;
   const h = (stock.history && stock.history[tf]) ? stock.history[tf] : [];
   const change = fmtChange(stock.change_pct);
-  const tfLabel = tf === 'daily' ? '일봉' : '주봉';
+  const tfLabel = tf === 'daily' ? '일봉' : (tf === 'weekly' ? '주봉' : '월봉');
 
   if (h.length === 0){
     return `
       <div class="chart-tabs">
         <button class="chart-tab ${tf==='daily'?'active':''}" onclick="switchChartTF('daily')">일봉</button>
         <button class="chart-tab ${tf==='weekly'?'active':''}" onclick="switchChartTF('weekly')">주봉</button>
+        <button class="chart-tab ${tf==='monthly'?'active':''}" onclick="switchChartTF('monthly')">월봉</button>
       </div>
       <div class="no-data" style="padding: 20px 0;">${tfLabel} 데이터가 부족합니다.</div>`;
   }
@@ -1047,6 +1048,7 @@ function buildChartHTML(stock){
     <div class="chart-tabs">
       <button class="chart-tab ${tf==='daily'?'active':''}" onclick="switchChartTF('daily')">일봉</button>
       <button class="chart-tab ${tf==='weekly'?'active':''}" onclick="switchChartTF('weekly')">주봉</button>
+      <button class="chart-tab ${tf==='monthly'?'active':''}" onclick="switchChartTF('monthly')">월봉</button>
     </div>
     <div class="chart-price-now mono"><span class="change ${change.cls}">${stock.close.toLocaleString()} ${change.text}</span></div>
     <div class="chart-legend">

@@ -152,10 +152,12 @@ def main():
             daily, daily_stoch_series = calc_stochrsi(df, return_series=True)
             weekly_df = resample_ohlcv(df, "W")
             weekly, weekly_stoch_series = calc_stochrsi(weekly_df, return_series=True)
-            monthly = calc_stochrsi(resample_ohlcv(df, "ME"))
+            monthly_df = resample_ohlcv(df, "ME")
+            monthly, monthly_stoch_series = calc_stochrsi(monthly_df, return_series=True)
 
             history_daily = build_history(df, daily_stoch_series, n=90)
             history_weekly = build_history(weekly_df, weekly_stoch_series, n=78)  # 약 1.5년치
+            history_monthly = build_history(monthly_df, monthly_stoch_series, n=48)  # 약 4년치
 
             last_row = df.iloc[-1]
             prev_close = df.iloc[-2]["종가"] if len(df) > 1 else last_row["종가"]
@@ -172,6 +174,7 @@ def main():
                 "history": {
                     "daily": history_daily,
                     "weekly": history_weekly,
+                    "monthly": history_monthly,
                 },
             })
             print(f"OK  {name}({code})")
