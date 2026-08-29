@@ -105,6 +105,7 @@ def build_history(df, stoch_series, n=90):
     merged["ma5"] = df["종가"].rolling(5).mean()
     merged["ma20"] = df["종가"].rolling(20).mean()
     merged["ma60"] = df["종가"].rolling(60).mean()
+    merged["ma120"] = df["종가"].rolling(120).mean()
     if stoch_series is not None:
         merged = merged.join(stoch_series)
     merged = merged.tail(n)
@@ -118,7 +119,7 @@ def build_history(df, stoch_series, n=90):
             "l": round(float(row["저가"])),
             "c": round(float(row["종가"])),
         }
-        for ma_key in ("ma5", "ma20", "ma60"):
+        for ma_key in ("ma5", "ma20", "ma60", "ma120"):
             if pd.notna(row.get(ma_key)):
                 entry[ma_key] = round(float(row[ma_key]))
         if "k" in merged.columns and pd.notna(row.get("k")):

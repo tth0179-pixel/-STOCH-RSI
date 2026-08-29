@@ -27,6 +27,7 @@
     --flat: #9AA1AC;
     --signal: #C7891E;
     --signal-dim: rgba(199,137,30,0.12);
+    --ma120: #7C5CD6;
     --zone-over: rgba(214,57,74,0.09);
     --zone-under: rgba(37,99,235,0.08);
   }
@@ -1057,6 +1058,7 @@ function buildChartHTML(stock){
       <span><i style="background:var(--up)"></i>MA5</span>
       <span><i style="background:var(--signal)"></i>MA20</span>
       <span><i style="background:var(--flat)"></i>MA60</span>
+      <span><i style="background:var(--ma120)"></i>MA120</span>
     </div>
     ${priceChart}
     <div class="chart-sub-label">Stoch RSI (14,14,3,3) · ${tfLabel} 최근 ${h.length}개</div>
@@ -1077,8 +1079,8 @@ function renderCandleSVG(history){
 
   let lo = Infinity, hi = -Infinity;
   history.forEach(d => {
-    lo = Math.min(lo, d.l, d.ma5 ?? d.l, d.ma20 ?? d.l, d.ma60 ?? d.l);
-    hi = Math.max(hi, d.h, d.ma5 ?? d.h, d.ma20 ?? d.h, d.ma60 ?? d.h);
+    lo = Math.min(lo, d.l, d.ma5 ?? d.l, d.ma20 ?? d.l, d.ma60 ?? d.l, d.ma120 ?? d.l);
+    hi = Math.max(hi, d.h, d.ma5 ?? d.h, d.ma20 ?? d.h, d.ma60 ?? d.h, d.ma120 ?? d.h);
   });
   const pad = (hi - lo) * 0.06 || 1;
   lo -= pad; hi += pad;
@@ -1112,6 +1114,7 @@ function renderCandleSVG(history){
   const ma5Path = maPathFor('ma5');
   const ma20Path = maPathFor('ma20');
   const ma60Path = maPathFor('ma60');
+  const ma120Path = maPathFor('ma120');
 
   // y축 라벨 (최고/최저/중간)
   const yTicks = [hi - pad, (hi + lo) / 2, lo + pad];
@@ -1121,6 +1124,7 @@ function renderCandleSVG(history){
     <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="display:block; overflow: visible;">
       ${yLabels}
       ${candles}
+      ${ma120Path ? `<path d="${ma120Path}" fill="none" stroke="var(--ma120)" stroke-width="1.2"/>` : ''}
       ${ma60Path ? `<path d="${ma60Path}" fill="none" stroke="var(--flat)" stroke-width="1.2"/>` : ''}
       ${ma20Path ? `<path d="${ma20Path}" fill="none" stroke="var(--signal)" stroke-width="1.3"/>` : ''}
       ${ma5Path ? `<path d="${ma5Path}" fill="none" stroke="var(--up)" stroke-width="1.2"/>` : ''}
