@@ -1096,9 +1096,7 @@ function classifyHolding(s){
     return {
       label: '추천', cls: 'rec',
       lines: [
-        `${mark(kAboveD)} %K(${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 위`,
-        `${mark(aboveMA5)} 종가(${last.c.toLocaleString()})가 MA5(${Math.round(last.ma5).toLocaleString()}) 위`,
-        `${mark(ma5AboveMa20)} MA5가 MA20(${Math.round(last.ma20).toLocaleString()})보다 위`,
+        `RSI(%K ${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 높아 상승 흐름이고, 종가(${last.c.toLocaleString()})가 5일 이동평균선(${Math.round(last.ma5).toLocaleString()}) 위에 있으며, 5일선이 20일선(${Math.round(last.ma20).toLocaleString()})보다 높은 정배열 상태라 추천 조건을 충족합니다.`,
       ],
     };
   }
@@ -1128,8 +1126,7 @@ function classifyHolding(s){
   return {
     label: '중립', cls: 'flat',
     lines: [
-      `%K(${k.toFixed(1)}) / %D(${d.toFixed(1)}) — 추천·위험진입·비추천 조건 중 어느 것도 충족하지 않음`,
-      `종가(${last.c.toLocaleString()}) / MA5(${Math.round(last.ma5).toLocaleString()}) / MA20(${Math.round(last.ma20).toLocaleString()})`,
+      `RSI(%K ${k.toFixed(1)})와 %D(${d.toFixed(1)})가 뚜렷한 방향 없이 움직이고 있고, 종가(${last.c.toLocaleString()})와 5일 이동평균선(${Math.round(last.ma5).toLocaleString()}), 20일 이동평균선(${Math.round(last.ma20).toLocaleString()})의 배열도 추천·위험진입·비추천 조건에 해당하지 않는 중립 상태입니다.`,
     ],
   };
 }
