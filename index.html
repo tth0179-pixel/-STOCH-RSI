@@ -1374,6 +1374,20 @@ function renderCandleSVG(history){
   const yTicks = [hi - pad, (hi + lo) / 2, lo + pad];
   const yLabels = yTicks.map(v => `<text x="${padL - 6}" y="${y(v) + 3}" text-anchor="end" font-size="9" fill="var(--text-faint)">${Math.round(v).toLocaleString()}</text>`).join('');
 
+  // x축 날짜 라벨 (처음/1·2·3분위/끝, 총 5개)
+  const dateLabelIdx = [0, Math.round((n-1)*0.25), Math.round((n-1)*0.5), Math.round((n-1)*0.75), n-1];
+  const seenIdx = new Set();
+  const xLabels = dateLabelIdx.filter(i => {
+    if (seenIdx.has(i)) return false;
+    seenIdx.add(i);
+    return true;
+  }).map(i => {
+    const raw = history[i].date; // "YYYY-MM-DD"
+    const short = raw ? raw.slice(5).replace('-', '.') : '';
+    const anchor = i === 0 ? 'start' : (i === n - 1 ? 'end' : 'middle');
+    return `<text x="${x(i)}" y="${H - 4}" text-anchor="${anchor}" font-size="8.5" fill="var(--text-faint)">${short}</text>`;
+  }).join('');
+
   return `
     <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="display:block; overflow: visible;">
       ${yLabels}
@@ -1382,6 +1396,7 @@ function renderCandleSVG(history){
       ${ma60Path ? `<path d="${ma60Path}" fill="none" stroke="var(--flat)" stroke-width="1.2"/>` : ''}
       ${ma20Path ? `<path d="${ma20Path}" fill="none" stroke="var(--signal)" stroke-width="1.3"/>` : ''}
       ${ma5Path ? `<path d="${ma5Path}" fill="none" stroke="var(--up)" stroke-width="1.2"/>` : ''}
+      ${xLabels}
     </svg>`;
 }
 
@@ -1406,6 +1421,27 @@ function renderStochSVG(history){
 
   const yOversold = y(20), yOverbought = y(80);
 
+  // %K/%D 교차 지점에 화살표 마커 추가 (골든크로스=상승 화살표/빨강, 데드크로스=하락 화살표/파랑)
+  let arrows = '';
+  for (let i = 1; i < history.length; i++){
+    const prev = history[i - 1], cur = history[i];
+    if (prev.k === undefined || prev.d === undefined || cur.k === undefined || cur.d === undefined) continue;
+    const wasBelow = prev.k <= prev.d;
+    const nowAbove = cur.k > cur.d;
+    const wasAbove = prev.k >= prev.d;
+    const nowBelow = cur.k < cur.d;
+    const ax = x(i);
+    if (wasBelow && nowAbove){
+      // 골든크로스: %K가 %D를 상향 돌파 -> 위쪽을 향한 빨간 화살표, 선 아래쪽에 배치
+      const ay = y(cur.k) + 11;
+      arrows += `<path d="M${ax},${ay+5} L${ax-3.5},${ay+11} L${ax+3.5},${ay+11} Z" fill="var(--up)"/>`;
+    } else if (wasAbove && nowBelow){
+      // 데드크로스: %K가 %D를 하향 돌파 -> 아래쪽을 향한 파란 화살표, 선 위쪽에 배치
+      const ay = y(cur.k) - 11;
+      arrows += `<path d="M${ax},${ay-5} L${ax-3.5},${ay-11} L${ax+3.5},${ay-11} Z" fill="var(--down)"/>`;
+    }
+  }
+
   return `
     <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="display:block; overflow: visible;">
       <rect x="${padL}" y="${padT}" width="${innerW}" height="${yOversold - padT}" fill="var(--zone-over)"/>
@@ -1414,6 +1450,7 @@ function renderStochSVG(history){
       <text x="${padL - 6}" y="${H - padB}" text-anchor="end" font-size="8" fill="var(--text-faint)">20</text>
       ${dPath ? `<path d="${dPath.trim()}" fill="none" stroke="var(--text-faint)" stroke-width="1.2"/>` : ''}
       ${kPath ? `<path d="${kPath.trim()}" fill="none" stroke="var(--down)" stroke-width="1.4"/>` : ''}
+      ${arrows}
     </svg>`;
 }
 
