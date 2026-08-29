@@ -455,13 +455,13 @@
     cursor: pointer;
   }
   .chart-legend{
-    display:flex; gap: 14px; font-size: 12px; color: var(--text-faint);
+    display:flex; gap: 14px; font-size: 12.5px; color: var(--text); font-weight: 600;
     margin: 4px 0 8px;
   }
   .chart-legend span{ display:flex; align-items:center; gap: 5px; }
   .chart-legend i{ width: 10px; height: 2px; display:inline-block; }
   .chart-price-now{ font-size: 15px; font-weight: 600; margin-bottom: 2px; }
-  .chart-sub-label{ font-size: 11px; color: var(--text-faint); margin: 10px 0 2px; }
+  .chart-sub-label{ font-size: 12px; color: var(--text-dim); font-weight: 600; margin: 10px 0 2px; }
 
   .chart-tabs{
     display:flex; gap: 6px;
@@ -1372,7 +1372,7 @@ function renderCandleSVG(history){
 
   // y축 라벨 (최고/최저/중간)
   const yTicks = [hi - pad, (hi + lo) / 2, lo + pad];
-  const yLabels = yTicks.map(v => `<text x="${padL - 6}" y="${y(v) + 3}" text-anchor="end" font-size="9" fill="var(--text-faint)">${Math.round(v).toLocaleString()}</text>`).join('');
+  const yLabels = yTicks.map(v => `<text x="${padL - 6}" y="${y(v) + 3}" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--text)">${Math.round(v).toLocaleString()}</text>`).join('');
 
   // x축 날짜 라벨 (처음/1·2·3분위/끝, 총 5개)
   const dateLabelIdx = [0, Math.round((n-1)*0.25), Math.round((n-1)*0.5), Math.round((n-1)*0.75), n-1];
@@ -1385,7 +1385,7 @@ function renderCandleSVG(history){
     const raw = history[i].date; // "YYYY-MM-DD"
     const short = raw ? raw.slice(5).replace('-', '.') : '';
     const anchor = i === 0 ? 'start' : (i === n - 1 ? 'end' : 'middle');
-    return `<text x="${x(i)}" y="${H - 4}" text-anchor="${anchor}" font-size="8.5" fill="var(--text-faint)">${short}</text>`;
+    return `<text x="${x(i)}" y="${H - 4}" text-anchor="${anchor}" font-size="9.5" font-weight="600" fill="var(--text)">${short}</text>`;
   }).join('');
 
   return `
@@ -1446,8 +1446,8 @@ function renderStochSVG(history){
     <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="display:block; overflow: visible;">
       <rect x="${padL}" y="${padT}" width="${innerW}" height="${yOversold - padT}" fill="var(--zone-over)"/>
       <rect x="${padL}" y="${yOverbought}" width="${innerW}" height="${H - padB - yOverbought}" fill="var(--zone-under)"/>
-      <text x="${padL - 6}" y="${padT + 8}" text-anchor="end" font-size="8" fill="var(--text-faint)">80</text>
-      <text x="${padL - 6}" y="${H - padB}" text-anchor="end" font-size="8" fill="var(--text-faint)">20</text>
+      <text x="${padL - 6}" y="${padT + 8}" text-anchor="end" font-size="10" font-weight="600" fill="var(--text)">80</text>
+      <text x="${padL - 6}" y="${H - padB}" text-anchor="end" font-size="10" font-weight="600" fill="var(--text)">20</text>
       ${dPath ? `<path d="${dPath.trim()}" fill="none" stroke="var(--text-faint)" stroke-width="1.2"/>` : ''}
       ${kPath ? `<path d="${kPath.trim()}" fill="none" stroke="var(--down)" stroke-width="1.4"/>` : ''}
       ${arrows}
