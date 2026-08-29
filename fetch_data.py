@@ -55,11 +55,22 @@ def get_top30_codes():
     if cap_df is None:
         raise RuntimeError("최근 10일 내 유효한 시가총액 데이터(30개 이상)를 찾지 못했습니다.")
 
-    cap_df = cap_df.sort_values("시가총액", ascending=False).head(30)
+    cap_df_full = cap_df.sort_values("시가총액", ascending=False)
+    cap_df = cap_df_full.head(30)
 
     # 디버그: 실제로 시총 상위 종목이 맞는지 로그로 확인
     for code, cap in cap_df["시가총액"].head(5).items():
         print(f"  상위: {code} {stock.get_market_ticker_name(code)}  시총={cap:,.0f}")
+
+    # 디버그: 우선주 등 자주 문의되는 종목이 몇 위인지, 30위 안에 들었는지 확인
+    watch_codes = {"005935": "삼성전자우", "000270": "기아", "051910": "LG화학", "066570": "LG전자"}
+    ranks = {code: i + 1 for i, code in enumerate(cap_df_full.index)}
+    for code, label in watch_codes.items():
+        if code in ranks:
+            cap = cap_df_full.loc[code, "시가총액"]
+            print(f"  참고: {label}({code}) 시총 순위 {ranks[code]}위 (시총={cap:,.0f}) -> {'TOP30 포함' if ranks[code] <= 30 else 'TOP30 밖'}")
+        else:
+            print(f"  참고: {label}({code}) 이번 기준일 데이터 없음")
 
     codes = []
     for code in cap_df.index:
