@@ -160,11 +160,17 @@
     color: var(--signal);
   }
   .ov-tab-recommend{ font-size: 13.5px; padding: 9px 4px; }
+  .ov-tab-danger{ font-size: 13.5px; padding: 9px 4px; }
   .ov-tab-avoid{ font-size: 13.5px; padding: 9px 4px; }
   .ov-tab-recommend.active{
     background: rgba(214,57,74,0.10);
     border-color: rgba(214,57,74,0.4);
     color: var(--up);
+  }
+  .ov-tab-danger.active{
+    background: rgba(217,119,6,0.12);
+    border-color: rgba(217,119,6,0.45);
+    color: #B45309;
   }
   .ov-tab-avoid.active{
     background: rgba(37,99,235,0.10);
@@ -435,6 +441,7 @@
   </div>
   <div class="ov-sort-tabs ov-sort-tabs-primary">
     <button class="ov-sort-tab ov-tab-recommend active" id="ov-sort-recommend" onclick="setOverviewSort('recommend')">추천</button>
+    <button class="ov-sort-tab ov-tab-danger" id="ov-sort-danger" onclick="setOverviewSort('danger')">위험진입</button>
     <button class="ov-sort-tab ov-tab-avoid" id="ov-sort-avoid" onclick="setOverviewSort('avoid')">비추천</button>
   </div>
   <div class="ov-sort-group-label">RSI 정렬</div>
@@ -451,6 +458,7 @@
 <footer>
   종가 기준 하루 지연 데이터 · Stoch RSI(14,14,3,3) · %K가 20 이하 구간에서 %D를 상향 돌파하면 &quot;신호&quot; 배지가 표시됩니다.<br>
   &quot;추천&quot;은 일봉 기준 ①%K가 %D보다 위, ②종가가 MA5 위, ③MA5가 MA20보다 위 3가지를 모두 만족하는 종목,<br>
+  &quot;위험진입&quot;은 일봉 %K가 과매수 구간(80 이상)이면서 종가가 MA5 아래로 내려오고, MA5&lt;MA20 / MA5&lt;MA60 / MA20&lt;MA60 중 하나라도 역배열인 종목(과매수 상태에서 추세 반전 위험),<br>
   &quot;비추천&quot;은 반대로 ①%K가 %D보다 아래, ②종가가 MA5 아래, ③MA5가 MA20보다 아래인 종목입니다.<br>
   이 페이지는 개인 참고용이며 투자 조언이 아닙니다.
 </footer>
@@ -940,6 +948,7 @@ let OV_SORT = 'recommend';
 function setOverviewSort(mode){
   OV_SORT = mode;
   document.getElementById('ov-sort-recommend').classList.toggle('active', mode === 'recommend');
+  document.getElementById('ov-sort-danger').classList.toggle('active', mode === 'danger');
   document.getElementById('ov-sort-avoid').classList.toggle('active', mode === 'avoid');
   document.getElementById('ov-sort-daily').classList.toggle('active', mode === 'daily');
   document.getElementById('ov-sort-weekly').classList.toggle('active', mode === 'weekly');
@@ -971,6 +980,24 @@ function isAvoid(s){
   return kBelowD && belowMA5 && ma5BelowMa20;
 }
 
+function isDanger(s){
+  // 위험진입 = ①일봉 %K ≥ 80(과매수) AND ②종가 < MA5 AND
+  //           ③(MA5<MA20 OR MA5<MA60 OR MA20<MA60) 중 하나라도 해당
+  if (!s.daily || s.daily.k === undefined) return false;
+  const h = s.history && s.history.daily;
+  if (!h || h.length < 1) return false;
+  const last = h[h.length - 1];
+  if (last.ma5 === undefined || last.ma20 === undefined || last.ma60 === undefined) return false;
+
+  const overbought = s.daily.k >= 80;                 // ① 과매수
+  const belowMA5 = last.c < last.ma5;                  // ② 종가 < MA5
+  const reverseAligned =                               // ③ 아래 3가지 중 하나라도 참
+    (last.ma5 < last.ma20) ||
+    (last.ma5 < last.ma60) ||
+    (last.ma20 < last.ma60);
+  return overbought && belowMA5 && reverseAligned;
+}
+
 function renderOverview(stocks){
   OV_STOCKS = stocks;
 
@@ -988,6 +1015,14 @@ function renderOverview(stocks){
       const la = a.history.daily[a.history.daily.length-1];
       const lb = b.history.daily[b.history.daily.length-1];
       return (la.k - la.d) - (lb.k - lb.d); // %K-%D 격차가 (음수로) 큰 순
+    });
+  } else if (OV_SORT === 'danger'){
+    const valid = stocks.filter(s => !s.error && isDanger(s));
+    const gap = (last) => Math.min(last.ma5 - last.ma20, last.ma5 - last.ma60, last.ma20 - last.ma60); // 가장 심한(가장 큰 음수) 역배열 격차
+    sorted = [...valid].sort((a, b) => {
+      const la = a.history.daily[a.history.daily.length-1];
+      const lb = b.history.daily[b.history.daily.length-1];
+      return gap(la) - gap(lb); // 역배열이 심한 순
     });
   } else {
     const sortKey = OV_SORT; // 'daily' or 'weekly'
