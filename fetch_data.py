@@ -19,7 +19,7 @@ from pykrx import stock
 
 CODES_FILE = "top30_codes.json"
 OUTPUT_FILE = "data.json"
-HISTORY_DAYS = 450  # 월봉 지표 계산까지 안정적으로 나오려면 넉넉한 기간이 필요
+HISTORY_DAYS = 1650  # 월봉 Stoch RSI(14,14,3,3)가 안정적으로 나오려면 최소 30개월치 이상 필요 -> 약 4.5년치 확보
 
 
 def get_top30_codes():
