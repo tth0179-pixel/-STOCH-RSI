@@ -417,6 +417,7 @@
     <button class="ov-sort-tab ov-tab-avoid" id="ov-sort-avoid" onclick="setOverviewSort('avoid')">비추천</button>
     <button class="ov-sort-tab" id="ov-sort-daily" onclick="setOverviewSort('daily')">일봉 %K 기준</button>
     <button class="ov-sort-tab" id="ov-sort-weekly" onclick="setOverviewSort('weekly')">주봉 %K 기준</button>
+    <button class="ov-sort-tab" id="ov-sort-monthly" onclick="setOverviewSort('monthly')">월봉 %K 기준</button>
   </div>
   <div id="overview-chart"></div>
 </section>
@@ -918,6 +919,7 @@ function setOverviewSort(mode){
   document.getElementById('ov-sort-avoid').classList.toggle('active', mode === 'avoid');
   document.getElementById('ov-sort-daily').classList.toggle('active', mode === 'daily');
   document.getElementById('ov-sort-weekly').classList.toggle('active', mode === 'weekly');
+  document.getElementById('ov-sort-monthly').classList.toggle('active', mode === 'monthly');
   renderOverview(OV_STOCKS);
 }
 
