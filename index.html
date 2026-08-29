@@ -172,9 +172,11 @@
     margin-bottom: 12px; flex-wrap: wrap; gap: 6px;
   }
   .overview-title{ font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+  .overview-title .count{ font-size: 13px; font-weight: 500; color: var(--text-dim); }
   .overview-legend{ display:flex; gap: 12px; font-size: 12.5px; color: var(--text-faint); font-weight: 500; }
   .overview-legend span{ display:flex; align-items:center; gap:5px; }
   .overview-legend i{ width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .overview-legend-wrap{ flex-wrap: wrap; row-gap: 6px; margin-bottom: 12px; }
 
   .ov-sort-group-label{
     font-size: 11px;
@@ -468,14 +470,9 @@
 
 <header>
   <div class="eyebrow">Personal Screener</div>
-  <h1>코스피 시총 TOP 30 <span class="count">· Stoch RSI 일 / 주 / 월</span></h1>
+  <h1>코스피 시총 TOP 30</h1>
   <div class="meta-row">
     <div class="updated"><span class="dot-live"></span><span id="updated-at">불러오는 중…</span></div>
-    <div class="legend">
-      <span><i style="background:var(--zone-under)"></i>과매도(20↓)</span>
-      <span><i style="background:var(--up)"></i>신호</span>
-      <span><i style="background:var(--zone-over)"></i>과매수(80↑)</span>
-    </div>
   </div>
   <button class="holdings-jump-btn" onclick="document.getElementById('holdings-wrap').scrollIntoView({behavior:'smooth'})">⭐ 보유종목</button>
 </header>
@@ -486,11 +483,14 @@
 
 <section class="overview-wrap">
   <div class="overview-head">
-    <span class="overview-title">한눈에 보기</span>
-    <div class="overview-legend">
-      <span><i style="background:var(--down)"></i>일봉 %K</span>
-      <span><i style="background:var(--signal)"></i>주봉 %K</span>
-    </div>
+    <span class="overview-title">한눈에 보기 <span class="count">· Stoch RSI 일 / 주 / 월</span></span>
+  </div>
+  <div class="overview-legend overview-legend-wrap">
+    <span><i style="background:var(--zone-under)"></i>과매도(20↓)</span>
+    <span><i style="background:var(--up)"></i>신호</span>
+    <span><i style="background:var(--zone-over)"></i>과매수(80↑)</span>
+    <span><i style="background:var(--down)"></i>일봉 %K</span>
+    <span><i style="background:var(--signal)"></i>주봉 %K</span>
   </div>
   <div class="ov-sort-tabs ov-sort-tabs-primary">
     <button class="ov-sort-tab ov-tab-recommend active" id="ov-sort-recommend" onclick="setOverviewSort('recommend')">추천</button>
