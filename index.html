@@ -567,7 +567,8 @@
 <footer>
   종가 기준 하루 지연 데이터 · Stoch RSI(14,14,3,3) · %K가 20 이하 구간에서 %D를 상향 돌파하면 &quot;신호&quot; 배지가 표시됩니다.<br>
   &quot;추천&quot;은 일봉 기준 ①%K가 %D보다 위, ②종가가 MA5 위, ③MA5가 MA20보다 위 3가지를 모두 만족하는 종목,<br>
-  &quot;위험진입&quot;은 일봉 %K가 %D보다 아래이면서 종가가 MA5 아래로 내려오고, MA5&lt;MA20 / MA5&lt;MA60 / MA20&lt;MA60 중 하나라도 역배열인 종목(추세 반전 위험),<br>
+  &quot;위험진입&quot;은 (①일봉 %K가 %D보다 아래이면서 종가가 MA5 아래로 내려오고 MA5&lt;MA20 / MA5&lt;MA60 / MA20&lt;MA60 중 하나라도 역배열이거나) 또는 (②당일 등락률이 -5% 이하로 급락) 둘 중 하나라도 해당하는 종목,<br>
+  급락 조건은 RSI/이동평균이 며칠 뒤늦게 반응하는 것을 보완하기 위한 것입니다.<br>
   &quot;비추천&quot;은 반대로 ①%K가 %D보다 아래, ②종가가 MA5 아래, ③MA5가 MA20보다 아래인 종목입니다.<br>
   이 페이지는 개인 참고용이며 투자 조언이 아닙니다.
 </footer>
@@ -1093,8 +1094,12 @@ function isAvoid(s){
 }
 
 function isDanger(s){
-  // 위험진입 = ①일봉 %K < %D AND ②종가 < MA5 AND
-  //           ③(MA5<MA20 OR MA5<MA60 OR MA20<MA60) 중 하나라도 해당
+  // 위험진입 = 아래 두 경로 중 하나라도 해당하면 위험진입
+  //  경로 A(기술적 반전): ①일봉 %K < %D AND ②종가 < MA5 AND
+  //                      ③(MA5<MA20 OR MA5<MA60 OR MA20<MA60) 중 하나라도 해당
+  //  경로 B(당일 급락): 당일 등락률이 -5% 이하 (RSI/이평 반응이 며칠 지연되는 것을 보완)
+  if (s.change_pct !== undefined && s.change_pct !== null && s.change_pct <= -5) return true;
+
   if (!s.daily || s.daily.k === undefined || s.daily.d === undefined) return false;
   const h = s.history && s.history.daily;
   if (!h || h.length < 1) return false;
@@ -1156,17 +1161,26 @@ function classifyHolding(s){
     };
   }
   if (isDanger(s)){
+    const crashTriggered = s.change_pct !== undefined && s.change_pct !== null && s.change_pct <= -5;
+    const technicalTriggered = !kAboveD && !aboveMA5 && reverseAligned;
+
     const reverseParts = [];
     if (last.ma5 < last.ma20) reverseParts.push('5일선이 20일선보다');
     if (last.ma5 < last.ma60) reverseParts.push('5일선이 60일선보다');
     if (last.ma20 < last.ma60) reverseParts.push('20일선이 60일선보다');
     const reverseText = reverseParts.join(', ') + ' 낮아진';
-    return {
-      label: '위험진입', cls: 'danger',
-      lines: [
-        `RSI(%K ${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 낮아 하락 전환했고, 종가(${last.c.toLocaleString()})가 5일 이동평균선(${Math.round(last.ma5).toLocaleString()}) 아래로 떨어졌으며, ${reverseText} 역배열 상태라 위험합니다.`,
-      ],
-    };
+
+    const lines = [];
+    if (crashTriggered){
+      lines.push(`당일 종가가 전일 대비 ${s.change_pct.toFixed(2)}% 급락해 위험합니다.`);
+    }
+    if (technicalTriggered){
+      lines.push(`RSI(%K ${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 낮아 하락 전환했고, 종가(${last.c.toLocaleString()})가 5일 이동평균선(${Math.round(last.ma5).toLocaleString()}) 아래로 떨어졌으며, ${reverseText} 역배열 상태라 위험합니다.`);
+    }
+    if (lines.length === 0){
+      lines.push('과매도·급락 신호가 감지되어 위험합니다.');
+    }
+    return { label: '위험진입', cls: 'danger', lines };
   }
   return {
     label: '중립', cls: 'flat',
@@ -1249,11 +1263,16 @@ function renderOverview(stocks){
     });
   } else if (OV_SORT === 'danger'){
     const valid = stocks.filter(s => !s.error && isDanger(s));
-    const gap = (last) => Math.min(last.ma5 - last.ma20, last.ma5 - last.ma60, last.ma20 - last.ma60); // 가장 심한(가장 큰 음수) 역배열 격차
+    const gap = (last) => {
+      if (!last || last.ma5 === undefined || last.ma20 === undefined || last.ma60 === undefined) return 0;
+      return Math.min(last.ma5 - last.ma20, last.ma5 - last.ma60, last.ma20 - last.ma60);
+    };
     sorted = [...valid].sort((a, b) => {
-      const la = a.history.daily[a.history.daily.length-1];
-      const lb = b.history.daily[b.history.daily.length-1];
-      return gap(la) - gap(lb); // 역배열이 심한 순
+      const ca = a.change_pct ?? 0, cb = b.change_pct ?? 0;
+      if (ca !== cb) return ca - cb; // 급락률이 큰(더 음수인) 순
+      const la = a.history && a.history.daily ? a.history.daily[a.history.daily.length-1] : null;
+      const lb = b.history && b.history.daily ? b.history.daily[b.history.daily.length-1] : null;
+      return gap(la) - gap(lb); // 동률이면 역배열이 심한 순
     });
   } else {
     const sortKey = OV_SORT; // 'daily' or 'weekly'
