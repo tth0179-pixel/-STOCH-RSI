@@ -1337,13 +1337,22 @@ function updateCandleSelection(idx){
     line.setAttribute('x1', CHART_X_POSITIONS[idx]);
     line.setAttribute('x2', CHART_X_POSITIONS[idx]);
   }
+  const stochLine = document.getElementById('stoch-selected-line');
+  if (stochLine && CHART_X_POSITIONS[idx] !== undefined){
+    stochLine.setAttribute('x1', CHART_X_POSITIONS[idx]);
+    stochLine.setAttribute('x2', CHART_X_POSITIONS[idx]);
+  }
 
   const stock = ALL_STOCKS.find(s => s.code === CHART_CODE);
   if (!stock) return;
   const h = (stock.history && stock.history[CHART_TF]) ? stock.history[CHART_TF] : [];
   const tfLabel = CHART_TF === 'daily' ? '일봉' : (CHART_TF === 'weekly' ? '주봉' : '월봉');
+
   const panel = document.getElementById('candle-info-panel');
   if (panel) panel.outerHTML = buildCandleInfoHTML(h, idx, tfLabel);
+
+  const kdLegend = document.getElementById('stoch-kd-legend');
+  if (kdLegend) kdLegend.outerHTML = buildKDLegendHTML(h[idx]);
 }
 
 function candlePointerStart(e){
@@ -1388,9 +1397,10 @@ function buildChartHTML(stock){
   }
 
   const priceChart = renderCandleSVG(h, CHART_SELECTED_IDX);
-  const stochChart = renderStochSVG(h);
   const infoIdx = (CHART_SELECTED_IDX !== null && CHART_SELECTED_IDX !== undefined) ? CHART_SELECTED_IDX : h.length - 1;
+  const stochChart = renderStochSVG(h, infoIdx);
   const candleInfo = buildCandleInfoHTML(h, infoIdx, tfLabel);
+  const kdLegend = buildKDLegendHTML(h[infoIdx]);
 
   return `
     <div class="chart-tabs">
@@ -1408,12 +1418,19 @@ function buildChartHTML(stock){
     ${priceChart}
     ${candleInfo}
     <div class="chart-sub-label">Stoch RSI (14,14,3,3) · ${tfLabel} 최근 ${h.length}개</div>
-    <div class="chart-legend">
-      <span><i style="background:var(--down)"></i>%K</span>
-      <span><i style="background:var(--text-faint)"></i>%D</span>
-    </div>
+    ${kdLegend}
     ${stochChart}
   `;
+}
+
+function buildKDLegendHTML(d){
+  const kVal = (d && d.k !== undefined) ? d.k.toFixed(1) : '-';
+  const dVal = (d && d.d !== undefined) ? d.d.toFixed(1) : '-';
+  return `
+    <div class="chart-legend" id="stoch-kd-legend">
+      <span><i style="background:var(--down)"></i>%K <b class="mono">${kVal}</b></span>
+      <span><i style="background:var(--text-faint)"></i>%D <b class="mono">${dVal}</b></span>
+    </div>`;
 }
 
 function buildCandleInfoHTML(h, idx, tfLabel){
@@ -1559,7 +1576,7 @@ function renderCandleSVG(history, selectedIdx){
     </div>`;
 }
 
-function renderStochSVG(history){
+function renderStochSVG(history, selectedIdx){
   const W = 600, H = 90, padL = 44, padR = 8, padT = 6, padB = 6;
   const n = history.length;
   const innerW = W - padL - padR;
@@ -1601,6 +1618,10 @@ function renderStochSVG(history){
     }
   }
 
+  const selectedLine = (selectedIdx !== null && selectedIdx !== undefined && history[selectedIdx])
+    ? `<line id="stoch-selected-line" x1="${x(selectedIdx)}" y1="${padT}" x2="${x(selectedIdx)}" y2="${H - padB}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,2"/>`
+    : `<line id="stoch-selected-line" x1="-100" y1="${padT}" x2="-100" y2="${H - padB}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,2"/>`;
+
   return `
     <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="display:block; overflow: visible;">
       <rect x="${padL}" y="${padT}" width="${innerW}" height="${yOversold - padT}" fill="var(--zone-over)"/>
@@ -1610,6 +1631,7 @@ function renderStochSVG(history){
       ${dPath ? `<path d="${dPath.trim()}" fill="none" stroke="var(--text-faint)" stroke-width="1.2"/>` : ''}
       ${kPath ? `<path d="${kPath.trim()}" fill="none" stroke="var(--down)" stroke-width="1.4"/>` : ''}
       ${arrows}
+      ${selectedLine}
     </svg>`;
 }
 
