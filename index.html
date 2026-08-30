@@ -444,7 +444,7 @@
     margin-bottom: 10px;
   }
   .chart-sheet-name{ font-size: 19px; font-weight: 700; }
-  .chart-sheet-code{ font-size: 13px; color: var(--text-faint); margin-top: 2px; }
+  .chart-sheet-code{ font-size: 14px; font-weight: 500; color: var(--text-faint); }
   .chart-close{
     background: var(--bg-elevated);
     border: 1px solid var(--border);
@@ -577,8 +577,7 @@
   <div class="chart-sheet">
     <div class="chart-sheet-head">
       <div>
-        <div class="chart-sheet-name" id="chart-name"></div>
-        <div class="chart-sheet-code mono" id="chart-code"></div>
+        <div class="chart-sheet-name"><span id="chart-name"></span> <span class="chart-sheet-code mono" id="chart-code"></span></div>
       </div>
       <button class="chart-close" onclick="closeChart()">✕</button>
     </div>
@@ -1320,7 +1319,7 @@ function openChart(code){
   CHART_SELECTED_IDX = null;
 
   document.getElementById('chart-name').textContent = stock.name;
-  document.getElementById('chart-code').textContent = stock.code;
+  document.getElementById('chart-code').textContent = `(${stock.code})`;
   document.getElementById('chart-body').innerHTML = buildChartHTML(stock);
   document.getElementById('chart-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1380,11 +1379,28 @@ function updateCandleSelection(idx){
   const h = (stock.history && stock.history[CHART_TF]) ? stock.history[CHART_TF] : [];
   const tfLabel = CHART_TF === 'daily' ? '일봉' : (CHART_TF === 'weekly' ? '주봉' : '월봉');
 
+  // 선택 날짜 라벨 위치/텍스트 갱신
+  const dateGroup = document.getElementById('candle-selected-date-label');
+  if (dateGroup && CHART_X_POSITIONS[idx] !== undefined && h[idx]){
+    const W = 600, padL = 44, padR = 8, dateBoxW = 68;
+    const boxX = Math.min(Math.max(CHART_X_POSITIONS[idx] - dateBoxW / 2, padL), W - padR - dateBoxW);
+    const rectEl = dateGroup.querySelector('rect');
+    const textEl = dateGroup.querySelector('text');
+    if (rectEl) rectEl.setAttribute('x', boxX);
+    if (textEl){
+      textEl.setAttribute('x', boxX + dateBoxW / 2);
+      textEl.textContent = h[idx].date;
+    }
+  }
+
   const panel = document.getElementById('candle-info-panel');
   if (panel) panel.outerHTML = buildCandleInfoHTML(h, idx, tfLabel);
 
   const kdLegend = document.getElementById('stoch-kd-legend');
   if (kdLegend) kdLegend.outerHTML = buildKDLegendHTML(h[idx]);
+
+  const priceNow = document.getElementById('chart-price-now');
+  if (priceNow) priceNow.outerHTML = buildPriceNowHTML(h, idx);
 }
 
 function candlePointerStart(e){
@@ -1433,6 +1449,7 @@ function buildChartHTML(stock){
   const stochChart = renderStochSVG(h, infoIdx);
   const candleInfo = buildCandleInfoHTML(h, infoIdx, tfLabel);
   const kdLegend = buildKDLegendHTML(h[infoIdx]);
+  const priceNow = buildPriceNowHTML(h, infoIdx);
 
   return `
     <div class="chart-tabs">
@@ -1440,7 +1457,7 @@ function buildChartHTML(stock){
       <button class="chart-tab ${tf==='weekly'?'active':''}" onclick="switchChartTF('weekly')">주봉</button>
       <button class="chart-tab ${tf==='monthly'?'active':''}" onclick="switchChartTF('monthly')">월봉</button>
     </div>
-    <div class="chart-price-now mono"><span class="change ${change.cls}">${stock.close.toLocaleString()} ${change.text}</span></div>
+    ${priceNow}
     <div class="chart-legend">
       <span><i style="background:var(--up)"></i>MA5</span>
       <span><i style="background:var(--signal)"></i>MA20</span>
@@ -1453,6 +1470,20 @@ function buildChartHTML(stock){
     ${stochChart}
     ${candleInfo}
   `;
+}
+
+function buildPriceNowHTML(h, idx){
+  const d = h[idx];
+  const prev = idx > 0 ? h[idx - 1] : null;
+  let changeCls = 'flat', changeText = '-';
+  if (d && prev && prev.c){
+    const pct = (d.c - prev.c) / prev.c * 100;
+    const change = fmtChange(pct);
+    changeCls = change.cls;
+    changeText = change.text;
+  }
+  const priceStr = d ? d.c.toLocaleString() : '-';
+  return `<div class="chart-price-now mono" id="chart-price-now"><span class="change ${changeCls}">${priceStr} ${changeText}</span></div>`;
 }
 
 function buildKDLegendHTML(d){
@@ -1522,7 +1553,7 @@ function buildCandleInfoHTML(h, idx, tfLabel){
 }
 
 function renderCandleSVG(history, selectedIdx){
-  const W = 600, H = 196, padL = 44, padR = 8, padT = 8, padB = 18;
+  const W = 600, H = 196, padL = 44, padR = 8, padT = 18, padB = 18;
   const n = history.length;
   const innerW = W - padL - padR;
   const slot = innerW / n;
@@ -1591,6 +1622,20 @@ function renderCandleSVG(history, selectedIdx){
     ? `<line id="candle-selected-line" x1="${x(selectedIdx)}" y1="${padT}" x2="${x(selectedIdx)}" y2="${H - padB}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,2"/>`
     : `<line id="candle-selected-line" x1="-100" y1="${padT}" x2="-100" y2="${H - padB}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,2"/>`;
 
+  const dateBoxW = 68, dateBoxH = 14;
+  function dateLabelGroup(idx){
+    if (idx === null || idx === undefined || !history[idx]) return { x: -200, text: '' };
+    const lx = x(idx);
+    const boxX = Math.min(Math.max(lx - dateBoxW / 2, padL), W - padR - dateBoxW);
+    return { x: boxX, text: history[idx].date };
+  }
+  const dl = dateLabelGroup(selectedIdx);
+  const selectedDateLabel = `
+    <g id="candle-selected-date-label">
+      <rect x="${dl.x}" y="2" width="${dateBoxW}" height="${dateBoxH}" rx="3" fill="var(--text)"/>
+      <text x="${dl.x + dateBoxW / 2}" y="${2 + dateBoxH - 4}" text-anchor="middle" font-size="9.5" font-weight="700" fill="var(--card)">${dl.text}</text>
+    </g>`;
+
   const dragOverlay = `<rect x="${padL}" y="${padT}" width="${innerW}" height="${H - padT - padB}" fill="transparent"
     style="touch-action:none; cursor:pointer;"
     onpointerdown="candlePointerStart(event)" onpointermove="candlePointerMove(event)"
@@ -1607,13 +1652,14 @@ function renderCandleSVG(history, selectedIdx){
       ${ma20Path ? `<path d="${ma20Path}" fill="none" stroke="var(--signal)" stroke-width="1.3"/>` : ''}
       ${ma5Path ? `<path d="${ma5Path}" fill="none" stroke="var(--up)" stroke-width="1.2"/>` : ''}
       ${xLabels}
+      ${selectedDateLabel}
       ${dragOverlay}
     </svg>
     </div>`;
 }
 
 function renderStochSVG(history, selectedIdx){
-  const W = 600, H = 78, padL = 44, padR = 8, padT = 6, padB = 6;
+  const W = 600, H = 92, padL = 44, padR = 8, padT = 18, padB = 6;
   const n = history.length;
   const innerW = W - padL - padR;
   const slot = innerW / n;
@@ -1645,11 +1691,11 @@ function renderStochSVG(history, selectedIdx){
     const ax = x(i);
     if (wasBelow && nowAbove){
       // 골든크로스: %K가 %D를 상향 돌파 -> 위쪽을 향한 빨간 화살표, 선 아래쪽에 배치
-      const ay = y(cur.k) + 11;
+      const ay = Math.min(y(cur.k) + 11, H - padB - 6);
       arrows += `<path d="M${ax},${ay+5} L${ax-3.5},${ay+11} L${ax+3.5},${ay+11} Z" fill="var(--up)"/>`;
     } else if (wasAbove && nowBelow){
       // 데드크로스: %K가 %D를 하향 돌파 -> 아래쪽을 향한 파란 화살표, 선 위쪽에 배치
-      const ay = y(cur.k) - 11;
+      const ay = Math.max(y(cur.k) - 11, padT + 6);
       arrows += `<path d="M${ax},${ay-5} L${ax-3.5},${ay-11} L${ax+3.5},${ay-11} Z" fill="var(--down)"/>`;
     }
   }
