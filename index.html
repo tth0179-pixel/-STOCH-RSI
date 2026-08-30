@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>코스피 TOP 30 · Stoch RSI</title>
 <link rel="apple-touch-icon" href="data:image/png;base64,">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1799,7 +1799,13 @@ function renderStochSVG(history, selectedIdx){
     ? `<line id="stoch-selected-line" x1="${x(selectedIdx)}" y1="${padT}" x2="${x(selectedIdx)}" y2="${H - padB}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,2"/>`
     : `<line id="stoch-selected-line" x1="-100" y1="${padT}" x2="-100" y2="${H - padB}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,2"/>`;
 
+  const dragOverlay = `<rect x="${padL}" y="${padT}" width="${innerW}" height="${H - padT - padB}" fill="transparent"
+    style="touch-action:none; cursor:pointer;"
+    onpointerdown="candlePointerStart(event)" onpointermove="candlePointerMove(event)"
+    onpointerup="candlePointerEnd(event)" onpointercancel="candlePointerEnd(event)"/>`;
+
   return `
+    <div class="candle-chart-wrap" data-n="${n}" data-padl="${padL}" data-padr="${padR}" data-vbw="${W}">
     <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="display:block; overflow: visible;">
       <rect x="${padL}" y="${padT}" width="${innerW}" height="${yOversold - padT}" fill="var(--zone-over)"/>
       <rect x="${padL}" y="${yOverbought}" width="${innerW}" height="${H - padB - yOverbought}" fill="var(--zone-under)"/>
@@ -1809,7 +1815,9 @@ function renderStochSVG(history, selectedIdx){
       ${kPath ? `<path d="${kPath.trim()}" fill="none" stroke="var(--down)" stroke-width="1.4"/>` : ''}
       ${arrows}
       ${selectedLine}
-    </svg>`;
+      ${dragOverlay}
+    </svg>
+    </div>`;
 }
 
 function render(data){
