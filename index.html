@@ -1276,6 +1276,8 @@ function renderOverview(stocks){
 let CHART_CODE = null;
 let CHART_TF = 'daily';
 let CHART_SELECTED_IDX = null;
+let CHART_X_POSITIONS = [];
+let CHART_DRAGGING = false;
 
 function openChart(code){
   const stock = ALL_STOCKS.find(s => s.code === code);
@@ -1307,9 +1309,66 @@ function showCandleInfo(i){
   document.getElementById('chart-body').innerHTML = buildChartHTML(stock);
 }
 
+function candleIndexFromEvent(e){
+  const svg = e.currentTarget.ownerSVGElement || e.currentTarget.closest('svg');
+  const wrap = svg.closest('.candle-chart-wrap');
+  if (!wrap) return null;
+  const n = parseInt(wrap.dataset.n, 10);
+  const padL = parseFloat(wrap.dataset.padl);
+  const padR = parseFloat(wrap.dataset.padr);
+  const vbw = parseFloat(wrap.dataset.vbw);
+  const rect = svg.getBoundingClientRect();
+  if (rect.width === 0) return null;
+  const clientX = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+  const relX = (clientX - rect.left) / rect.width * vbw;
+  const innerW = vbw - padL - padR;
+  const slot = innerW / n;
+  let idx = Math.floor((relX - padL) / slot);
+  idx = Math.max(0, Math.min(n - 1, idx));
+  return idx;
+}
+
+function updateCandleSelection(idx){
+  if (idx === null || idx === CHART_SELECTED_IDX) return;
+  CHART_SELECTED_IDX = idx;
+
+  const line = document.getElementById('candle-selected-line');
+  if (line && CHART_X_POSITIONS[idx] !== undefined){
+    line.setAttribute('x1', CHART_X_POSITIONS[idx]);
+    line.setAttribute('x2', CHART_X_POSITIONS[idx]);
+  }
+
+  const stock = ALL_STOCKS.find(s => s.code === CHART_CODE);
+  if (!stock) return;
+  const h = (stock.history && stock.history[CHART_TF]) ? stock.history[CHART_TF] : [];
+  const tfLabel = CHART_TF === 'daily' ? '일봉' : (CHART_TF === 'weekly' ? '주봉' : '월봉');
+  const panel = document.getElementById('candle-info-panel');
+  if (panel) panel.outerHTML = buildCandleInfoHTML(h, idx, tfLabel);
+}
+
+function candlePointerStart(e){
+  e.preventDefault();
+  CHART_DRAGGING = true;
+  try { e.target.setPointerCapture(e.pointerId); } catch(err){}
+  const idx = candleIndexFromEvent(e);
+  updateCandleSelection(idx);
+}
+
+function candlePointerMove(e){
+  if (!CHART_DRAGGING) return;
+  e.preventDefault();
+  const idx = candleIndexFromEvent(e);
+  updateCandleSelection(idx);
+}
+
+function candlePointerEnd(e){
+  CHART_DRAGGING = false;
+}
+
 function closeChart(){
   document.getElementById('chart-modal').classList.remove('open');
   document.body.style.overflow = '';
+  CHART_DRAGGING = false;
 }
 
 function buildChartHTML(stock){
@@ -1394,7 +1453,7 @@ function buildCandleInfoHTML(h, idx, tfLabel){
     : '';
 
   return `
-    <div class="candle-info">
+    <div class="candle-info" id="candle-info-panel">
       <div class="candle-info-date">${d.date} (${tfLabel})</div>
       ${row('종가', d.c, true)}
       ${row('시가', d.o, true)}
@@ -1428,7 +1487,6 @@ function renderCandleSVG(history, selectedIdx){
   const x = i => padL + slot * i + slot / 2;
 
   let candles = '';
-  let hitAreas = '';
   history.forEach((d, i) => {
     const cx = x(i);
     const up = d.c >= d.o;
@@ -1439,8 +1497,9 @@ function renderCandleSVG(history, selectedIdx){
     const bodyH = Math.max(1, Math.abs(yClose - yOpen));
     candles += `<line x1="${cx}" y1="${yHigh}" x2="${cx}" y2="${yLow}" stroke="${color}" stroke-width="1"/>`;
     candles += `<rect x="${cx - candleW/2}" y="${bodyTop}" width="${candleW}" height="${bodyH}" fill="${color}"/>`;
-    hitAreas += `<rect x="${cx - slot/2}" y="${padT}" width="${slot}" height="${H - padT - padB}" fill="transparent" style="cursor:pointer" onclick="showCandleInfo(${i})"/>`;
   });
+  // 드래그(스크럽) 선택을 위해 각 봉의 x좌표를 전역에 저장
+  CHART_X_POSITIONS = history.map((d, i) => x(i));
 
   // 이동평균선 (5/20/60)
   function maPathFor(key){
@@ -1476,10 +1535,16 @@ function renderCandleSVG(history, selectedIdx){
   }).join('');
 
   const selectedLine = (selectedIdx !== null && selectedIdx !== undefined && history[selectedIdx])
-    ? `<line x1="${x(selectedIdx)}" y1="${padT}" x2="${x(selectedIdx)}" y2="${H - padB}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,2"/>`
-    : '';
+    ? `<line id="candle-selected-line" x1="${x(selectedIdx)}" y1="${padT}" x2="${x(selectedIdx)}" y2="${H - padB}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,2"/>`
+    : `<line id="candle-selected-line" x1="-100" y1="${padT}" x2="-100" y2="${H - padB}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,2"/>`;
+
+  const dragOverlay = `<rect x="${padL}" y="${padT}" width="${innerW}" height="${H - padT - padB}" fill="transparent"
+    style="touch-action:none; cursor:pointer;"
+    onpointerdown="candlePointerStart(event)" onpointermove="candlePointerMove(event)"
+    onpointerup="candlePointerEnd(event)" onpointercancel="candlePointerEnd(event)"/>`;
 
   return `
+    <div class="candle-chart-wrap" data-n="${n}" data-padl="${padL}" data-padr="${padR}" data-vbw="${W}">
     <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="display:block; overflow: visible;">
       ${yLabels}
       ${selectedLine}
@@ -1489,8 +1554,9 @@ function renderCandleSVG(history, selectedIdx){
       ${ma20Path ? `<path d="${ma20Path}" fill="none" stroke="var(--signal)" stroke-width="1.3"/>` : ''}
       ${ma5Path ? `<path d="${ma5Path}" fill="none" stroke="var(--up)" stroke-width="1.2"/>` : ''}
       ${xLabels}
-      ${hitAreas}
-    </svg>`;
+      ${dragOverlay}
+    </svg>
+    </div>`;
 }
 
 function renderStochSVG(history){
