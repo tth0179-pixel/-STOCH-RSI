@@ -111,8 +111,12 @@ def calc_stochrsi(df, return_series=False):
 
 
 def build_history(df, stoch_series, n=90):
-    """차트용: 최근 n개 봉(일/주 공용)의 OHLC + 이동평균(5/20/60) + Stoch %K/%D"""
-    merged = df[["시가", "고가", "저가", "종가"]].copy()
+    """차트용: 최근 n개 봉(일/주 공용)의 OHLC + 거래량 + 이동평균(5/20/60/120) + Stoch %K/%D"""
+    cols = ["시가", "고가", "저가", "종가"]
+    has_volume = "거래량" in df.columns
+    if has_volume:
+        cols.append("거래량")
+    merged = df[cols].copy()
     merged["ma5"] = df["종가"].rolling(5).mean()
     merged["ma20"] = df["종가"].rolling(20).mean()
     merged["ma60"] = df["종가"].rolling(60).mean()
@@ -130,6 +134,8 @@ def build_history(df, stoch_series, n=90):
             "l": round(float(row["저가"])),
             "c": round(float(row["종가"])),
         }
+        if has_volume and pd.notna(row.get("거래량")):
+            entry["v"] = int(row["거래량"])
         for ma_key in ("ma5", "ma20", "ma60", "ma120"):
             if pd.notna(row.get(ma_key)):
                 entry[ma_key] = round(float(row[ma_key]))
