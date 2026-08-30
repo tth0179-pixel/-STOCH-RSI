@@ -461,14 +461,15 @@
   .chart-legend span{ display:flex; align-items:center; gap: 5px; }
   .chart-legend i{ width: 10px; height: 2px; display:inline-block; }
   .chart-price-now{ font-size: 15px; font-weight: 600; margin-bottom: 2px; }
-  .chart-sub-label{ font-size: 12px; color: var(--text-dim); font-weight: 600; margin: 10px 0 2px; }
+  .chart-sub-label{ font-size: 12px; color: var(--text-dim); font-weight: 600; margin: 4px 0 8px; }
+  .chart-divider{ height: 1px; background: var(--border); margin: 16px 0; }
 
   .candle-info{
     background: var(--bg-elevated);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 10px 12px;
-    margin: 8px 0;
+    padding: 12px 14px;
+    margin: 4px 0 6px;
   }
   .candle-info-date{ font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
   .candle-info-row{
@@ -1441,8 +1442,8 @@ function buildChartHTML(stock){
       <div class="no-data" style="padding: 20px 0;">${tfLabel} 데이터가 부족합니다.</div>`;
   }
 
-  const priceChart = renderCandleSVG(h, CHART_SELECTED_IDX);
   const infoIdx = (CHART_SELECTED_IDX !== null && CHART_SELECTED_IDX !== undefined) ? CHART_SELECTED_IDX : h.length - 1;
+  const priceChart = renderCandleSVG(h, infoIdx);
   const stochChart = renderStochSVG(h, infoIdx);
   const candleInfo = buildCandleInfoHTML(h, infoIdx, tfLabel);
   const kdLegend = buildKDLegendHTML(h[infoIdx]);
@@ -1462,9 +1463,11 @@ function buildChartHTML(stock){
       <span><i style="background:var(--ma120)"></i>MA120</span>
     </div>
     ${priceChart}
+    <div class="chart-divider"></div>
     <div class="chart-sub-label">Stoch RSI (14,14,3,3) · ${tfLabel} 최근 ${h.length}개</div>
     ${kdLegend}
     ${stochChart}
+    <div class="chart-divider"></div>
     ${candleInfo}
   `;
 }
