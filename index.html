@@ -463,6 +463,10 @@
   .chart-price-now{ font-size: 15px; font-weight: 600; margin: 4px 0 12px; }
   .chart-sub-label{ font-size: 12px; color: var(--text-dim); font-weight: 600; margin: 4px 0 8px; }
   .chart-divider{ height: 1px; background: var(--border); margin: 16px 0; }
+  .chart-zoom-hint{
+    font-size: 11.5px; color: var(--signal); font-weight: 600;
+    margin-top: 6px;
+  }
 
   .candle-info{
     background: var(--bg-elevated);
@@ -1318,6 +1322,9 @@ let CHART_TF = 'daily';
 let CHART_SELECTED_IDX = null;
 let CHART_X_POSITIONS = [];
 let CHART_DRAGGING = false;
+let CHART_ZOOM_COUNT = null; // null = 전체 데이터 표시(기본, 최대 축소 상태)
+let CHART_PINCH_POINTERS = new Map();
+let CHART_PINCH_STATE = null;
 
 function openChart(code){
   const stock = ALL_STOCKS.find(s => s.code === code);
@@ -1326,6 +1333,9 @@ function openChart(code){
   CHART_CODE = code;
   CHART_TF = 'daily';
   CHART_SELECTED_IDX = null;
+  CHART_ZOOM_COUNT = null;
+  CHART_PINCH_POINTERS.clear();
+  CHART_PINCH_STATE = null;
 
   document.getElementById('chart-name').textContent = stock.name;
   document.getElementById('chart-code').textContent = `(${stock.code})`;
@@ -1337,6 +1347,9 @@ function openChart(code){
 function switchChartTF(tf){
   CHART_TF = tf;
   CHART_SELECTED_IDX = null;
+  CHART_ZOOM_COUNT = null;
+  CHART_PINCH_POINTERS.clear();
+  CHART_PINCH_STATE = null;
   const stock = ALL_STOCKS.find(s => s.code === CHART_CODE);
   if (!stock) return;
   document.getElementById('chart-body').innerHTML = buildChartHTML(stock);
@@ -1385,7 +1398,9 @@ function updateCandleSelection(idx){
 
   const stock = ALL_STOCKS.find(s => s.code === CHART_CODE);
   if (!stock) return;
-  const h = (stock.history && stock.history[CHART_TF]) ? stock.history[CHART_TF] : [];
+  const fullH = (stock.history && stock.history[CHART_TF]) ? stock.history[CHART_TF] : [];
+  const zoomCount = CHART_ZOOM_COUNT ? Math.min(CHART_ZOOM_COUNT, fullH.length) : fullH.length;
+  const h = zoomCount ? fullH.slice(-zoomCount) : fullH;
   const tfLabel = CHART_TF === 'daily' ? '일봉' : (CHART_TF === 'weekly' ? '주봉' : '월봉');
 
   // 선택 날짜 라벨 위치/텍스트 갱신
@@ -1414,13 +1429,22 @@ function updateCandleSelection(idx){
 
 function candlePointerStart(e){
   e.preventDefault();
-  CHART_DRAGGING = true;
+  CHART_PINCH_POINTERS.set(e.pointerId, { x: e.clientX, y: e.clientY });
   try { e.target.setPointerCapture(e.pointerId); } catch(err){}
+
+  if (CHART_PINCH_POINTERS.size >= 2){
+    CHART_DRAGGING = false;
+    startPinchZoom();
+    return;
+  }
+
+  CHART_DRAGGING = true;
   const idx = candleIndexFromEvent(e);
   updateCandleSelection(idx);
 }
 
 function candlePointerMove(e){
+  if (CHART_PINCH_POINTERS.size >= 2) return; // 핀치 중엔 window 리스너가 처리
   if (!CHART_DRAGGING) return;
   e.preventDefault();
   const idx = candleIndexFromEvent(e);
@@ -1428,18 +1452,88 @@ function candlePointerMove(e){
 }
 
 function candlePointerEnd(e){
-  CHART_DRAGGING = false;
+  CHART_PINCH_POINTERS.delete(e.pointerId);
+  if (CHART_PINCH_POINTERS.size < 2){
+    endPinchZoom();
+  }
+  if (CHART_PINCH_POINTERS.size === 0){
+    CHART_DRAGGING = false;
+  }
+}
+
+function startPinchZoom(){
+  const pts = Array.from(CHART_PINCH_POINTERS.values());
+  if (pts.length < 2) return;
+  const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+  const stock = ALL_STOCKS.find(s => s.code === CHART_CODE);
+  const fullLen = (stock && stock.history && stock.history[CHART_TF]) ? stock.history[CHART_TF].length : 0;
+  if (fullLen === 0 || dist === 0) return;
+  CHART_PINCH_STATE = {
+    initialDist: dist,
+    initialCount: CHART_ZOOM_COUNT || fullLen,
+    fullLen,
+  };
+  window.addEventListener('pointermove', handlePinchZoomMove);
+  window.addEventListener('pointerup', handlePinchZoomEnd);
+  window.addEventListener('pointercancel', handlePinchZoomEnd);
+}
+
+function handlePinchZoomMove(e){
+  if (!CHART_PINCH_STATE || !CHART_PINCH_POINTERS.has(e.pointerId)) return;
+  e.preventDefault();
+  CHART_PINCH_POINTERS.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (CHART_PINCH_POINTERS.size < 2) return;
+
+  const pts = Array.from(CHART_PINCH_POINTERS.values());
+  const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+  const ratio = dist / CHART_PINCH_STATE.initialDist;
+  const minCount = 15;
+  let newCount = Math.round(CHART_PINCH_STATE.initialCount / ratio);
+  newCount = Math.max(minCount, Math.min(CHART_PINCH_STATE.fullLen, newCount));
+
+  const currentCount = CHART_ZOOM_COUNT || CHART_PINCH_STATE.fullLen;
+  if (newCount !== currentCount){
+    CHART_ZOOM_COUNT = newCount;
+    CHART_SELECTED_IDX = null;
+    const stock = ALL_STOCKS.find(s => s.code === CHART_CODE);
+    if (stock) document.getElementById('chart-body').innerHTML = buildChartHTML(stock);
+  }
+}
+
+function handlePinchZoomEnd(e){
+  CHART_PINCH_POINTERS.delete(e.pointerId);
+  if (CHART_PINCH_POINTERS.size < 2){
+    endPinchZoom();
+  }
+}
+
+function endPinchZoom(){
+  CHART_PINCH_STATE = null;
+  window.removeEventListener('pointermove', handlePinchZoomMove);
+  window.removeEventListener('pointerup', handlePinchZoomEnd);
+  window.removeEventListener('pointercancel', handlePinchZoomEnd);
+}
+
+function resetChartZoom(){
+  CHART_ZOOM_COUNT = null;
+  CHART_SELECTED_IDX = null;
+  const stock = ALL_STOCKS.find(s => s.code === CHART_CODE);
+  if (stock) document.getElementById('chart-body').innerHTML = buildChartHTML(stock);
 }
 
 function closeChart(){
   document.getElementById('chart-modal').classList.remove('open');
   document.body.style.overflow = '';
   CHART_DRAGGING = false;
+  CHART_PINCH_POINTERS.clear();
+  endPinchZoom();
 }
 
 function buildChartHTML(stock){
   const tf = CHART_TF;
-  const h = (stock.history && stock.history[tf]) ? stock.history[tf] : [];
+  const fullH = (stock.history && stock.history[tf]) ? stock.history[tf] : [];
+  const zoomCount = CHART_ZOOM_COUNT ? Math.min(CHART_ZOOM_COUNT, fullH.length) : fullH.length;
+  const h = zoomCount ? fullH.slice(-zoomCount) : fullH;
   const change = fmtChange(stock.change_pct);
   const tfLabel = tf === 'daily' ? '일봉' : (tf === 'weekly' ? '주봉' : '월봉');
 
@@ -1474,6 +1568,7 @@ function buildChartHTML(stock){
       <span><i style="background:var(--ma120)"></i>MA120</span>
     </div>
     ${priceChart}
+    ${zoomCount < fullH.length ? `<div class="chart-zoom-hint">🔍 확대됨 (최근 ${zoomCount}개) · <span onclick="resetChartZoom()" style="text-decoration:underline; cursor:pointer;">초기화</span></div>` : ''}
     <div class="chart-divider"></div>
     <div class="chart-sub-label">Stoch RSI (14,14,3,3) · ${tfLabel} 최근 ${h.length}개</div>
     ${kdLegend}
