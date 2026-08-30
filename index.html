@@ -488,13 +488,10 @@
     column-gap: 14px;
   }
   .candle-info-grid2 .candle-info-row{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1px;
     padding: 3px 0;
   }
-  .candle-info-grid2 .candle-info-label{ font-size: 10.5px; }
-  .candle-info-grid2 .candle-info-value{ font-size: 12.5px; }
+  .candle-info-grid2 .candle-info-label{ font-size: 11px; }
+  .candle-info-grid2 .candle-info-value{ font-size: 11.5px; }
 
   .chart-tabs{
     display:flex; gap: 6px;
@@ -1516,18 +1513,6 @@ function buildCandleInfoHTML(h, idx, tfLabel){
     return `<div class="candle-info-row"><span class="candle-info-label">${label}</span><span class="candle-info-value mono">${valStr}${showPct ? pct(val) : ''}</span></div>`;
   };
 
-  const volRow = (() => {
-    if (d.v === undefined) return '';
-    let pctStr = '';
-    if (prev && prev.v){
-      const p = (d.v - prev.v) / prev.v * 100;
-      const sign = p > 0 ? '+' : '';
-      const cls = p > 0 ? 'up' : (p < 0 ? 'down' : 'flat');
-      pctStr = ` <span class="candle-info-pct ${cls}">${sign}${p.toFixed(2)}%</span>`;
-    }
-    return `<div class="candle-info-row"><span class="candle-info-label">거래량</span><span class="candle-info-value mono">${d.v.toLocaleString()}${pctStr}</span></div>`;
-  })();
-
   const rsiRow = (d.k !== undefined && d.d !== undefined)
     ? `<div class="candle-info-row"><span class="candle-info-label">Stoch RSI</span><span class="candle-info-value mono">%K ${d.k.toFixed(1)} / %D ${d.d.toFixed(1)}</span></div>`
     : '';
@@ -1541,7 +1526,6 @@ function buildCandleInfoHTML(h, idx, tfLabel){
         ${row('고가', d.h, true)}
         ${row('저가', d.l, true)}
       </div>
-      ${volRow}
       <div class="candle-info-grid2">
         ${row('MA5', d.ma5, true)}
         ${row('MA20', d.ma20, true)}
@@ -1659,7 +1643,7 @@ function renderCandleSVG(history, selectedIdx){
 }
 
 function renderStochSVG(history, selectedIdx){
-  const W = 600, H = 92, padL = 44, padR = 8, padT = 18, padB = 6;
+  const W = 600, H = 140, padL = 44, padR = 8, padT = 18, padB = 8;
   const n = history.length;
   const innerW = W - padL - padR;
   const slot = innerW / n;
