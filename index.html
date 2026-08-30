@@ -1346,12 +1346,19 @@ function openChart(code){
   CHART_ZOOM_COUNT = null;
   CHART_PINCH_POINTERS.clear();
   CHART_PINCH_STATE = null;
+  CHART_DRAGGING = false;
 
   document.getElementById('chart-name').textContent = stock.name;
   document.getElementById('chart-code').textContent = `(${stock.code})`;
   document.getElementById('chart-body').innerHTML = buildChartHTML(stock);
   document.getElementById('chart-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // 모달이 열려있는 동안 항상 붙여두는 전역 리스너 -> 화면이 다시 그려져도(핀치 중 확대 시)
+  // 포인터 캡처가 끊기지 않고 손가락을 뗐을 때 확실히 상태가 정리됨
+  window.addEventListener('pointermove', globalChartPointerMove);
+  window.addEventListener('pointerup', globalChartPointerUp);
+  window.addEventListener('pointercancel', globalChartPointerUp);
 }
 
 function switchChartTF(tf){
@@ -1444,7 +1451,7 @@ function candlePointerStart(e){
 
   if (CHART_PINCH_POINTERS.size >= 2){
     CHART_DRAGGING = false;
-    startPinchZoom();
+    beginPinchIfNeeded();
     return;
   }
 
@@ -1454,7 +1461,7 @@ function candlePointerStart(e){
 }
 
 function candlePointerMove(e){
-  if (CHART_PINCH_POINTERS.size >= 2) return; // 핀치 중엔 window 리스너가 처리
+  if (CHART_PINCH_POINTERS.size >= 2) return; // 핀치 중엔 전역 리스너가 처리
   if (!CHART_DRAGGING) return;
   e.preventDefault();
   const idx = candleIndexFromEvent(e);
@@ -1462,16 +1469,11 @@ function candlePointerMove(e){
 }
 
 function candlePointerEnd(e){
-  CHART_PINCH_POINTERS.delete(e.pointerId);
-  if (CHART_PINCH_POINTERS.size < 2){
-    endPinchZoom();
-  }
-  if (CHART_PINCH_POINTERS.size === 0){
-    CHART_DRAGGING = false;
-  }
+  globalChartPointerUp(e);
 }
 
-function startPinchZoom(){
+function beginPinchIfNeeded(){
+  if (CHART_PINCH_STATE) return;
   const pts = Array.from(CHART_PINCH_POINTERS.values());
   if (pts.length < 2) return;
   const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
@@ -1483,16 +1485,15 @@ function startPinchZoom(){
     initialCount: CHART_ZOOM_COUNT || fullLen,
     fullLen,
   };
-  window.addEventListener('pointermove', handlePinchZoomMove);
-  window.addEventListener('pointerup', handlePinchZoomEnd);
-  window.addEventListener('pointercancel', handlePinchZoomEnd);
 }
 
-function handlePinchZoomMove(e){
-  if (!CHART_PINCH_STATE || !CHART_PINCH_POINTERS.has(e.pointerId)) return;
-  e.preventDefault();
+function globalChartPointerMove(e){
+  if (!CHART_PINCH_POINTERS.has(e.pointerId)) return;
   CHART_PINCH_POINTERS.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (CHART_PINCH_POINTERS.size < 2) return;
+  if (!CHART_PINCH_STATE) beginPinchIfNeeded();
+  if (!CHART_PINCH_STATE) return;
+  e.preventDefault();
 
   const pts = Array.from(CHART_PINCH_POINTERS.values());
   const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
@@ -1510,18 +1511,18 @@ function handlePinchZoomMove(e){
   }
 }
 
-function handlePinchZoomEnd(e){
-  CHART_PINCH_POINTERS.delete(e.pointerId);
-  if (CHART_PINCH_POINTERS.size < 2){
-    endPinchZoom();
+function globalChartPointerUp(e){
+  // 이 리스너는 모달이 열려있는 동안 항상 켜져 있어서, 화면이 다시 그려져
+  // 포인터 캡처가 끊기더라도 손가락을 뗀 시점에 반드시 상태가 정리됨(유령 포인터 방지)
+  if (CHART_PINCH_POINTERS.has(e.pointerId)){
+    CHART_PINCH_POINTERS.delete(e.pointerId);
   }
-}
-
-function endPinchZoom(){
-  CHART_PINCH_STATE = null;
-  window.removeEventListener('pointermove', handlePinchZoomMove);
-  window.removeEventListener('pointerup', handlePinchZoomEnd);
-  window.removeEventListener('pointercancel', handlePinchZoomEnd);
+  if (CHART_PINCH_POINTERS.size < 2){
+    CHART_PINCH_STATE = null;
+  }
+  if (CHART_PINCH_POINTERS.size === 0){
+    CHART_DRAGGING = false;
+  }
 }
 
 function resetChartZoom(){
@@ -1536,7 +1537,10 @@ function closeChart(){
   document.body.style.overflow = '';
   CHART_DRAGGING = false;
   CHART_PINCH_POINTERS.clear();
-  endPinchZoom();
+  CHART_PINCH_STATE = null;
+  window.removeEventListener('pointermove', globalChartPointerMove);
+  window.removeEventListener('pointerup', globalChartPointerUp);
+  window.removeEventListener('pointercancel', globalChartPointerUp);
 }
 
 function buildChartHTML(stock){
