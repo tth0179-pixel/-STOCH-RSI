@@ -432,7 +432,7 @@
   .chart-sheet{
     width: 100%;
     max-width: 640px;
-    max-height: 88vh;
+    max-height: 94vh;
     background: var(--card);
     border-radius: 16px 16px 0 0;
     padding: 14px 14px 20px;
@@ -482,6 +482,19 @@
   .candle-info-pct.up{ color: var(--up); }
   .candle-info-pct.down{ color: var(--down); }
   .candle-info-pct.flat{ color: var(--text-faint); }
+  .candle-info-grid2{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 14px;
+  }
+  .candle-info-grid2 .candle-info-row{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    padding: 3px 0;
+  }
+  .candle-info-grid2 .candle-info-label{ font-size: 10.5px; }
+  .candle-info-grid2 .candle-info-value{ font-size: 12.5px; }
 
   .chart-tabs{
     display:flex; gap: 6px;
@@ -1472,21 +1485,25 @@ function buildCandleInfoHTML(h, idx, tfLabel){
   return `
     <div class="candle-info" id="candle-info-panel">
       <div class="candle-info-date">${d.date} (${tfLabel})</div>
-      ${row('종가', d.c, true)}
-      ${row('시가', d.o, true)}
-      ${row('고가', d.h, true)}
-      ${row('저가', d.l, true)}
+      <div class="candle-info-grid2">
+        ${row('종가', d.c, true)}
+        ${row('시가', d.o, true)}
+        ${row('고가', d.h, true)}
+        ${row('저가', d.l, true)}
+      </div>
       ${volRow}
-      ${row('MA5', d.ma5, true)}
-      ${row('MA20', d.ma20, true)}
-      ${row('MA60', d.ma60, true)}
-      ${row('MA120', d.ma120, true)}
+      <div class="candle-info-grid2">
+        ${row('MA5', d.ma5, true)}
+        ${row('MA20', d.ma20, true)}
+        ${row('MA60', d.ma60, true)}
+        ${row('MA120', d.ma120, true)}
+      </div>
       ${rsiRow}
     </div>`;
 }
 
 function renderCandleSVG(history, selectedIdx){
-  const W = 600, H = 220, padL = 44, padR = 8, padT = 8, padB = 18;
+  const W = 600, H = 196, padL = 44, padR = 8, padT = 8, padB = 18;
   const n = history.length;
   const innerW = W - padL - padR;
   const slot = innerW / n;
@@ -1577,7 +1594,7 @@ function renderCandleSVG(history, selectedIdx){
 }
 
 function renderStochSVG(history, selectedIdx){
-  const W = 600, H = 90, padL = 44, padR = 8, padT = 6, padB = 6;
+  const W = 600, H = 78, padL = 44, padR = 8, padT = 6, padB = 6;
   const n = history.length;
   const innerW = W - padL - padR;
   const slot = innerW / n;
