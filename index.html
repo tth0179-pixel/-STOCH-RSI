@@ -461,7 +461,13 @@
   .chart-legend span{ display:flex; align-items:center; gap: 5px; }
   .chart-legend i{ width: 10px; height: 2px; display:inline-block; }
   .chart-price-now{ font-size: 15px; font-weight: 600; margin: 4px 0 12px; }
-  .chart-sub-label{ font-size: 12px; color: var(--text-dim); font-weight: 600; margin: 4px 0 8px; }
+  .chart-sub-label{ font-size: 12px; color: var(--text-dim); font-weight: 600; margin: 0; }
+  .chart-sub-row{
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 6px 12px;
+    margin: 4px 0 8px;
+  }
+  .chart-sub-row .chart-legend{ margin: 0; }
   .chart-divider{ height: 1px; background: var(--border); margin: 16px 0; }
   .chart-zoom-hint{
     font-size: 11.5px; color: var(--signal); font-weight: 600;
@@ -1570,8 +1576,10 @@ function buildChartHTML(stock){
     ${priceChart}
     ${zoomCount < fullH.length ? `<div class="chart-zoom-hint">🔍 확대됨 (최근 ${zoomCount}개) · <span onclick="resetChartZoom()" style="text-decoration:underline; cursor:pointer;">초기화</span></div>` : ''}
     <div class="chart-divider"></div>
-    <div class="chart-sub-label">Stoch RSI (14,14,3,3) · ${tfLabel} 최근 ${h.length}개</div>
-    ${kdLegend}
+    <div class="chart-sub-row">
+      <div class="chart-sub-label">Stoch RSI (14,14,3,3) · ${tfLabel} 최근 ${h.length}개</div>
+      ${kdLegend}
+    </div>
     ${stochChart}
     <div class="chart-divider"></div>
     ${candleInfo}
