@@ -483,16 +483,27 @@
   .candle-info-pct.up{ color: var(--up); }
   .candle-info-pct.down{ color: var(--down); }
   .candle-info-pct.flat{ color: var(--text-faint); }
-  .candle-info-grid2{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 14px;
+  .candle-info-cols{
+    display: flex;
+    gap: 22px;
   }
-  .candle-info-grid2 .candle-info-row{
+  .candle-info-col{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .candle-info-col .candle-info-row{
     padding: 3px 0;
   }
-  .candle-info-grid2 .candle-info-label{ font-size: 11px; }
-  .candle-info-grid2 .candle-info-value{ font-size: 11.5px; }
+  .candle-info-col .candle-info-label{ font-size: 11px; }
+  .candle-info-col .candle-info-value{ font-size: 11.5px; }
+  .candle-info-row-inline{
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 4px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border-soft);
+  }
 
   .chart-tabs{
     display:flex; gap: 6px;
@@ -1517,23 +1528,25 @@ function buildCandleInfoHTML(h, idx, tfLabel){
   };
 
   const rsiRow = (d.k !== undefined && d.d !== undefined)
-    ? `<div class="candle-info-row"><span class="candle-info-label">Stoch RSI</span><span class="candle-info-value mono">%K ${d.k.toFixed(1)} / %D ${d.d.toFixed(1)}</span></div>`
+    ? `<div class="candle-info-row candle-info-row-inline"><span class="candle-info-label">Stoch RSI</span><span class="candle-info-value mono">%K ${d.k.toFixed(1)} / %D ${d.d.toFixed(1)}</span></div>`
     : '';
 
   return `
     <div class="candle-info" id="candle-info-panel">
       <div class="candle-info-date">${d.date} (${tfLabel})</div>
-      <div class="candle-info-grid2">
-        ${row('종가', d.c, true)}
-        ${row('시가', d.o, true)}
-        ${row('고가', d.h, true)}
-        ${row('저가', d.l, true)}
-      </div>
-      <div class="candle-info-grid2">
-        ${row('MA5', d.ma5, true)}
-        ${row('MA20', d.ma20, true)}
-        ${row('MA60', d.ma60, true)}
-        ${row('MA120', d.ma120, true)}
+      <div class="candle-info-cols">
+        <div class="candle-info-col">
+          ${row('종가', d.c, true)}
+          ${row('시가', d.o, true)}
+          ${row('고가', d.h, true)}
+          ${row('저가', d.l, true)}
+        </div>
+        <div class="candle-info-col">
+          ${row('MA5', d.ma5, true)}
+          ${row('MA20', d.ma20, true)}
+          ${row('MA60', d.ma60, true)}
+          ${row('MA120', d.ma120, true)}
+        </div>
       </div>
       ${rsiRow}
     </div>`;
