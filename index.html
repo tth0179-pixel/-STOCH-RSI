@@ -460,7 +460,7 @@
   }
   .chart-legend span{ display:flex; align-items:center; gap: 5px; }
   .chart-legend i{ width: 10px; height: 2px; display:inline-block; }
-  .chart-price-now{ font-size: 15px; font-weight: 600; margin: 4px 0 12px; }
+  .chart-price-now{ font-size: 15px; font-weight: 600; margin: 0; }
   .chart-sub-label{ font-size: 12px; color: var(--text-dim); font-weight: 600; margin: 0; }
   .chart-sub-row{
     display: flex; justify-content: space-between; align-items: center;
@@ -1566,12 +1566,14 @@ function buildChartHTML(stock){
       <button class="chart-tab ${tf==='weekly'?'active':''}" onclick="switchChartTF('weekly')">주봉</button>
       <button class="chart-tab ${tf==='monthly'?'active':''}" onclick="switchChartTF('monthly')">월봉</button>
     </div>
-    ${priceNow}
-    <div class="chart-legend">
-      <span><i style="background:var(--up)"></i>MA5</span>
-      <span><i style="background:var(--signal)"></i>MA20</span>
-      <span><i style="background:var(--flat)"></i>MA60</span>
-      <span><i style="background:var(--ma120)"></i>MA120</span>
+    <div class="chart-sub-row">
+      ${priceNow}
+      <div class="chart-legend">
+        <span><i style="background:var(--up)"></i>MA5</span>
+        <span><i style="background:var(--signal)"></i>MA20</span>
+        <span><i style="background:var(--flat)"></i>MA60</span>
+        <span><i style="background:var(--ma120)"></i>MA120</span>
+      </div>
     </div>
     ${priceChart}
     ${zoomCount < fullH.length ? `<div class="chart-zoom-hint">🔍 확대됨 (최근 ${zoomCount}개) · <span onclick="resetChartZoom()" style="text-decoration:underline; cursor:pointer;">초기화</span></div>` : ''}
