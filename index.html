@@ -81,10 +81,10 @@
 
   .meta-row{
     display:flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 4px;
     margin-top: 8px;
-    font-size: 15px;
+    font-size: 14px;
     color: var(--text-faint);
   }
   .meta-row .updated{
@@ -552,7 +552,8 @@
   <div class="eyebrow">Personal Screener</div>
   <h1>코스피 시총 TOP 30</h1>
   <div class="meta-row">
-    <div class="updated"><span class="dot-live"></span><span id="updated-at">불러오는 중…</span></div>
+    <div class="updated"><span class="dot-live"></span><span id="updated-at-kospi">코스피(20분마다 업데이트): 불러오는 중…</span></div>
+    <div class="updated"><span class="dot-live"></span><span id="updated-at-btc">비트코인(20분마다 업데이트): 불러오는 중…</span></div>
   </div>
   <button class="holdings-jump-btn" onclick="document.getElementById('holdings-wrap').scrollIntoView({behavior:'smooth'})">⭐ 관심종목</button>
 </header>
@@ -1859,7 +1860,7 @@ function renderStochSVG(history, selectedIdx){
 
 function render(data){
   ALL_STOCKS = data.stocks.concat(BTC_ASSETS);
-  document.getElementById('updated-at').textContent = `기준 시각: ${data.updated_at || '-'}`;
+  document.getElementById('updated-at-kospi').textContent = `코스피(20분마다 업데이트): ${data.updated_at || '-'}`;
 
   // 신호 있는 종목을 위로 정렬
   const stocks = [...data.stocks].sort((a, b) => {
@@ -1888,9 +1889,13 @@ async function load(){
     if (btcRes.ok){
       const btcData = await btcRes.json();
       BTC_ASSETS = btcData.assets || [];
+      document.getElementById('updated-at-btc').textContent = `비트코인(20분마다 업데이트): ${btcData.updated_at || '-'}`;
+    } else {
+      document.getElementById('updated-at-btc').textContent = `비트코인(20분마다 업데이트): -`;
     }
   } catch(e){
     // btc.json 없으면 비트코인 없이 진행
+    document.getElementById('updated-at-btc').textContent = `비트코인(20분마다 업데이트): -`;
   }
   try{
     const res = await fetch('./data.json', { cache: 'no-store' });
