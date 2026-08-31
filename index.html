@@ -709,7 +709,7 @@ function cardHTML(stock){
 // 화면이 비어 보이지 않도록 쓰는 예시 데이터입니다.
 // 실제 배포(GitHub Pages) 상태에서는 항상 같은 폴더의 data.json이 먼저 사용됩니다.
 // 보유종목 코드 목록 (holdings.json 로딩 실패 시 사용할 기본값)
-const FALLBACK_HOLDINGS = ["000660", "005930", "009150", "373220", "BTC-KRW"];
+const FALLBACK_HOLDINGS = ["BTC-KRW", "000660", "005930", "009150", "373220"];
 
 const FALLBACK_DATA = {
   "updated_at": "2026-08-27 16:30",
@@ -1144,6 +1144,23 @@ function escapeHtml(str){
     .replace(/>/g, '&gt;');
 }
 
+function classifyCryptoTrend(s){
+  // 코스피처럼 3가지 조건 조합이 아니라, 일봉 %K vs %D 만으로 단순 상승/하락 판정
+  // (24시간 변동성이 큰 암호화폐 특성상 단순 모멘텀 지표가 더 적합)
+  if (!s.daily || s.daily.k === undefined || s.daily.d === undefined){
+    return { label: '데이터 부족', cls: 'flat', lines: ['일봉 지표를 계산하기에 데이터가 부족합니다.'] };
+  }
+  const k = s.daily.k, d = s.daily.d;
+  const isUp = k > d;
+  return {
+    label: isUp ? '상승중' : '하락중',
+    cls: isUp ? 'rec' : 'danger',
+    lines: [
+      `RSI(%K ${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 ${isUp ? '높아' : '낮아'} 일봉 기준 ${isUp ? '상승' : '하락'} 흐름입니다.`,
+    ],
+  };
+}
+
 function classifyHolding(s){
   const h = s.history && s.history.daily;
   const last = h && h.length ? h[h.length - 1] : null;
@@ -1229,11 +1246,13 @@ function renderHoldings(allStocks){
       return `<div class="holding-card"><div class="holding-name">${s.name}</div><div class="no-data">데이터 오류</div></div>`;
     }
     const change = fmtChange(s.change_pct);
-    const status = classifyHolding(s);
+    const isCrypto = s.code === 'BTC-KRW';
+    const status = isCrypto ? classifyCryptoTrend(s) : classifyHolding(s);
     const cardClass = status.cls === 'danger' ? 'holding-card holding-card-danger'
       : status.cls === 'rec' ? 'holding-card holding-card-rec'
       : 'holding-card';
-    const badgeLabel = status.cls === 'danger' ? '⚠️ 위험진입'
+    const badgeLabel = isCrypto ? (status.cls === 'rec' ? '📈 ' : '📉 ') + status.label
+      : status.cls === 'danger' ? '⚠️ 위험진입'
       : status.cls === 'rec' ? '✅ 추천'
       : status.label;
     const reasonLineClass = status.cls === 'danger' ? 'holding-reason-line-danger'
@@ -1839,8 +1858,7 @@ function renderStochSVG(history, selectedIdx){
 }
 
 function render(data){
-  const extraAssets = data.extra_assets || [];
-  ALL_STOCKS = data.stocks.concat(extraAssets);
+  ALL_STOCKS = data.stocks.concat(BTC_ASSETS);
   document.getElementById('updated-at').textContent = `기준 시각: ${data.updated_at || '-'}`;
 
   // 신호 있는 종목을 위로 정렬
@@ -1856,6 +1874,7 @@ function render(data){
 }
 
 let HOLDINGS = FALLBACK_HOLDINGS;
+let BTC_ASSETS = [];
 
 async function load(){
   try{
@@ -1863,6 +1882,15 @@ async function load(){
     if (holdRes.ok) HOLDINGS = await holdRes.json();
   } catch(e){
     // holdings.json 없으면 기본값 사용
+  }
+  try{
+    const btcRes = await fetch('./btc.json', { cache: 'no-store' });
+    if (btcRes.ok){
+      const btcData = await btcRes.json();
+      BTC_ASSETS = btcData.assets || [];
+    }
+  } catch(e){
+    // btc.json 없으면 비트코인 없이 진행
   }
   try{
     const res = await fetch('./data.json', { cache: 'no-store' });

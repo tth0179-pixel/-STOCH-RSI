@@ -15,7 +15,6 @@ from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 import pandas_ta as ta
-import requests
 from pykrx import stock
 
 CODES_FILE = "top30_codes.json"
@@ -154,69 +153,6 @@ def resample_ohlcv(df, rule):
     return df.resample(rule).agg(agg).dropna()
 
 
-def fetch_upbit_daily_df(market="KRW-BTC", total_days=HISTORY_DAYS):
-    """업비트 공개 API(무료, 키 불필요)로 일봉 OHLCV를 최대 total_days만큼 페이징하여 수집"""
-    all_rows = []
-    to_param = None
-    while len(all_rows) < total_days:
-        params = {"market": market, "count": 200}
-        if to_param:
-            params["to"] = to_param
-        resp = requests.get("https://api.upbit.com/v1/candles/days", params=params, timeout=10)
-        resp.raise_for_status()
-        batch = resp.json()
-        if not batch:
-            break
-        all_rows.extend(batch)
-        to_param = batch[-1]["candle_date_time_utc"]
-        if len(batch) < 200:
-            break
-
-    df = pd.DataFrame(all_rows).drop_duplicates(subset="candle_date_time_kst")
-    df["date"] = pd.to_datetime(df["candle_date_time_kst"])
-    df = df.set_index("date").sort_index()
-    df = df.rename(columns={
-        "opening_price": "시가",
-        "high_price": "고가",
-        "low_price": "저가",
-        "trade_price": "종가",
-        "candle_acc_trade_volume": "거래량",
-    })
-    return df[["시가", "고가", "저가", "종가", "거래량"]]
-
-
-def build_asset_entry(code, name, df):
-    """KOSPI 종목과 동일한 스키마로 일반 자산(암호화폐 등) 데이터 구성"""
-    daily, daily_stoch_series = calc_stochrsi(df, return_series=True)
-    weekly_df = resample_ohlcv(df, "W")
-    weekly, weekly_stoch_series = calc_stochrsi(weekly_df, return_series=True)
-    monthly_df = resample_ohlcv(df, "ME")
-    monthly, monthly_stoch_series = calc_stochrsi(monthly_df, return_series=True)
-
-    history_daily = build_history(df, daily_stoch_series, n=90)
-    history_weekly = build_history(weekly_df, weekly_stoch_series, n=78)
-    history_monthly = build_history(monthly_df, monthly_stoch_series, n=48)
-
-    last_row = df.iloc[-1]
-    prev_close = df.iloc[-2]["종가"] if len(df) > 1 else last_row["종가"]
-    change_pct = round((last_row["종가"] - prev_close) / prev_close * 100, 2)
-
-    return {
-        "code": code,
-        "name": name,
-        "close": int(last_row["종가"]),
-        "change_pct": change_pct,
-        "daily": daily,
-        "weekly": weekly,
-        "monthly": monthly,
-        "history": {
-            "daily": history_daily,
-            "weekly": history_weekly,
-            "monthly": history_monthly,
-        },
-    }
-
-
 def main():
     codes = get_top30_codes()
 
@@ -265,19 +201,9 @@ def main():
             results.append({"code": code, "name": name, "error": str(e)})
             print(f"FAIL {name}({code}): {e}")
 
-    extra_assets = []
-    try:
-        btc_df = fetch_upbit_daily_df("KRW-BTC", HISTORY_DAYS)
-        extra_assets.append(build_asset_entry("BTC-KRW", "비트코인", btc_df))
-        print("OK  비트코인(BTC-KRW, 업비트)")
-    except Exception as e:
-        extra_assets.append({"code": "BTC-KRW", "name": "비트코인", "error": str(e)})
-        print(f"FAIL 비트코인(BTC-KRW): {e}")
-
     output = {
         "updated_at": end.strftime("%Y-%m-%d %H:%M"),  # 작업 시작 시각(예약 시각에 가까움) 기준
         "stocks": results,
-        "extra_assets": extra_assets,
     }
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
