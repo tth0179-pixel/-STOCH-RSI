@@ -2,7 +2,9 @@ name: Update KOSPI Stoch RSI Data
 
 on:
   schedule:
-    # 매 평일 UTC 07:30 = KST 16:30 (장마감 후)
+    # 매 평일 장중(KST 09:00~15:40) 20분마다 -> UTC 00:00~06:40, 20분 간격
+    - cron: "0,20,40 0-6 * * 1-5"
+    # 매 평일 UTC 07:30 = KST 16:30 (장마감 후 최종 확정치)
     - cron: "30 7 * * 1-5"
   workflow_dispatch: {}
 

@@ -554,7 +554,7 @@
   <div class="meta-row">
     <div class="updated"><span class="dot-live"></span><span id="updated-at">불러오는 중…</span></div>
   </div>
-  <button class="holdings-jump-btn" onclick="document.getElementById('holdings-wrap').scrollIntoView({behavior:'smooth'})">⭐ 보유종목</button>
+  <button class="holdings-jump-btn" onclick="document.getElementById('holdings-wrap').scrollIntoView({behavior:'smooth'})">⭐ 관심종목</button>
 </header>
 
 <section class="overview-wrap" id="holdings-wrap">
@@ -1220,7 +1220,7 @@ function renderHoldings(allStocks){
     .filter(Boolean);
 
   if (held.length === 0){
-    wrap.innerHTML = `<div class="overview-head"><span class="overview-title">⭐ 보유종목</span></div><div class="no-data" style="padding:10px 0;">등록된 보유종목이 없습니다.</div>`;
+    wrap.innerHTML = `<div class="overview-head"><span class="overview-title">⭐ 관심종목</span></div><div class="no-data" style="padding:10px 0;">등록된 관심종목이 없습니다.</div>`;
     return;
   }
 
@@ -1260,7 +1260,7 @@ function renderHoldings(allStocks){
 
   wrap.innerHTML = `
     <div class="overview-head">
-      <span class="overview-title">⭐ 보유종목</span>
+      <span class="overview-title">⭐ 관심종목</span>
     </div>
     <div class="holdings-grid">${cardsHTML}</div>`;
 }
@@ -1840,8 +1840,7 @@ function renderStochSVG(history, selectedIdx){
 
 function render(data){
   ALL_STOCKS = data.stocks;
-  const updateDateOnly = (data.updated_at || '').split(' ')[0];
-  document.getElementById('updated-at').textContent = `기준 종가일: ${updateDateOnly}`;
+  document.getElementById('updated-at').textContent = `기준 시각: ${data.updated_at || '-'}`;
 
   // 신호 있는 종목을 위로 정렬
   const stocks = [...data.stocks].sort((a, b) => {
