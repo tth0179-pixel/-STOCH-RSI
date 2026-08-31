@@ -11,7 +11,7 @@
 
 import json
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 import pandas_ta as ta
@@ -20,6 +20,7 @@ from pykrx import stock
 CODES_FILE = "top30_codes.json"
 OUTPUT_FILE = "data.json"
 HISTORY_DAYS = 1650  # 월봉 Stoch RSI(14,14,3,3)가 안정적으로 나오려면 최소 30개월치 이상 필요 -> 약 4.5년치 확보
+KST = timezone(timedelta(hours=9))  # GitHub Actions 서버는 UTC로 동작하므로 한국 시간(KST) 명시 필요
 
 
 def get_top30_codes():
@@ -32,7 +33,7 @@ def get_top30_codes():
     # "유효한 시가총액이 30개 이상 확보될 때까지" 하루씩 뒤로 가며 재시도 (최대 10일)
     cap_df = None
     for i in range(10):
-        try_date = (datetime.now() - timedelta(days=i)).strftime("%Y%m%d")
+        try_date = (datetime.now(KST) - timedelta(days=i)).strftime("%Y%m%d")
         try:
             candidate = stock.get_market_cap(try_date, market="KOSPI")
         except Exception:
@@ -155,7 +156,7 @@ def resample_ohlcv(df, rule):
 def main():
     codes = get_top30_codes()
 
-    end = datetime.now()
+    end = datetime.now(KST)
     start = end - timedelta(days=HISTORY_DAYS)
     start_str, end_str = start.strftime("%Y%m%d"), end.strftime("%Y%m%d")
 
@@ -201,7 +202,7 @@ def main():
             print(f"FAIL {name}({code}): {e}")
 
     output = {
-        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "updated_at": datetime.now(KST).strftime("%Y-%m-%d %H:%M"),
         "stocks": results,
     }
 
