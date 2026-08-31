@@ -156,7 +156,7 @@ def resample_ohlcv(df, rule):
 def main():
     codes = get_top30_codes()
 
-    end = datetime.now(KST)
+    end = datetime.now(KST)  # 작업 시작 시각. 데이터 조회 종료일 + 화면에 표시할 "기준 시각"으로 재사용
     start = end - timedelta(days=HISTORY_DAYS)
     start_str, end_str = start.strftime("%Y%m%d"), end.strftime("%Y%m%d")
 
@@ -202,7 +202,7 @@ def main():
             print(f"FAIL {name}({code}): {e}")
 
     output = {
-        "updated_at": datetime.now(KST).strftime("%Y-%m-%d %H:%M"),
+        "updated_at": end.strftime("%Y-%m-%d %H:%M"),  # 작업 시작 시각(예약 시각에 가까움) 기준
         "stocks": results,
     }
 
