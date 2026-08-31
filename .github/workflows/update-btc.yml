@@ -2,8 +2,8 @@ name: Update BTC Stoch RSI Data
 
 on:
   schedule:
-    # 매일(주말 포함) 매시 정각 -> 1시간마다, 24시간 365일
-    - cron: "0 * * * *"
+    # 매일(주말 포함) 20분마다 -> 24시간 365일
+    - cron: "0,20,40 * * * *"
   workflow_dispatch: {}
 
 permissions:
