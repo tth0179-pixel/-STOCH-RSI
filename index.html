@@ -709,7 +709,7 @@ function cardHTML(stock){
 // 화면이 비어 보이지 않도록 쓰는 예시 데이터입니다.
 // 실제 배포(GitHub Pages) 상태에서는 항상 같은 폴더의 data.json이 먼저 사용됩니다.
 // 보유종목 코드 목록 (holdings.json 로딩 실패 시 사용할 기본값)
-const FALLBACK_HOLDINGS = ["000660", "005930", "009150", "373220"];
+const FALLBACK_HOLDINGS = ["000660", "005930", "009150", "373220", "BTC-KRW"];
 
 const FALLBACK_DATA = {
   "updated_at": "2026-08-27 16:30",
@@ -1839,7 +1839,8 @@ function renderStochSVG(history, selectedIdx){
 }
 
 function render(data){
-  ALL_STOCKS = data.stocks;
+  const extraAssets = data.extra_assets || [];
+  ALL_STOCKS = data.stocks.concat(extraAssets);
   document.getElementById('updated-at').textContent = `기준 시각: ${data.updated_at || '-'}`;
 
   // 신호 있는 종목을 위로 정렬
@@ -1851,7 +1852,7 @@ function render(data){
 
   document.getElementById('grid').innerHTML = stocks.map(cardHTML).join('');
   renderOverview(data.stocks);
-  renderHoldings(data.stocks);
+  renderHoldings(ALL_STOCKS);
 }
 
 let HOLDINGS = FALLBACK_HOLDINGS;

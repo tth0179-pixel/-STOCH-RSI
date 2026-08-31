@@ -2,3 +2,4 @@ pykrx
 pandas
 numpy
 pandas-ta
+requests
