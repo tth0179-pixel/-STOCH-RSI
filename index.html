@@ -81,10 +81,10 @@
 
   .meta-row{
     display:flex;
-    flex-direction: column;
-    gap: 4px;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 8px;
-    font-size: 14px;
+    font-size: 15px;
     color: var(--text-faint);
   }
   .meta-row .updated{
@@ -144,7 +144,38 @@
     padding: 12px 14px;
     cursor: pointer;
     background: var(--bg-elevated);
+    position: relative;
+    touch-action: pan-y;
   }
+  .holding-card-dragging{
+    box-shadow: 0 8px 20px rgba(20,24,30,0.18);
+    opacity: 0.95;
+    transition: none !important;
+  }
+  .holding-card-placeholder{
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+    background: var(--card-hover);
+  }
+  .holding-top-left{
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 0;
+  }
+  .holding-drag-handle{
+    flex-shrink: 0;
+    cursor: grab;
+    touch-action: none;
+    color: var(--text-faint);
+    font-size: 18px;
+    line-height: 1.1;
+    padding: 2px 5px 2px 0;
+    margin-top: 0px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .holding-drag-handle:active{ cursor: grabbing; color: var(--text-dim); }
   .holding-card-danger{
     border: 1.5px solid #D6394A;
     background: linear-gradient(180deg, rgba(214,57,74,0.10), var(--bg-elevated) 65%);
@@ -552,8 +583,7 @@
   <div class="eyebrow">Personal Screener</div>
   <h1>코스피 시총 TOP 30</h1>
   <div class="meta-row">
-    <div class="updated"><span class="dot-live"></span><span id="updated-at-kospi">코스피(20분마다 업데이트): 불러오는 중…</span></div>
-    <div class="updated"><span class="dot-live"></span><span id="updated-at-btc">비트코인(20분마다 업데이트): 불러오는 중…</span></div>
+    <div class="updated"><span class="dot-live"></span><span id="updated-at">불러오는 중…</span></div>
   </div>
   <button class="holdings-jump-btn" onclick="document.getElementById('holdings-wrap').scrollIntoView({behavior:'smooth'})">⭐ 관심종목</button>
 </header>
@@ -710,7 +740,7 @@ function cardHTML(stock){
 // 화면이 비어 보이지 않도록 쓰는 예시 데이터입니다.
 // 실제 배포(GitHub Pages) 상태에서는 항상 같은 폴더의 data.json이 먼저 사용됩니다.
 // 보유종목 코드 목록 (holdings.json 로딩 실패 시 사용할 기본값)
-const FALLBACK_HOLDINGS = ["BTC-KRW", "000660", "005930", "009150", "373220"];
+const FALLBACK_HOLDINGS = ["000660", "005930", "009150", "373220", "BTC-KRW"];
 
 const FALLBACK_DATA = {
   "updated_at": "2026-08-27 16:30",
@@ -1145,23 +1175,6 @@ function escapeHtml(str){
     .replace(/>/g, '&gt;');
 }
 
-function classifyCryptoTrend(s){
-  // 코스피처럼 3가지 조건 조합이 아니라, 일봉 %K vs %D 만으로 단순 상승/하락 판정
-  // (24시간 변동성이 큰 암호화폐 특성상 단순 모멘텀 지표가 더 적합)
-  if (!s.daily || s.daily.k === undefined || s.daily.d === undefined){
-    return { label: '데이터 부족', cls: 'flat', lines: ['일봉 지표를 계산하기에 데이터가 부족합니다.'] };
-  }
-  const k = s.daily.k, d = s.daily.d;
-  const isUp = k > d;
-  return {
-    label: isUp ? '상승중' : '하락중',
-    cls: isUp ? 'rec' : 'danger',
-    lines: [
-      `RSI(%K ${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 ${isUp ? '높아' : '낮아'} 일봉 기준 ${isUp ? '상승' : '하락'} 흐름입니다.`,
-    ],
-  };
-}
-
 function classifyHolding(s){
   const h = s.history && s.history.daily;
   const last = h && h.length ? h[h.length - 1] : null;
@@ -1242,29 +1255,32 @@ function renderHoldings(allStocks){
     return;
   }
 
+  const dragHandle = `<span class="holding-drag-handle" onclick="event.stopPropagation()" title="드래그하여 순서 변경">⠿</span>`;
+
   const cardsHTML = held.map(s => {
     if (s.error){
-      return `<div class="holding-card"><div class="holding-name">${s.name}</div><div class="no-data">데이터 오류</div></div>`;
+      return `<div class="holding-card" data-code="${s.code}"><div class="holding-top-left">${dragHandle}<div class="holding-name">${s.name}</div></div><div class="no-data">데이터 오류</div></div>`;
     }
     const change = fmtChange(s.change_pct);
-    const isCrypto = s.code === 'BTC-KRW';
-    const status = isCrypto ? classifyCryptoTrend(s) : classifyHolding(s);
+    const status = classifyHolding(s);
     const cardClass = status.cls === 'danger' ? 'holding-card holding-card-danger'
       : status.cls === 'rec' ? 'holding-card holding-card-rec'
       : 'holding-card';
-    const badgeLabel = isCrypto ? (status.cls === 'rec' ? '📈 ' : '📉 ') + status.label
-      : status.cls === 'danger' ? '⚠️ 위험진입'
+    const badgeLabel = status.cls === 'danger' ? '⚠️ 위험진입'
       : status.cls === 'rec' ? '✅ 추천'
       : status.label;
     const reasonLineClass = status.cls === 'danger' ? 'holding-reason-line-danger'
       : status.cls === 'rec' ? 'holding-reason-line-rec'
       : 'holding-reason-line';
     return `
-      <div class="${cardClass}" onclick="openChart('${s.code}')">
+      <div class="${cardClass}" data-code="${s.code}" onclick="openChart('${s.code}')">
         <div class="holding-top">
-          <div>
-            <div class="holding-name">${s.name}</div>
-            <div class="holding-code mono">${s.code}</div>
+          <div class="holding-top-left">
+            ${dragHandle}
+            <div>
+              <div class="holding-name">${s.name}</div>
+              <div class="holding-code mono">${s.code}</div>
+            </div>
           </div>
           <div class="holding-price-block">
             <div class="holding-price mono">${s.close.toLocaleString()}</div>
@@ -1283,6 +1299,113 @@ function renderHoldings(allStocks){
       <span class="overview-title">⭐ 관심종목</span>
     </div>
     <div class="holdings-grid">${cardsHTML}</div>`;
+
+  initHoldingsDrag();
+}
+
+// ── 관심종목 드래그 정렬 ──────────────────────────────
+const HOLDINGS_ORDER_KEY = 'holdingsOrder';
+let holdingsDragState = null;
+
+function loadHoldingsOrder(defaultOrder){
+  let saved = null;
+  try {
+    const raw = localStorage.getItem(HOLDINGS_ORDER_KEY);
+    if (raw) saved = JSON.parse(raw);
+  } catch(e){ saved = null; }
+  if (!Array.isArray(saved) || saved.length === 0) return defaultOrder;
+  const savedValid = saved.filter(code => defaultOrder.includes(code));
+  const missing = defaultOrder.filter(code => !savedValid.includes(code));
+  return [...savedValid, ...missing];
+}
+
+function saveHoldingsOrder(order){
+  try { localStorage.setItem(HOLDINGS_ORDER_KEY, JSON.stringify(order)); } catch(e){ /* 저장 실패 시 무시 */ }
+}
+
+function initHoldingsDrag(){
+  const grid = document.querySelector('#holdings-wrap .holdings-grid');
+  if (!grid) return;
+  grid.querySelectorAll('.holding-drag-handle').forEach(handle => {
+    handle.onpointerdown = handleHoldingDragStart;
+  });
+}
+
+function handleHoldingDragStart(e){
+  e.preventDefault();
+  e.stopPropagation();
+  const card = e.currentTarget.closest('.holding-card');
+  const grid = document.querySelector('#holdings-wrap .holdings-grid');
+  if (!card || !grid) return;
+
+  const placeholder = document.createElement('div');
+  placeholder.className = 'holding-card-placeholder';
+  placeholder.style.height = card.offsetHeight + 'px';
+  card.parentNode.insertBefore(placeholder, card.nextSibling);
+
+  holdingsDragState = { card, grid, placeholder, startY: e.clientY };
+
+  card.classList.add('holding-card-dragging');
+  card.style.position = 'relative';
+  card.style.zIndex = '50';
+  card.style.pointerEvents = 'none';
+  card.style.width = card.offsetWidth + 'px';
+
+  document.addEventListener('pointermove', handleHoldingDragMove);
+  document.addEventListener('pointerup', handleHoldingDragEnd);
+  document.addEventListener('pointercancel', handleHoldingDragEnd);
+}
+
+function handleHoldingDragMove(e){
+  if (!holdingsDragState) return;
+  const { card, grid, placeholder, startY } = holdingsDragState;
+  const dy = e.clientY - startY;
+  card.style.transform = `translateY(${dy}px)`;
+
+  const cardRect = card.getBoundingClientRect();
+  const cardCenterY = cardRect.top + cardRect.height / 2;
+
+  const siblings = Array.from(grid.children).filter(el => el !== card && el !== placeholder);
+  let insertBefore = null;
+  for (const sib of siblings){
+    const rect = sib.getBoundingClientRect();
+    if (cardCenterY < rect.top + rect.height / 2){
+      insertBefore = sib;
+      break;
+    }
+  }
+  if (insertBefore){
+    if (placeholder.nextSibling !== insertBefore){
+      grid.insertBefore(placeholder, insertBefore);
+    }
+  } else if (grid.lastElementChild !== placeholder){
+    grid.appendChild(placeholder);
+  }
+}
+
+function handleHoldingDragEnd(){
+  if (!holdingsDragState) return;
+  const { card, grid, placeholder } = holdingsDragState;
+
+  grid.insertBefore(card, placeholder);
+  grid.removeChild(placeholder);
+  card.style.transform = '';
+  card.style.position = '';
+  card.style.zIndex = '';
+  card.style.pointerEvents = '';
+  card.style.width = '';
+  card.classList.remove('holding-card-dragging');
+
+  document.removeEventListener('pointermove', handleHoldingDragMove);
+  document.removeEventListener('pointerup', handleHoldingDragEnd);
+  document.removeEventListener('pointercancel', handleHoldingDragEnd);
+  holdingsDragState = null;
+
+  const newOrder = Array.from(grid.children).map(el => el.dataset.code).filter(Boolean);
+  if (newOrder.length){
+    HOLDINGS = newOrder;
+    saveHoldingsOrder(HOLDINGS);
+  }
 }
 
 function renderOverview(stocks){
@@ -1859,8 +1982,9 @@ function renderStochSVG(history, selectedIdx){
 }
 
 function render(data){
-  ALL_STOCKS = data.stocks.concat(BTC_ASSETS);
-  document.getElementById('updated-at-kospi').textContent = `코스피(20분마다 업데이트): ${data.updated_at || '-'}`;
+  const extraAssets = data.extra_assets || [];
+  ALL_STOCKS = data.stocks.concat(extraAssets);
+  document.getElementById('updated-at').textContent = `기준 시각: ${data.updated_at || '-'}`;
 
   // 신호 있는 종목을 위로 정렬
   const stocks = [...data.stocks].sort((a, b) => {
@@ -1875,7 +1999,6 @@ function render(data){
 }
 
 let HOLDINGS = FALLBACK_HOLDINGS;
-let BTC_ASSETS = [];
 
 async function load(){
   try{
@@ -1884,19 +2007,7 @@ async function load(){
   } catch(e){
     // holdings.json 없으면 기본값 사용
   }
-  try{
-    const btcRes = await fetch('./btc.json', { cache: 'no-store' });
-    if (btcRes.ok){
-      const btcData = await btcRes.json();
-      BTC_ASSETS = btcData.assets || [];
-      document.getElementById('updated-at-btc').textContent = `비트코인(20분마다 업데이트): ${btcData.updated_at || '-'}`;
-    } else {
-      document.getElementById('updated-at-btc').textContent = `비트코인(20분마다 업데이트): -`;
-    }
-  } catch(e){
-    // btc.json 없으면 비트코인 없이 진행
-    document.getElementById('updated-at-btc').textContent = `비트코인(20분마다 업데이트): -`;
-  }
+  HOLDINGS = loadHoldingsOrder(HOLDINGS); // 사용자가 드래그로 바꾼 순서가 있으면 우선 적용
   try{
     const res = await fetch('./data.json', { cache: 'no-store' });
     if (!res.ok) throw new Error('data.json 응답 오류');
