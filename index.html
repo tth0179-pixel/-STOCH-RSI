@@ -1145,23 +1145,6 @@ function escapeHtml(str){
     .replace(/>/g, '&gt;');
 }
 
-function classifyCryptoTrend(s){
-  // 코스피처럼 3가지 조건 조합이 아니라, 일봉 %K vs %D 만으로 단순 상승/하락 판정
-  // (24시간 변동성이 큰 암호화폐 특성상 단순 모멘텀 지표가 더 적합)
-  if (!s.daily || s.daily.k === undefined || s.daily.d === undefined){
-    return { label: '데이터 부족', cls: 'flat', lines: ['일봉 지표를 계산하기에 데이터가 부족합니다.'] };
-  }
-  const k = s.daily.k, d = s.daily.d;
-  const isUp = k > d;
-  return {
-    label: isUp ? '상승중' : '하락중',
-    cls: isUp ? 'rec' : 'danger',
-    lines: [
-      `RSI(%K ${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 ${isUp ? '높아' : '낮아'} 일봉 기준 ${isUp ? '상승' : '하락'} 흐름입니다.`,
-    ],
-  };
-}
-
 function classifyHolding(s){
   const h = s.history && s.history.daily;
   const last = h && h.length ? h[h.length - 1] : null;
@@ -1247,13 +1230,11 @@ function renderHoldings(allStocks){
       return `<div class="holding-card"><div class="holding-name">${s.name}</div><div class="no-data">데이터 오류</div></div>`;
     }
     const change = fmtChange(s.change_pct);
-    const isCrypto = s.code === 'BTC-KRW';
-    const status = isCrypto ? classifyCryptoTrend(s) : classifyHolding(s);
+    const status = classifyHolding(s);
     const cardClass = status.cls === 'danger' ? 'holding-card holding-card-danger'
       : status.cls === 'rec' ? 'holding-card holding-card-rec'
       : 'holding-card';
-    const badgeLabel = isCrypto ? (status.cls === 'rec' ? '📈 ' : '📉 ') + status.label
-      : status.cls === 'danger' ? '⚠️ 위험진입'
+    const badgeLabel = status.cls === 'danger' ? '⚠️ 위험진입'
       : status.cls === 'rec' ? '✅ 추천'
       : status.label;
     const reasonLineClass = status.cls === 'danger' ? 'holding-reason-line-danger'
