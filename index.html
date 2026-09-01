@@ -2008,15 +2008,34 @@ async function load(){
     // holdings.json 없으면 기본값 사용
   }
   HOLDINGS = loadHoldingsOrder(HOLDINGS); // 사용자가 드래그로 바꾼 순서가 있으면 우선 적용
+
+  let data;
   try{
     const res = await fetch('./data.json', { cache: 'no-store' });
     if (!res.ok) throw new Error('data.json 응답 오류');
-    const data = await res.json();
-    render(data);
+    data = await res.json();
   } catch(e){
     // data.json을 못 불러오면(단독 미리보기 등) 내장된 예시 데이터로 표시
-    render(FALLBACK_DATA);
+    data = FALLBACK_DATA;
   }
+
+  // data.json에 비트코인 등 추가 자산(extra_assets)이 없으면(백엔드가 아직 별도 btc.json 방식일 수 있음)
+  // btc.json을 별도로 불러와서 보완합니다. 둘 다 없으면 관심종목에서 비트코인 없이 표시됩니다.
+  if (!data.extra_assets || data.extra_assets.length === 0){
+    try{
+      const btcRes = await fetch('./btc.json', { cache: 'no-store' });
+      if (btcRes.ok){
+        const btcData = await btcRes.json();
+        if (btcData.assets && btcData.assets.length){
+          data = { ...data, extra_assets: btcData.assets };
+        }
+      }
+    } catch(e){
+      // btc.json도 없으면 조용히 넘어감
+    }
+  }
+
+  render(data);
 }
 
 load();
