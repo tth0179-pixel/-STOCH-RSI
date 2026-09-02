@@ -153,6 +153,45 @@ def resample_ohlcv(df, rule):
     return df.resample(rule).agg(agg).dropna()
 
 
+EXTRA_STOCKS_FILE = "extra_stocks.json"  # TOP30 밖이라도 관심종목으로 개별 추적할 종목 목록
+
+
+def fetch_stock_entry(code, name, start_str, end_str):
+    """단일 종목의 일봉을 받아 KOSPI 종목과 동일한 스키마로 구성 (TOP30 여부와 무관)"""
+    df = stock.get_market_ohlcv(start_str, end_str, code)
+    df.index = pd.to_datetime(df.index)
+    df = df[df["종가"] > 0]
+
+    daily, daily_stoch_series = calc_stochrsi(df, return_series=True)
+    weekly_df = resample_ohlcv(df, "W")
+    weekly, weekly_stoch_series = calc_stochrsi(weekly_df, return_series=True)
+    monthly_df = resample_ohlcv(df, "ME")
+    monthly, monthly_stoch_series = calc_stochrsi(monthly_df, return_series=True)
+
+    history_daily = build_history(df, daily_stoch_series, n=90)
+    history_weekly = build_history(weekly_df, weekly_stoch_series, n=78)
+    history_monthly = build_history(monthly_df, monthly_stoch_series, n=48)
+
+    last_row = df.iloc[-1]
+    prev_close = df.iloc[-2]["종가"] if len(df) > 1 else last_row["종가"]
+    change_pct = round((last_row["종가"] - prev_close) / prev_close * 100, 2)
+
+    return {
+        "code": code,
+        "name": name,
+        "close": int(last_row["종가"]),
+        "change_pct": change_pct,
+        "daily": daily,
+        "weekly": weekly,
+        "monthly": monthly,
+        "history": {
+            "daily": history_daily,
+            "weekly": history_weekly,
+            "monthly": history_monthly,
+        },
+    }
+
+
 def main():
     codes = get_top30_codes()
 
@@ -201,9 +240,26 @@ def main():
             results.append({"code": code, "name": name, "error": str(e)})
             print(f"FAIL {name}({code}): {e}")
 
+    top30_codes_set = {item["code"] for item in codes}
+    extra_results = []
+    if os.path.exists(EXTRA_STOCKS_FILE):
+        with open(EXTRA_STOCKS_FILE, "r", encoding="utf-8") as f:
+            extra_stocks = json.load(f)
+        for item in extra_stocks:
+            code, name = item["code"], item["name"]
+            if code in top30_codes_set:
+                continue  # 이미 TOP30에 포함되어 있으면 중복 수집 불필요
+            try:
+                extra_results.append(fetch_stock_entry(code, name, start_str, end_str))
+                print(f"OK  (추가종목) {name}({code})")
+            except Exception as e:
+                extra_results.append({"code": code, "name": name, "error": str(e)})
+                print(f"FAIL (추가종목) {name}({code}): {e}")
+
     output = {
         "updated_at": end.strftime("%Y-%m-%d %H:%M"),  # 작업 시작 시각(예약 시각에 가까움) 기준
         "stocks": results,
+        "extra_stocks": extra_results,
     }
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
