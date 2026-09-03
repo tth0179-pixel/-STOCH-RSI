@@ -1157,66 +1157,6 @@ function escapeHtml(str){
     .replace(/>/g, '&gt;');
 }
 
-function classifyCryptoHolding(s){
-  // 비트코인 전용 조건 (코스피보다 단순한 2가지 지표만 사용):
-  //  중립   = |%K - %D| < 3 (방향성이 불분명한 구간 -> 다른 조건보다 우선 체크)
-  //  추천   = %K>%D AND 종가>MA5
-  //  비추천 = %K<%D AND 종가<MA5
-  //  위험진입 = %K<%D OR 종가<MA5 (단, 비추천에 해당 안 되는 경우, 즉 둘 중 하나만 해당)
-  const NEUTRAL_GAP = 3; // %K-%D 격차가 이 값 미만이면 중립
-  const h = s.history && s.history.daily;
-  const last = h && h.length ? h[h.length - 1] : null;
-  const hasDaily = s.daily && s.daily.k !== undefined && s.daily.d !== undefined;
-  const hasMA = last && last.ma5 !== undefined;
-
-  if (!hasDaily || !hasMA){
-    return { label: '데이터 부족', cls: 'flat', lines: ['일봉 지표를 계산하기에 데이터가 부족합니다.'] };
-  }
-
-  const k = s.daily.k, d = s.daily.d;
-  const gap = Math.abs(k - d);
-
-  if (gap < NEUTRAL_GAP){
-    return {
-      label: '중립', cls: 'flat',
-      lines: [`RSI(%K ${k.toFixed(1)})와 %D(${d.toFixed(1)})의 격차가 ${gap.toFixed(1)}로 작아 방향성이 불분명한 중립 상태입니다.`],
-    };
-  }
-
-  const kAboveD = k > d;
-  const aboveMA5 = last.c > last.ma5;
-
-  if (kAboveD && aboveMA5){
-    return {
-      label: '추천', cls: 'rec',
-      lines: [
-        `RSI(%K ${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 높고, 종가(${last.c.toLocaleString()})가 5일 이동평균선(${Math.round(last.ma5).toLocaleString()}) 위에 있어 추천 조건을 충족합니다.`,
-      ],
-    };
-  }
-  if (!kAboveD && !aboveMA5){
-    return {
-      label: '비추천', cls: 'avoid',
-      lines: [
-        `RSI(%K ${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 낮고, 종가(${last.c.toLocaleString()})가 5일 이동평균선(${Math.round(last.ma5).toLocaleString()}) 아래에 있어 비추천 조건에 해당합니다.`,
-      ],
-    };
-  }
-  if (!kAboveD || !aboveMA5){
-    const reasons = [];
-    if (!kAboveD) reasons.push(`RSI(%K ${k.toFixed(1)})가 %D(${d.toFixed(1)})보다 낮음`);
-    if (!aboveMA5) reasons.push(`종가(${last.c.toLocaleString()})가 5일 이동평균선(${Math.round(last.ma5).toLocaleString()}) 아래`);
-    return {
-      label: '위험진입', cls: 'danger',
-      lines: [`${reasons.join(', ')} 상태라 위험합니다.`],
-    };
-  }
-  return {
-    label: '중립', cls: 'flat',
-    lines: ['추천·위험진입·비추천 조건에 해당하지 않는 중립 상태입니다.'],
-  };
-}
-
 function classifyHolding(s){
   const h = s.history && s.history.daily;
   const last = h && h.length ? h[h.length - 1] : null;
@@ -1302,7 +1242,7 @@ function renderHoldings(allStocks){
       return `<div class="holding-card"><div class="holding-name">${s.name}</div><div class="no-data">데이터 오류</div></div>`;
     }
     const change = fmtChange(s.change_pct);
-    const status = s.code === 'BTC-KRW' ? classifyCryptoHolding(s) : classifyHolding(s);
+    const status = classifyHolding(s);
     const cardClass = status.cls === 'danger' ? 'holding-card holding-card-danger'
       : status.cls === 'avoid' ? 'holding-card holding-card-avoid'
       : status.cls === 'rec' ? 'holding-card holding-card-rec'
