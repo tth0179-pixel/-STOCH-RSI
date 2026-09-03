@@ -37,3 +37,5 @@ jobs:
           git add data.json top30_codes.json
           git diff --staged --quiet || git commit -m "Update KOSPI Stoch RSI data ($(date +'%Y-%m-%d %H:%M'))"
           git push
+
+
