@@ -263,6 +263,12 @@
     border-color: rgba(37,99,235,0.4);
     color: var(--down);
   }
+  .ov-tab-neutral{ font-size: 13.5px; padding: 9px 4px; }
+  .ov-tab-neutral.active{
+    background: rgba(107,114,128,0.12);
+    border-color: rgba(107,114,128,0.4);
+    color: var(--text-faint);
+  }
   #overview-chart{ margin-top: 12px; }
 
   .ov-row{
@@ -309,6 +315,13 @@
     transform: translate(-50%, -50%);
     border: 1.5px solid var(--bg-elevated);
     z-index: 1;
+  }
+  .ov-dot-monthly{
+    position:absolute; top:50%; width:8px; height:8px; border-radius:50%;
+    background: #16A34A;
+    transform: translate(-50%, -50%);
+    border: 1.5px solid var(--bg-elevated);
+    z-index: 2;
   }
 
   .card{
@@ -583,9 +596,11 @@
     <span><i style="background:var(--zone-over)"></i>과매수(80↑)</span>
     <span><i style="background:var(--down)"></i>일봉 %K</span>
     <span><i style="background:var(--signal)"></i>주봉 %K</span>
+    <span><i style="background:#16A34A"></i>월봉 %K</span>
   </div>
   <div class="ov-sort-tabs ov-sort-tabs-primary">
     <button class="ov-sort-tab ov-tab-recommend active" id="ov-sort-recommend" onclick="setOverviewSort('recommend')">추천</button>
+    <button class="ov-sort-tab ov-tab-neutral" id="ov-sort-neutral" onclick="setOverviewSort('neutral')">중립</button>
     <button class="ov-sort-tab ov-tab-danger" id="ov-sort-danger" onclick="setOverviewSort('danger')">위험진입</button>
     <button class="ov-sort-tab ov-tab-avoid" id="ov-sort-avoid" onclick="setOverviewSort('avoid')">비추천</button>
   </div>
@@ -1096,6 +1111,7 @@ let OV_SORT = 'recommend';
 function setOverviewSort(mode){
   OV_SORT = mode;
   document.getElementById('ov-sort-recommend').classList.toggle('active', mode === 'recommend');
+  document.getElementById('ov-sort-neutral').classList.toggle('active', mode === 'neutral');
   document.getElementById('ov-sort-danger').classList.toggle('active', mode === 'danger');
   document.getElementById('ov-sort-avoid').classList.toggle('active', mode === 'avoid');
   document.getElementById('ov-sort-daily').classList.toggle('active', mode === 'daily');
@@ -1148,6 +1164,11 @@ function isDanger(s){
     (last.ma5 < last.ma60) ||
     (last.ma20 < last.ma60);
   return kBelowD && belowMA5 && reverseAligned;
+}
+
+function isNeutral(s){
+  // 추천·비추천·위험진입 어느 조건에도 해당하지 않는 종목
+  return !isRecommended(s) && !isAvoid(s) && !isDanger(s);
 }
 
 function escapeHtml(str){
@@ -1312,6 +1333,13 @@ function renderOverview(stocks){
       const lb = b.history && b.history.daily ? b.history.daily[b.history.daily.length-1] : null;
       return gap(la) - gap(lb); // 동률이면 역배열이 심한 순
     });
+  } else if (OV_SORT === 'neutral'){
+    const valid = stocks.filter(s => !s.error && s.daily && s.history && s.history.daily && s.history.daily.length && isNeutral(s));
+    sorted = [...valid].sort((a, b) => {
+      const gapA = Math.abs(a.daily.k - a.daily.d);
+      const gapB = Math.abs(b.daily.k - b.daily.d);
+      return gapA - gapB; // %K-%D 격차가 작은(가장 방향성 없는) 순
+    });
   } else {
     const sortKey = OV_SORT; // 'daily' or 'weekly'
     const valid = stocks.filter(s => !s.error && s[sortKey]);
@@ -1327,6 +1355,7 @@ function renderOverview(stocks){
   const rows = sorted.map(s => {
     const dailyCross = isSignal(s.daily);
     const weeklyK = s.weekly ? s.weekly.k : null;
+    const monthlyK = s.monthly ? s.monthly.k : null;
     const nameCls = (dailyCross || isSignal(s.weekly)) ? 'ov-name ov-signal' : 'ov-name';
     return `
       <div class="ov-row" onclick="openChart('${s.code}')">
@@ -1334,6 +1363,7 @@ function renderOverview(stocks){
         <div class="ov-track">
           <div class="ov-zone-under"></div>
           <div class="ov-zone-over"></div>
+          ${monthlyK !== null ? `<div class="ov-dot-monthly" style="left:${monthlyK}%"></div>` : ''}
           ${weeklyK !== null ? `<div class="ov-dot-weekly" style="left:${weeklyK}%"></div>` : ''}
           <div class="ov-dot-daily ${dailyCross ? 'ov-cross' : ''}" style="left:${s.daily.k}%"></div>
         </div>
