@@ -199,6 +199,18 @@ def fetch_overtime_prices(codes):
     return result
 
 
+def get_close_and_change(df, last_row):
+    """종가/등락률 계산. pykrx가 제공하는 등락률 컬럼을 우선 사용하고(가장 정확),
+    해당 컬럼이 없거나 비어 있을 때만 전일 종가 대비 직접 계산으로 대체한다."""
+    close = int(last_row["종가"])
+    if "등락률" in df.columns and pd.notna(last_row.get("등락률")):
+        change_pct = round(float(last_row["등락률"]), 2)
+    else:
+        prev_close = df.iloc[-2]["종가"] if len(df) > 1 else last_row["종가"]
+        change_pct = round((last_row["종가"] - prev_close) / prev_close * 100, 2)
+    return close, change_pct
+
+
 def fetch_stock_entry(code, name, start_str, end_str):
     """단일 종목의 일봉을 받아 KOSPI 종목과 동일한 스키마로 구성 (TOP30 여부와 무관, ETF 포함)"""
     if code in ETF_CODES:
@@ -219,13 +231,12 @@ def fetch_stock_entry(code, name, start_str, end_str):
     history_monthly = build_history(monthly_df, monthly_stoch_series, n=48)
 
     last_row = df.iloc[-1]
-    prev_close = df.iloc[-2]["종가"] if len(df) > 1 else last_row["종가"]
-    change_pct = round((last_row["종가"] - prev_close) / prev_close * 100, 2)
+    close, change_pct = get_close_and_change(df, last_row)
 
     return {
         "code": code,
         "name": name,
-        "close": int(last_row["종가"]),
+        "close": close,
         "change_pct": change_pct,
         "daily": daily,
         "weekly": weekly,
@@ -264,13 +275,12 @@ def main():
             history_monthly = build_history(monthly_df, monthly_stoch_series, n=48)  # 약 4년치
 
             last_row = df.iloc[-1]
-            prev_close = df.iloc[-2]["종가"] if len(df) > 1 else last_row["종가"]
-            change_pct = round((last_row["종가"] - prev_close) / prev_close * 100, 2)
+            close, change_pct = get_close_and_change(df, last_row)
 
             results.append({
                 "code": code,
                 "name": name,
-                "close": int(last_row["종가"]),
+                "close": close,
                 "change_pct": change_pct,
                 "daily": daily,
                 "weekly": weekly,
