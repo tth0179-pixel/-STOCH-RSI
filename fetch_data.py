@@ -154,11 +154,15 @@ def resample_ohlcv(df, rule):
 
 
 EXTRA_STOCKS_FILE = "extra_stocks.json"  # TOP30 밖이라도 관심종목으로 개별 추적할 종목 목록
+ETF_CODES = {"0177N0", "379810", "411060", "458730", "484880"}  # 관심종목용 ETF는 일반 종목과 다른 pykrx 함수로 조회해야 함
 
 
 def fetch_stock_entry(code, name, start_str, end_str):
-    """단일 종목의 일봉을 받아 KOSPI 종목과 동일한 스키마로 구성 (TOP30 여부와 무관)"""
-    df = stock.get_market_ohlcv(start_str, end_str, code)
+    """단일 종목의 일봉을 받아 KOSPI 종목과 동일한 스키마로 구성 (TOP30 여부와 무관, ETF 포함)"""
+    if code in ETF_CODES:
+        df = stock.get_etf_ohlcv_by_date(start_str, end_str, code)
+    else:
+        df = stock.get_market_ohlcv(start_str, end_str, code)
     df.index = pd.to_datetime(df.index)
     df = df[df["종가"] > 0]
 
