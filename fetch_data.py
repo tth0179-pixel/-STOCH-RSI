@@ -15,6 +15,7 @@ from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 import pandas_ta as ta
+import requests
 from pykrx import stock
 
 CODES_FILE = "top30_codes.json"
@@ -156,6 +157,47 @@ def resample_ohlcv(df, rule):
 EXTRA_STOCKS_FILE = "extra_stocks.json"  # TOP30 밖이라도 관심종목으로 개별 추적할 종목 목록
 ETF_CODES = {"0177N0", "379810", "411060", "458730", "484880"}  # 관심종목용 ETF는 일반 종목과 다른 pykrx 함수로 조회해야 함
 
+NAVER_REALTIME_URL = "https://polling.finance.naver.com/api/realtime/domestic/stock/{codes}"
+
+
+def fetch_overtime_prices(codes):
+    """네이버 금융 비공식 API로 시간외 단일가(16:00~18:00 KST) 정보를 일괄 조회.
+    pykrx는 정규장(09:00~15:30) 종가만 제공하므로, 시간외 가격은 이 함수로 별도 보강한다.
+    비공식 API라 실패할 수 있으므로, 실패해도 전체 작업이 중단되지 않도록 방어적으로 처리한다."""
+    result = {}
+    codes = [c for c in codes if c]
+    if not codes:
+        return result
+    try:
+        url = NAVER_REALTIME_URL.format(codes=",".join(codes))
+        resp = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+        resp.raise_for_status()
+        payload = resp.json()
+        for item in payload.get("datas", []):
+            code = item.get("itemCode") or item.get("symbolCode") or item.get("code")
+            if not code:
+                continue
+            over = item.get("overMarketPriceInfo")
+            if not over:
+                continue
+            over_price_raw = over.get("overPrice")
+            if not over_price_raw:
+                continue
+            try:
+                over_price = float(str(over_price_raw).replace(",", ""))
+            except ValueError:
+                continue
+            if over_price <= 0:
+                continue
+            result[code] = {
+                "over_price": over_price,
+                "over_session": over.get("tradingSessionType"),  # PRE_MARKET / AFTER_MARKET
+                "over_market_status": over.get("overMarketStatus"),  # OPEN / CLOSE
+            }
+    except Exception as e:
+        print(f"WARN 시간외 단일가 조회 실패(무시하고 진행): {e}")
+    return result
+
 
 def fetch_stock_entry(code, name, start_str, end_str):
     """단일 종목의 일봉을 받아 KOSPI 종목과 동일한 스키마로 구성 (TOP30 여부와 무관, ETF 포함)"""
@@ -259,6 +301,22 @@ def main():
             except Exception as e:
                 extra_results.append({"code": code, "name": name, "error": str(e)})
                 print(f"FAIL (추가종목) {name}({code}): {e}")
+
+    # 시간외 단일가(16:00~18:00 KST) 보강: 정규장 종가만 있는 pykrx 데이터에 네이버 금융 시세를 덧붙인다.
+    all_codes = [r["code"] for r in results if "error" not in r] + [r["code"] for r in extra_results if "error" not in r]
+    overtime = fetch_overtime_prices(all_codes)
+    for entry_list in (results, extra_results):
+        for entry in entry_list:
+            if "error" in entry:
+                continue
+            over = overtime.get(entry["code"])
+            if not over:
+                continue
+            entry["over_price"] = int(over["over_price"])
+            entry["over_session"] = over["over_session"]
+            entry["over_market_status"] = over["over_market_status"]
+            entry["over_change_pct"] = round((over["over_price"] - entry["close"]) / entry["close"] * 100, 2)
+    print(f"시간외 단일가 반영: {len(overtime)}개 종목")
 
     output = {
         "updated_at": end.strftime("%Y-%m-%d %H:%M"),  # 작업 시작 시각(예약 시각에 가까움) 기준

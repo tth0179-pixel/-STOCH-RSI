@@ -1408,6 +1408,11 @@ function renderHoldings(allStocks){
           <div class="holding-price-block">
             <div class="holding-price mono">${s.close.toLocaleString()}</div>
             <div class="change ${change.cls} mono" style="font-size:12.5px;">${change.text}</div>
+            ${s.over_price !== undefined ? (() => {
+              const overChange = fmtChange(s.over_change_pct);
+              const sessionLabel = s.over_session === 'PRE_MARKET' ? '장전 시간외' : '시간외';
+              return `<div class="mono" style="font-size:11.5px;color:#888;margin-top:2px;">${sessionLabel} ${s.over_price.toLocaleString()} <span class="${overChange.cls}">${overChange.text}</span></div>`;
+            })() : ''}
           </div>
         </div>
         <div class="holding-status holding-status-${status.cls}">${badgeLabel}</div>
