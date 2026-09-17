@@ -1432,8 +1432,8 @@ function buildMayerGauge(cycle){
 }
 
 function buildMayerHistoryChart(cycle){
-  const hist = cycle && cycle.history;
-  if (!hist || hist.length < 2) return '';
+  const hist = (cycle && cycle.history || []).filter(p => p.mayer_multiple !== null);
+  if (hist.length < 2) return '';
   const w = 300, h = 110, padL = 8, padR = 8, padT = 10, padB = 16;
   const values = hist.map(p => p.mayer_multiple);
   const maxV = Math.max(3.2, ...values);
@@ -1455,6 +1455,38 @@ function buildMayerHistoryChart(cycle){
       <text x="${w - padR}" y="${(y24 - 3).toFixed(1)}" text-anchor="end" font-size="9" fill="#D6394A">2.4</text>
       <text x="${w - padR}" y="${(y08 - 3).toFixed(1)}" text-anchor="end" font-size="9" fill="#16A34A">0.8</text>
     </svg>`;
+}
+
+function buildPiCycleChart(cycle){
+  const hist = cycle && cycle.history;
+  if (!hist || hist.length < 2) return '';
+  const w = 300, h = 110, padL = 8, padR = 8, padT = 10, padB = 16;
+  const allVals = hist.flatMap(p => [p.ma111, p.pi_band]);
+  const minV = Math.min(...allVals), maxV = Math.max(...allVals);
+  const innerW = w - padL - padR, innerH = h - padT - padB;
+  const toX = i => padL + (i / (hist.length - 1)) * innerW;
+  const toY = v => padT + innerH - ((v - minV) / ((maxV - minV) || 1)) * innerH;
+  const pathMa111 = hist.map((p, i) => `${i === 0 ? 'M' : 'L'}${toX(i).toFixed(1)},${toY(p.ma111).toFixed(1)}`).join(' ');
+  const pathBand = hist.map((p, i) => `${i === 0 ? 'M' : 'L'}${toX(i).toFixed(1)},${toY(p.pi_band).toFixed(1)}`).join(' ');
+  const crossIdx = hist.findIndex(p => p.ma111 >= p.pi_band);
+  const firstLabel = hist[0].date.slice(0, 7);
+  const lastLabel = hist[hist.length - 1].date.slice(0, 7);
+  const crossMark = crossIdx >= 0
+    ? `<circle cx="${toX(crossIdx).toFixed(1)}" cy="${toY(hist[crossIdx].ma111).toFixed(1)}" r="4" fill="#D6394A"></circle>`
+    : '';
+  return `
+    <div style="font-size:10.5px;color:#8A8A8A;margin-top:10px;">Pi Cycle Top: 111일선 vs 350일선×2 (주간)</div>
+    <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:${h}px;">
+      <path d="${pathBand}" fill="none" stroke="#D6394A" stroke-width="1.5" stroke-dasharray="4,3"></path>
+      <path d="${pathMa111}" fill="none" stroke="#2a78d6" stroke-width="1.5"></path>
+      ${crossMark}
+      <text x="${padL}" y="${h - 4}" font-size="9" fill="#8A8A8A">${firstLabel}</text>
+      <text x="${w - padR}" y="${h - 4}" text-anchor="end" font-size="9" fill="#8A8A8A">${lastLabel}</text>
+    </svg>
+    <div style="display:flex;gap:12px;font-size:9.5px;color:#8A8A8A;margin-top:2px;">
+      <span><span style="display:inline-block;width:8px;height:8px;background:#2a78d6;border-radius:2px;margin-right:3px;"></span>111일선</span>
+      <span><span style="display:inline-block;width:8px;height:2px;background:#D6394A;margin-right:3px;vertical-align:middle;"></span>350일선×2</span>
+    </div>`;
 }
 
 function renderHoldings(allStocks){
@@ -1508,7 +1540,7 @@ function renderHoldings(allStocks){
         <div class="holding-reasons">
           ${status.lines.map(l => `<div class="${reasonLineClass}">${escapeHtml(l)}</div>`).join('')}
         </div>
-        ${s.code === 'BTC-KRW' && s.cycle ? buildMayerGauge(s.cycle) + buildMayerHistoryChart(s.cycle) : ''}
+        ${s.code === 'BTC-KRW' && s.cycle ? buildMayerGauge(s.cycle) + buildMayerHistoryChart(s.cycle) + buildPiCycleChart(s.cycle) : ''}
       </div>`;
   }).join('');
 

@@ -92,7 +92,7 @@ def calc_cycle_indicators(df):
     """반감기 사이클(장기 보유) 관점 지표.
     - Mayer Multiple = 종가 / 200일 이동평균 (2.4 이상=과열/고점권, 0.8 이하=저평가/저점권, 평균 약 1.31)
     - Pi Cycle Top = 111일 이동평균 vs 350일 이동평균×2 (111일선이 350일선×2를 상향 돌파하면 과거 주요 고점과 근접했던 이력)
-    - history: Mayer Multiple 주간 추이(200일 이동평균이 계산 가능한 시점부터) — 시계열 그래프용
+    - history: Mayer Multiple·111일선·350일선×2 주간 추이(200/350일 이동평균이 계산 가능한 시점부터) — 시계열 그래프용
     데이터가 부족(최소 350일치 미만)하면 None을 반환한다."""
     if df is None or len(df) < 350:
         return None
@@ -114,12 +114,21 @@ def calc_cycle_indicators(df):
     pi_cycle_band = round(float(last_ma350 * 2), 0)
     pi_cross = bool(last_ma111 >= last_ma350 * 2)
 
-    # 시계열: Mayer Multiple 주간 추이(200일 이동평균이 유효한 구간부터, 주 단위로 샘플링해 용량 절약)
-    mayer_series = (close / ma200).dropna()
-    weekly_mayer = mayer_series.resample("W").last().dropna()
+    # 시계열: Mayer Multiple + Pi Cycle(111일선, 350일선x2) 주간 추이 (350일 이동평균이 유효한 구간부터)
+    combined = pd.DataFrame({
+        "mayer": close / ma200,
+        "ma111": ma111,
+        "pi_band": ma350 * 2,
+    }).dropna(subset=["ma111", "pi_band"])
+    weekly = combined.resample("W").last().dropna(subset=["ma111", "pi_band"])
     history = [
-        {"date": idx.strftime("%Y-%m-%d"), "mayer_multiple": round(float(v), 3)}
-        for idx, v in weekly_mayer.items()
+        {
+            "date": idx.strftime("%Y-%m-%d"),
+            "mayer_multiple": None if pd.isna(row["mayer"]) else round(float(row["mayer"]), 3),
+            "ma111": round(float(row["ma111"])),
+            "pi_band": round(float(row["pi_band"])),
+        }
+        for idx, row in weekly.iterrows()
     ]
 
     return {
@@ -128,7 +137,7 @@ def calc_cycle_indicators(df):
         "ma111": round(float(last_ma111)),
         "pi_cycle_band": pi_cycle_band,  # 350일선 x 2 (Pi Cycle Top 기준선)
         "pi_cross": pi_cross,  # True면 111일선이 기준선을 이미 상향 돌파(고점 확정 신호)
-        "history": history,  # [{date, mayer_multiple}] 주간 추이
+        "history": history,  # [{date, mayer_multiple, ma111, pi_band}] 주간 추이
     }
 
 
