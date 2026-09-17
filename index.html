@@ -1411,6 +1411,52 @@ function classifyHolding(s){
   };
 }
 
+function buildMayerGauge(cycle){
+  if (!cycle) return '';
+  const mm = cycle.mayer_multiple;
+  const domainMax = 3.2;
+  const x0 = 10, x1 = 290; // 게이지 좌우 여백
+  const toX = v => x0 + (Math.min(Math.max(v, 0), domainMax) / domainMax) * (x1 - x0);
+  const lowX = toX(0.8), highX = toX(2.4), markerX = toX(mm);
+  const markerColor = mm <= 0.8 ? '#16A34A' : mm >= 2.4 ? '#D6394A' : '#8A8A8A';
+  return `
+    <svg viewBox="0 0 300 46" style="width:100%;height:46px;margin-top:6px;">
+      <rect x="${x0}" y="16" width="${lowX - x0}" height="8" rx="4" fill="#16A34A" opacity="0.35"></rect>
+      <rect x="${lowX}" y="16" width="${highX - lowX}" height="8" rx="4" fill="#B0AFAA" opacity="0.35"></rect>
+      <rect x="${highX}" y="16" width="${x1 - highX}" height="8" rx="4" fill="#D6394A" opacity="0.35"></rect>
+      <circle cx="${markerX}" cy="20" r="6" fill="${markerColor}"></circle>
+      <text x="${markerX}" y="12" text-anchor="middle" font-size="11" font-weight="700" fill="${markerColor}">${mm}</text>
+      <text x="${x0}" y="40" font-size="9.5" fill="#8A8A8A">저평가 0.8</text>
+      <text x="${x1}" y="40" text-anchor="end" font-size="9.5" fill="#8A8A8A">과열 2.4</text>
+    </svg>`;
+}
+
+function buildMayerHistoryChart(cycle){
+  const hist = cycle && cycle.history;
+  if (!hist || hist.length < 2) return '';
+  const w = 300, h = 110, padL = 8, padR = 8, padT = 10, padB = 16;
+  const values = hist.map(p => p.mayer_multiple);
+  const maxV = Math.max(3.2, ...values);
+  const innerW = w - padL - padR, innerH = h - padT - padB;
+  const toX = i => padL + (i / (hist.length - 1)) * innerW;
+  const toY = v => padT + innerH - (Math.max(0, v) / maxV) * innerH;
+  const pathD = hist.map((p, i) => `${i === 0 ? 'M' : 'L'}${toX(i).toFixed(1)},${toY(p.mayer_multiple).toFixed(1)}`).join(' ');
+  const y08 = toY(0.8), y24 = toY(2.4);
+  const firstLabel = hist[0].date.slice(0, 7);
+  const lastLabel = hist[hist.length - 1].date.slice(0, 7);
+  return `
+    <div style="font-size:10.5px;color:#8A8A8A;margin-top:10px;">Mayer Multiple 추이(주간)</div>
+    <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:${h}px;">
+      <line x1="${padL}" y1="${y24.toFixed(1)}" x2="${w - padR}" y2="${y24.toFixed(1)}" stroke="#D6394A" stroke-width="1" stroke-dasharray="3,3"></line>
+      <line x1="${padL}" y1="${y08.toFixed(1)}" x2="${w - padR}" y2="${y08.toFixed(1)}" stroke="#16A34A" stroke-width="1" stroke-dasharray="3,3"></line>
+      <path d="${pathD}" fill="none" stroke="#2a78d6" stroke-width="1.5"></path>
+      <text x="${padL}" y="${h - 4}" font-size="9" fill="#8A8A8A">${firstLabel}</text>
+      <text x="${w - padR}" y="${h - 4}" text-anchor="end" font-size="9" fill="#8A8A8A">${lastLabel}</text>
+      <text x="${w - padR}" y="${(y24 - 3).toFixed(1)}" text-anchor="end" font-size="9" fill="#D6394A">2.4</text>
+      <text x="${w - padR}" y="${(y08 - 3).toFixed(1)}" text-anchor="end" font-size="9" fill="#16A34A">0.8</text>
+    </svg>`;
+}
+
 function renderHoldings(allStocks){
   const wrap = document.getElementById('holdings-wrap');
   if (!wrap) return;
@@ -1462,6 +1508,7 @@ function renderHoldings(allStocks){
         <div class="holding-reasons">
           ${status.lines.map(l => `<div class="${reasonLineClass}">${escapeHtml(l)}</div>`).join('')}
         </div>
+        ${s.code === 'BTC-KRW' && s.cycle ? buildMayerGauge(s.cycle) + buildMayerHistoryChart(s.cycle) : ''}
       </div>`;
   }).join('');
 
