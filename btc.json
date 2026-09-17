@@ -1,949 +1,1277 @@
 {
-  "updated_at": "2026-09-17 15:23",
+  "updated_at": "2026-09-17 15:32",
   "assets": [
     {
       "code": "BTC-KRW",
       "name": "비트코인",
-      "close": 105216000,
-      "change_pct": 0.35,
+      "close": 105335000,
+      "change_pct": 0.46,
       "daily": {
-        "k": 18.48,
-        "d": 12.5
+        "k": 19.03,
+        "d": 12.68
       },
       "weekly": {
-        "k": 86.99,
-        "d": 93.33
+        "k": 87.16,
+        "d": 93.39
       },
       "monthly": {
-        "k": 16.06,
-        "d": 9.98
+        "k": 16.11,
+        "d": 10.0
       },
       "cycle": {
-        "mayer_multiple": 1.022,
-        "ma200": 102904370,
-        "ma111": 97438730,
-        "pi_cycle_band": 234072354.0,
+        "mayer_multiple": 1.024,
+        "ma200": 102904965,
+        "ma111": 97439802,
+        "pi_cycle_band": 234073034.0,
         "pi_cross": false,
         "history": [
           {
-            "date": "2022-05-01",
-            "mayer_multiple": 0.85
-          },
-          {
-            "date": "2022-05-08",
-            "mayer_multiple": 0.784
-          },
-          {
-            "date": "2022-05-15",
-            "mayer_multiple": 0.731
-          },
-          {
-            "date": "2022-05-22",
-            "mayer_multiple": 0.712
-          },
-          {
-            "date": "2022-05-29",
-            "mayer_multiple": 0.701
-          },
-          {
-            "date": "2022-06-05",
-            "mayer_multiple": 0.731
-          },
-          {
-            "date": "2022-06-12",
-            "mayer_multiple": 0.684
-          },
-          {
-            "date": "2022-06-19",
-            "mayer_multiple": 0.541
-          },
-          {
-            "date": "2022-06-26",
-            "mayer_multiple": 0.573
-          },
-          {
-            "date": "2022-07-03",
-            "mayer_multiple": 0.544
-          },
-          {
-            "date": "2022-07-10",
-            "mayer_multiple": 0.599
-          },
-          {
-            "date": "2022-07-17",
-            "mayer_multiple": 0.619
-          },
-          {
-            "date": "2022-07-24",
-            "mayer_multiple": 0.685
-          },
-          {
-            "date": "2022-07-31",
-            "mayer_multiple": 0.719
-          },
-          {
-            "date": "2022-08-07",
-            "mayer_multiple": 0.73
-          },
-          {
-            "date": "2022-08-14",
-            "mayer_multiple": 0.783
-          },
-          {
-            "date": "2022-08-21",
-            "mayer_multiple": 0.719
-          },
-          {
-            "date": "2022-08-28",
-            "mayer_multiple": 0.674
-          },
-          {
-            "date": "2022-09-04",
-            "mayer_multiple": 0.7
-          },
-          {
-            "date": "2022-09-11",
-            "mayer_multiple": 0.777
-          },
-          {
-            "date": "2022-09-18",
-            "mayer_multiple": 0.725
-          },
-          {
-            "date": "2022-09-25",
-            "mayer_multiple": 0.728
-          },
-          {
             "date": "2022-10-02",
-            "mayer_multiple": 0.761
+            "mayer_multiple": 0.761,
+            "ma111": 28517604,
+            "pi_band": 92582943
           },
           {
             "date": "2022-10-09",
-            "mayer_multiple": 0.777
+            "mayer_multiple": 0.777,
+            "ma111": 28583162,
+            "pi_band": 90653314
           },
           {
             "date": "2022-10-16",
-            "mayer_multiple": 0.798
+            "mayer_multiple": 0.798,
+            "ma111": 28604261,
+            "pi_band": 88813411
           },
           {
             "date": "2022-10-23",
-            "mayer_multiple": 0.831
+            "mayer_multiple": 0.831,
+            "ma111": 28714261,
+            "pi_band": 86950314
           },
           {
             "date": "2022-10-30",
-            "mayer_multiple": 0.882
+            "mayer_multiple": 0.882,
+            "ma111": 28796577,
+            "pi_band": 84920560
           },
           {
             "date": "2022-11-06",
-            "mayer_multiple": 0.919
+            "mayer_multiple": 0.919,
+            "ma111": 28902865,
+            "pi_band": 83142817
           },
           {
             "date": "2022-11-13",
-            "mayer_multiple": 0.722
+            "mayer_multiple": 0.722,
+            "ma111": 28570288,
+            "pi_band": 81283994
           },
           {
             "date": "2022-11-20",
-            "mayer_multiple": 0.753
+            "mayer_multiple": 0.753,
+            "ma111": 28087973,
+            "pi_band": 79478377
           },
           {
             "date": "2022-11-27",
-            "mayer_multiple": 0.768
+            "mayer_multiple": 0.768,
+            "ma111": 27577045,
+            "pi_band": 77923394
           },
           {
             "date": "2022-12-04",
-            "mayer_multiple": 0.792
+            "mayer_multiple": 0.792,
+            "ma111": 26994108,
+            "pi_band": 76467251
           },
           {
             "date": "2022-12-11",
-            "mayer_multiple": 0.802
+            "mayer_multiple": 0.802,
+            "ma111": 26520027,
+            "pi_band": 74956411
           },
           {
             "date": "2022-12-18",
-            "mayer_multiple": 0.797
+            "mayer_multiple": 0.797,
+            "ma111": 26164541,
+            "pi_band": 73542411
           },
           {
             "date": "2022-12-25",
-            "mayer_multiple": 0.801
+            "mayer_multiple": 0.801,
+            "ma111": 25811703,
+            "pi_band": 72274663
           },
           {
             "date": "2023-01-01",
-            "mayer_multiple": 0.787
+            "mayer_multiple": 0.787,
+            "ma111": 25349883,
+            "pi_band": 71034766
           },
           {
             "date": "2023-01-08",
-            "mayer_multiple": 0.814
+            "mayer_multiple": 0.814,
+            "ma111": 24940919,
+            "pi_band": 69977331
           },
           {
             "date": "2023-01-15",
-            "mayer_multiple": 0.973
+            "mayer_multiple": 0.973,
+            "ma111": 24722432,
+            "pi_band": 69089537
           },
           {
             "date": "2023-01-22",
-            "mayer_multiple": 1.068
+            "mayer_multiple": 1.068,
+            "ma111": 24668622,
+            "pi_band": 68231046
           },
           {
             "date": "2023-01-29",
-            "mayer_multiple": 1.114
+            "mayer_multiple": 1.114,
+            "ma111": 24718730,
+            "pi_band": 67278674
           },
           {
             "date": "2023-02-05",
-            "mayer_multiple": 1.087
+            "mayer_multiple": 1.087,
+            "ma111": 24821351,
+            "pi_band": 66430440
           },
           {
             "date": "2023-02-12",
-            "mayer_multiple": 1.061
+            "mayer_multiple": 1.061,
+            "ma111": 24884162,
+            "pi_band": 65713514
           },
           {
             "date": "2023-02-19",
-            "mayer_multiple": 1.181
+            "mayer_multiple": 1.181,
+            "ma111": 24989225,
+            "pi_band": 64899149
           },
           {
             "date": "2023-02-26",
-            "mayer_multiple": 1.175
+            "mayer_multiple": 1.175,
+            "ma111": 25134405,
+            "pi_band": 64209497
           },
           {
             "date": "2023-03-05",
-            "mayer_multiple": 1.128
+            "mayer_multiple": 1.128,
+            "ma111": 25561685,
+            "pi_band": 63428223
           },
           {
             "date": "2023-03-12",
-            "mayer_multiple": 1.1
+            "mayer_multiple": 1.1,
+            "ma111": 25923532,
+            "pi_band": 62454943
           },
           {
             "date": "2023-03-19",
-            "mayer_multiple": 1.391
+            "mayer_multiple": 1.391,
+            "ma111": 26649577,
+            "pi_band": 61565171
           },
           {
             "date": "2023-03-26",
-            "mayer_multiple": 1.371
+            "mayer_multiple": 1.371,
+            "ma111": 27540315,
+            "pi_band": 60877823
           },
           {
             "date": "2023-04-02",
-            "mayer_multiple": 1.362
+            "mayer_multiple": 1.362,
+            "ma111": 28437234,
+            "pi_band": 60335931
           },
           {
             "date": "2023-04-09",
-            "mayer_multiple": 1.346
+            "mayer_multiple": 1.346,
+            "ma111": 29355441,
+            "pi_band": 59797720
           },
           {
             "date": "2023-04-16",
-            "mayer_multiple": 1.407
+            "mayer_multiple": 1.407,
+            "ma111": 30477892,
+            "pi_band": 59394794
           },
           {
             "date": "2023-04-23",
-            "mayer_multiple": 1.292
+            "mayer_multiple": 1.292,
+            "ma111": 31527919,
+            "pi_band": 58993394
           },
           {
             "date": "2023-04-30",
-            "mayer_multiple": 1.357
+            "mayer_multiple": 1.357,
+            "ma111": 32592514,
+            "pi_band": 58921251
           },
           {
             "date": "2023-05-07",
-            "mayer_multiple": 1.305
+            "mayer_multiple": 1.305,
+            "ma111": 33479811,
+            "pi_band": 58922417
           },
           {
             "date": "2023-05-14",
-            "mayer_multiple": 1.233
+            "mayer_multiple": 1.233,
+            "ma111": 34069730,
+            "pi_band": 58893309
           },
           {
             "date": "2023-05-21",
-            "mayer_multiple": 1.21
+            "mayer_multiple": 1.21,
+            "ma111": 34539811,
+            "pi_band": 58808171
           },
           {
             "date": "2023-05-28",
-            "mayer_multiple": 1.242
+            "mayer_multiple": 1.242,
+            "ma111": 34962550,
+            "pi_band": 58734560
           },
           {
             "date": "2023-06-04",
-            "mayer_multiple": 1.175
+            "mayer_multiple": 1.175,
+            "ma111": 35448541,
+            "pi_band": 59082360
           },
           {
             "date": "2023-06-11",
-            "mayer_multiple": 1.109
+            "mayer_multiple": 1.109,
+            "ma111": 35687252,
+            "pi_band": 59388469
           },
           {
             "date": "2023-06-18",
-            "mayer_multiple": 1.099
+            "mayer_multiple": 1.099,
+            "ma111": 35858892,
+            "pi_band": 59706166
           },
           {
             "date": "2023-06-25",
-            "mayer_multiple": 1.264
+            "mayer_multiple": 1.264,
+            "ma111": 36394234,
+            "pi_band": 60164371
           },
           {
             "date": "2023-07-02",
-            "mayer_multiple": 1.25
+            "mayer_multiple": 1.25,
+            "ma111": 37123910,
+            "pi_band": 60703491
           },
           {
             "date": "2023-07-09",
-            "mayer_multiple": 1.201
+            "mayer_multiple": 1.201,
+            "ma111": 37461225,
+            "pi_band": 61113537
           },
           {
             "date": "2023-07-16",
-            "mayer_multiple": 1.152
+            "mayer_multiple": 1.152,
+            "ma111": 37635649,
+            "pi_band": 61486029
           },
           {
             "date": "2023-07-23",
-            "mayer_multiple": 1.132
+            "mayer_multiple": 1.132,
+            "ma111": 37732577,
+            "pi_band": 61805851
           },
           {
             "date": "2023-07-30",
-            "mayer_multiple": 1.083
+            "mayer_multiple": 1.083,
+            "ma111": 37764144,
+            "pi_band": 62045817
           },
           {
             "date": "2023-08-06",
-            "mayer_multiple": 1.09
+            "mayer_multiple": 1.09,
+            "ma111": 37686766,
+            "pi_band": 62352474
           },
           {
             "date": "2023-08-13",
-            "mayer_multiple": 1.093
+            "mayer_multiple": 1.093,
+            "ma111": 37789000,
+            "pi_band": 62776720
           },
           {
             "date": "2023-08-20",
-            "mayer_multiple": 0.996
+            "mayer_multiple": 0.996,
+            "ma111": 37717450,
+            "pi_band": 63173051
           },
           {
             "date": "2023-08-27",
-            "mayer_multiple": 0.975
+            "mayer_multiple": 0.975,
+            "ma111": 37541703,
+            "pi_band": 63474971
           },
           {
             "date": "2023-09-03",
-            "mayer_multiple": 0.966
+            "mayer_multiple": 0.966,
+            "ma111": 37495387,
+            "pi_band": 63773709
           },
           {
             "date": "2023-09-10",
-            "mayer_multiple": 0.959
+            "mayer_multiple": 0.959,
+            "ma111": 37428559,
+            "pi_band": 64094474
           },
           {
             "date": "2023-09-17",
-            "mayer_multiple": 0.97
+            "mayer_multiple": 0.97,
+            "ma111": 37384387,
+            "pi_band": 64402177
           },
           {
             "date": "2023-09-24",
-            "mayer_multiple": 0.959
+            "mayer_multiple": 0.959,
+            "ma111": 37395117,
+            "pi_band": 64715400
           },
           {
             "date": "2023-10-01",
-            "mayer_multiple": 1.013
+            "mayer_multiple": 1.013,
+            "ma111": 37494459,
+            "pi_band": 65067509
           },
           {
             "date": "2023-10-08",
-            "mayer_multiple": 1.016
+            "mayer_multiple": 1.016,
+            "ma111": 37709730,
+            "pi_band": 65461537
           },
           {
             "date": "2023-10-15",
-            "mayer_multiple": 0.993
+            "mayer_multiple": 0.993,
+            "ma111": 37549829,
+            "pi_band": 65794246
           },
           {
             "date": "2023-10-22",
-            "mayer_multiple": 1.078
+            "mayer_multiple": 1.078,
+            "ma111": 37475820,
+            "pi_band": 66209069
           },
           {
             "date": "2023-10-29",
-            "mayer_multiple": 1.242
+            "mayer_multiple": 1.242,
+            "ma111": 37839712,
+            "pi_band": 67058686
           },
           {
             "date": "2023-11-05",
-            "mayer_multiple": 1.239
+            "mayer_multiple": 1.239,
+            "ma111": 38330252,
+            "pi_band": 68027651
           },
           {
             "date": "2023-11-12",
-            "mayer_multiple": 1.288
+            "mayer_multiple": 1.288,
+            "ma111": 38963441,
+            "pi_band": 69064840
           },
           {
             "date": "2023-11-19",
-            "mayer_multiple": 1.286
+            "mayer_multiple": 1.286,
+            "ma111": 39679559,
+            "pi_band": 70123354
           },
           {
             "date": "2023-11-26",
-            "mayer_multiple": 1.282
+            "mayer_multiple": 1.282,
+            "ma111": 40403577,
+            "pi_band": 71212109
           },
           {
             "date": "2023-12-03",
-            "mayer_multiple": 1.353
+            "mayer_multiple": 1.353,
+            "ma111": 41173685,
+            "pi_band": 72362497
           },
           {
             "date": "2023-12-10",
-            "mayer_multiple": 1.477
+            "mayer_multiple": 1.477,
+            "ma111": 42598126,
+            "pi_band": 73868783
           },
           {
             "date": "2023-12-17",
-            "mayer_multiple": 1.375
+            "mayer_multiple": 1.375,
+            "ma111": 44004838,
+            "pi_band": 75334280
           },
           {
             "date": "2023-12-24",
-            "mayer_multiple": 1.379
+            "mayer_multiple": 1.379,
+            "ma111": 45452225,
+            "pi_band": 76826280
           },
           {
             "date": "2023-12-31",
-            "mayer_multiple": 1.331
+            "mayer_multiple": 1.331,
+            "ma111": 46841766,
+            "pi_band": 78162909
           },
           {
             "date": "2024-01-07",
-            "mayer_multiple": 1.353
+            "mayer_multiple": 1.353,
+            "ma111": 48326486,
+            "pi_band": 79452029
           },
           {
             "date": "2024-01-14",
-            "mayer_multiple": 1.292
+            "mayer_multiple": 1.292,
+            "ma111": 49912423,
+            "pi_band": 80741629
           },
           {
             "date": "2024-01-21",
-            "mayer_multiple": 1.274
+            "mayer_multiple": 1.274,
+            "ma111": 51262441,
+            "pi_band": 81892606
           },
           {
             "date": "2024-01-28",
-            "mayer_multiple": 1.269
+            "mayer_multiple": 1.269,
+            "ma111": 52438559,
+            "pi_band": 82994851
           },
           {
             "date": "2024-02-04",
-            "mayer_multiple": 1.27
+            "mayer_multiple": 1.27,
+            "ma111": 53817171,
+            "pi_band": 84136080
           },
           {
             "date": "2024-02-11",
-            "mayer_multiple": 1.384
+            "mayer_multiple": 1.384,
+            "ma111": 55187261,
+            "pi_band": 85358217
           },
           {
             "date": "2024-02-18",
-            "mayer_multiple": 1.491
+            "mayer_multiple": 1.491,
+            "ma111": 56694559,
+            "pi_band": 86943143
           },
           {
             "date": "2024-02-25",
-            "mayer_multiple": 1.442
+            "mayer_multiple": 1.442,
+            "ma111": 58234414,
+            "pi_band": 88662331
           },
           {
             "date": "2024-03-03",
-            "mayer_multiple": 1.726
+            "mayer_multiple": 1.726,
+            "ma111": 60453126,
+            "pi_band": 90659177
           },
           {
             "date": "2024-03-10",
-            "mayer_multiple": 1.838
+            "mayer_multiple": 1.838,
+            "ma111": 63318162,
+            "pi_band": 92973560
           },
           {
             "date": "2024-03-17",
-            "mayer_multiple": 1.807
+            "mayer_multiple": 1.807,
+            "ma111": 66523757,
+            "pi_band": 95526709
           },
           {
             "date": "2024-03-24",
-            "mayer_multiple": 1.682
+            "mayer_multiple": 1.682,
+            "ma111": 69260955,
+            "pi_band": 97875514
           },
           {
             "date": "2024-03-31",
-            "mayer_multiple": 1.691
+            "mayer_multiple": 1.691,
+            "ma111": 71819505,
+            "pi_band": 100292594
           },
           {
             "date": "2024-04-07",
-            "mayer_multiple": 1.606
+            "mayer_multiple": 1.606,
+            "ma111": 74365477,
+            "pi_band": 102716474
           },
           {
             "date": "2024-04-14",
-            "mayer_multiple": 1.542
+            "mayer_multiple": 1.542,
+            "ma111": 76950351,
+            "pi_band": 105169749
           },
           {
             "date": "2024-04-21",
-            "mayer_multiple": 1.435
+            "mayer_multiple": 1.435,
+            "ma111": 79284838,
+            "pi_band": 107401931
           },
           {
             "date": "2024-04-28",
-            "mayer_multiple": 1.33
+            "mayer_multiple": 1.33,
+            "ma111": 81396856,
+            "pi_band": 109667526
           },
           {
             "date": "2024-05-05",
-            "mayer_multiple": 1.29
+            "mayer_multiple": 1.29,
+            "ma111": 83121505,
+            "pi_band": 111725720
           },
           {
             "date": "2024-05-12",
-            "mayer_multiple": 1.212
+            "mayer_multiple": 1.212,
+            "ma111": 84976937,
+            "pi_band": 113761543
           },
           {
             "date": "2024-05-19",
-            "mayer_multiple": 1.264
+            "mayer_multiple": 1.264,
+            "ma111": 87112081,
+            "pi_band": 115940251
           },
           {
             "date": "2024-05-26",
-            "mayer_multiple": 1.281
+            "mayer_multiple": 1.281,
+            "ma111": 89438568,
+            "pi_band": 118384051
           },
           {
             "date": "2024-06-02",
-            "mayer_multiple": 1.246
+            "mayer_multiple": 1.246,
+            "ma111": 91438414,
+            "pi_band": 120815783
           },
           {
             "date": "2024-06-09",
-            "mayer_multiple": 1.257
+            "mayer_multiple": 1.257,
+            "ma111": 93133027,
+            "pi_band": 123171669
           },
           {
             "date": "2024-06-16",
-            "mayer_multiple": 1.185
+            "mayer_multiple": 1.185,
+            "ma111": 94584928,
+            "pi_band": 125355126
           },
           {
             "date": "2024-06-23",
-            "mayer_multiple": 1.103
+            "mayer_multiple": 1.103,
+            "ma111": 94849568,
+            "pi_band": 127392383
           },
           {
             "date": "2024-06-30",
-            "mayer_multiple": 1.076
+            "mayer_multiple": 1.076,
+            "ma111": 94272613,
+            "pi_band": 129264971
           },
           {
             "date": "2024-07-07",
-            "mayer_multiple": 0.961
+            "mayer_multiple": 0.961,
+            "ma111": 93203207,
+            "pi_band": 131066514
           },
           {
             "date": "2024-07-14",
-            "mayer_multiple": 1.024
+            "mayer_multiple": 1.024,
+            "ma111": 92343829,
+            "pi_band": 132838726
           },
           {
             "date": "2024-07-21",
-            "mayer_multiple": 1.122
+            "mayer_multiple": 1.122,
+            "ma111": 91818225,
+            "pi_band": 134978263
           },
           {
             "date": "2024-07-28",
-            "mayer_multiple": 1.112
+            "mayer_multiple": 1.112,
+            "ma111": 91495090,
+            "pi_band": 137154914
           },
           {
             "date": "2024-08-04",
-            "mayer_multiple": 0.943
+            "mayer_multiple": 0.943,
+            "ma111": 90866360,
+            "pi_band": 139217103
           },
           {
             "date": "2024-08-11",
-            "mayer_multiple": 0.944
+            "mayer_multiple": 0.944,
+            "ma111": 90111559,
+            "pi_band": 141088737
           },
           {
             "date": "2024-08-18",
-            "mayer_multiple": 0.92
+            "mayer_multiple": 0.92,
+            "ma111": 89482153,
+            "pi_band": 142954949
           },
           {
             "date": "2024-08-25",
-            "mayer_multiple": 0.964
+            "mayer_multiple": 0.964,
+            "ma111": 89236946,
+            "pi_band": 144889080
           },
           {
             "date": "2024-09-01",
-            "mayer_multiple": 0.87
+            "mayer_multiple": 0.87,
+            "ma111": 88859054,
+            "pi_band": 146702251
           },
           {
             "date": "2024-09-08",
-            "mayer_multiple": 0.826
+            "mayer_multiple": 0.826,
+            "ma111": 87874360,
+            "pi_band": 148318297
           },
           {
             "date": "2024-09-15",
-            "mayer_multiple": 0.883
+            "mayer_multiple": 0.883,
+            "ma111": 86810784,
+            "pi_band": 150018926
           },
           {
             "date": "2024-09-22",
-            "mayer_multiple": 0.942
+            "mayer_multiple": 0.942,
+            "ma111": 86054459,
+            "pi_band": 151828166
           },
           {
             "date": "2024-09-29",
-            "mayer_multiple": 0.96
+            "mayer_multiple": 0.96,
+            "ma111": 85282991,
+            "pi_band": 153774983
           },
           {
             "date": "2024-10-06",
-            "mayer_multiple": 0.95
+            "mayer_multiple": 0.95,
+            "ma111": 84563018,
+            "pi_band": 155521223
           },
           {
             "date": "2024-10-13",
-            "mayer_multiple": 0.958
+            "mayer_multiple": 0.958,
+            "ma111": 84167541,
+            "pi_band": 157037154
           },
           {
             "date": "2024-10-20",
-            "mayer_multiple": 1.063
+            "mayer_multiple": 1.063,
+            "ma111": 84488901,
+            "pi_band": 158825663
           },
           {
             "date": "2024-10-27",
-            "mayer_multiple": 1.076
+            "mayer_multiple": 1.076,
+            "ma111": 85172955,
+            "pi_band": 160620217
           },
           {
             "date": "2024-11-03",
-            "mayer_multiple": 1.088
+            "mayer_multiple": 1.088,
+            "ma111": 86089351,
+            "pi_band": 162579983
           },
           {
             "date": "2024-11-10",
-            "mayer_multiple": 1.26
+            "mayer_multiple": 1.26,
+            "ma111": 86780216,
+            "pi_band": 164712789
           },
           {
             "date": "2024-11-17",
-            "mayer_multiple": 1.41
+            "mayer_multiple": 1.41,
+            "ma111": 88840901,
+            "pi_band": 167700006
           },
           {
             "date": "2024-11-24",
-            "mayer_multiple": 1.491
+            "mayer_multiple": 1.491,
+            "ma111": 91803000,
+            "pi_band": 170667417
           },
           {
             "date": "2024-12-01",
-            "mayer_multiple": 1.441
+            "mayer_multiple": 1.441,
+            "ma111": 94906820,
+            "pi_band": 173648771
           },
           {
             "date": "2024-12-08",
-            "mayer_multiple": 1.494
+            "mayer_multiple": 1.494,
+            "ma111": 98388820,
+            "pi_band": 176798554
           },
           {
             "date": "2024-12-15",
-            "mayer_multiple": 1.553
+            "mayer_multiple": 1.553,
+            "ma111": 102125991,
+            "pi_band": 180241251
           },
           {
             "date": "2024-12-22",
-            "mayer_multiple": 1.478
+            "mayer_multiple": 1.478,
+            "ma111": 106478297,
+            "pi_band": 183839714
           },
           {
             "date": "2024-12-29",
-            "mayer_multiple": 1.403
+            "mayer_multiple": 1.403,
+            "ma111": 110745865,
+            "pi_band": 187142846
           },
           {
             "date": "2025-01-05",
-            "mayer_multiple": 1.429
+            "mayer_multiple": 1.429,
+            "ma111": 114738162,
+            "pi_band": 190515211
           },
           {
             "date": "2025-01-12",
-            "mayer_multiple": 1.377
+            "mayer_multiple": 1.377,
+            "ma111": 118500261,
+            "pi_band": 193998937
           },
           {
             "date": "2025-01-19",
-            "mayer_multiple": 1.462
+            "mayer_multiple": 1.462,
+            "ma111": 122488964,
+            "pi_band": 197589851
           },
           {
             "date": "2025-01-26",
-            "mayer_multiple": 1.446
+            "mayer_multiple": 1.446,
+            "ma111": 127078928,
+            "pi_band": 201348297
           },
           {
             "date": "2025-02-02",
-            "mayer_multiple": 1.394
+            "mayer_multiple": 1.394,
+            "ma111": 131621613,
+            "pi_band": 204801789
           },
           {
             "date": "2025-02-09",
-            "mayer_multiple": 1.312
+            "mayer_multiple": 1.312,
+            "ma111": 135355658,
+            "pi_band": 208001880
           },
           {
             "date": "2025-02-16",
-            "mayer_multiple": 1.273
+            "mayer_multiple": 1.273,
+            "ma111": 138669532,
+            "pi_band": 210507463
           },
           {
             "date": "2025-02-23",
-            "mayer_multiple": 1.214
+            "mayer_multiple": 1.214,
+            "ma111": 141552613,
+            "pi_band": 212455086
           },
           {
             "date": "2025-03-02",
-            "mayer_multiple": 1.207
+            "mayer_multiple": 1.207,
+            "ma111": 142911477,
+            "pi_band": 213588589
           },
           {
             "date": "2025-03-09",
-            "mayer_multiple": 1.012
+            "mayer_multiple": 1.012,
+            "ma111": 143118477,
+            "pi_band": 214948046
           },
           {
             "date": "2025-03-16",
-            "mayer_multiple": 1.006
+            "mayer_multiple": 1.006,
+            "ma111": 142359081,
+            "pi_band": 215825897
           },
           {
             "date": "2025-03-23",
-            "mayer_multiple": 1.035
+            "mayer_multiple": 1.035,
+            "ma111": 141824405,
+            "pi_band": 216867891
           },
           {
             "date": "2025-03-30",
-            "mayer_multiple": 0.989
+            "mayer_multiple": 0.989,
+            "ma111": 141095252,
+            "pi_band": 217946589
           },
           {
             "date": "2025-04-06",
-            "mayer_multiple": 0.933
+            "mayer_multiple": 0.933,
+            "ma111": 139681387,
+            "pi_band": 219090286
           },
           {
             "date": "2025-04-13",
-            "mayer_multiple": 0.956
+            "mayer_multiple": 0.956,
+            "ma111": 137918171,
+            "pi_band": 220146897
           },
           {
             "date": "2025-04-20",
-            "mayer_multiple": 0.955
+            "mayer_multiple": 0.955,
+            "ma111": 136622027,
+            "pi_band": 221531966
           },
           {
             "date": "2025-04-27",
-            "mayer_multiple": 1.038
+            "mayer_multiple": 1.038,
+            "ma111": 135976901,
+            "pi_band": 223409903
           },
           {
             "date": "2025-05-04",
-            "mayer_multiple": 1.028
+            "mayer_multiple": 1.028,
+            "ma111": 135660234,
+            "pi_band": 225266663
           },
           {
             "date": "2025-05-11",
-            "mayer_multiple": 1.088
+            "mayer_multiple": 1.088,
+            "ma111": 135084315,
+            "pi_band": 227081400
           },
           {
             "date": "2025-05-18",
-            "mayer_multiple": 1.111
+            "mayer_multiple": 1.111,
+            "ma111": 134480081,
+            "pi_band": 229151394
           },
           {
             "date": "2025-05-25",
-            "mayer_multiple": 1.108
+            "mayer_multiple": 1.108,
+            "ma111": 134119423,
+            "pi_band": 231292943
           },
           {
             "date": "2025-06-01",
-            "mayer_multiple": 1.076
+            "mayer_multiple": 1.076,
+            "ma111": 134070856,
+            "pi_band": 233464280
           },
           {
             "date": "2025-06-08",
-            "mayer_multiple": 1.048
+            "mayer_multiple": 1.048,
+            "ma111": 134033856,
+            "pi_band": 235640869
           },
           {
             "date": "2025-06-15",
-            "mayer_multiple": 1.046
+            "mayer_multiple": 1.046,
+            "ma111": 134427405,
+            "pi_band": 238106017
           },
           {
             "date": "2025-06-22",
-            "mayer_multiple": 1.007
+            "mayer_multiple": 1.007,
+            "ma111": 135399387,
+            "pi_band": 240530474
           },
           {
             "date": "2025-06-29",
-            "mayer_multiple": 1.055
+            "mayer_multiple": 1.055,
+            "ma111": 136591468,
+            "pi_band": 243118120
           },
           {
             "date": "2025-07-06",
-            "mayer_multiple": 1.059
+            "mayer_multiple": 1.059,
+            "ma111": 138137721,
+            "pi_band": 245335411
           },
           {
             "date": "2025-07-13",
-            "mayer_multiple": 1.151
+            "mayer_multiple": 1.151,
+            "ma111": 139993486,
+            "pi_band": 247782811
           },
           {
             "date": "2025-07-20",
-            "mayer_multiple": 1.134
+            "mayer_multiple": 1.134,
+            "ma111": 142239459,
+            "pi_band": 250684280
           },
           {
             "date": "2025-07-27",
-            "mayer_multiple": 1.148
+            "mayer_multiple": 1.148,
+            "ma111": 144709802,
+            "pi_band": 253840423
           },
           {
             "date": "2025-08-03",
-            "mayer_multiple": 1.125
+            "mayer_multiple": 1.125,
+            "ma111": 147257784,
+            "pi_band": 256971977
           },
           {
             "date": "2025-08-10",
-            "mayer_multiple": 1.149
+            "mayer_multiple": 1.149,
+            "ma111": 149650784,
+            "pi_band": 260065503
           },
           {
             "date": "2025-08-17",
-            "mayer_multiple": 1.141
+            "mayer_multiple": 1.141,
+            "ma111": 151486946,
+            "pi_band": 263413240
           },
           {
             "date": "2025-08-24",
-            "mayer_multiple": 1.102
+            "mayer_multiple": 1.102,
+            "ma111": 152890658,
+            "pi_band": 266720600
           },
           {
             "date": "2025-08-31",
-            "mayer_multiple": 1.052
+            "mayer_multiple": 1.052,
+            "ma111": 153616838,
+            "pi_band": 269734526
           },
           {
             "date": "2025-09-07",
-            "mayer_multiple": 1.079
+            "mayer_multiple": 1.079,
+            "ma111": 154085523,
+            "pi_band": 272603697
           },
           {
             "date": "2025-09-14",
-            "mayer_multiple": 1.111
+            "mayer_multiple": 1.111,
+            "ma111": 154535090,
+            "pi_band": 275532383
           },
           {
             "date": "2025-09-21",
-            "mayer_multiple": 1.11
+            "mayer_multiple": 1.11,
+            "ma111": 155359243,
+            "pi_band": 278680663
           },
           {
             "date": "2025-09-28",
-            "mayer_multiple": 1.095
+            "mayer_multiple": 1.095,
+            "ma111": 156205658,
+            "pi_band": 281704097
           },
           {
             "date": "2025-10-05",
-            "mayer_multiple": 1.194
+            "mayer_multiple": 1.194,
+            "ma111": 157628505,
+            "pi_band": 284831251
           },
           {
             "date": "2025-10-12",
-            "mayer_multiple": 1.159
+            "mayer_multiple": 1.159,
+            "ma111": 159569595,
+            "pi_band": 288094331
           },
           {
             "date": "2025-10-19",
-            "mayer_multiple": 1.088
+            "mayer_multiple": 1.088,
+            "ma111": 160829288,
+            "pi_band": 290836577
           },
           {
             "date": "2025-10-26",
-            "mayer_multiple": 1.108
+            "mayer_multiple": 1.108,
+            "ma111": 161962757,
+            "pi_band": 293329726
           },
           {
             "date": "2025-11-02",
-            "mayer_multiple": 1.062
+            "mayer_multiple": 1.062,
+            "ma111": 162498514,
+            "pi_band": 294904526
           },
           {
             "date": "2025-11-09",
-            "mayer_multiple": 1.0
+            "mayer_multiple": 1.0,
+            "ma111": 162081946,
+            "pi_band": 295731286
           },
           {
             "date": "2025-11-16",
-            "mayer_multiple": 0.899
+            "mayer_multiple": 0.899,
+            "ma111": 161292369,
+            "pi_band": 296400754
           },
           {
             "date": "2025-11-23",
-            "mayer_multiple": 0.847
+            "mayer_multiple": 0.847,
+            "ma111": 159539919,
+            "pi_band": 296208686
           },
           {
             "date": "2025-11-30",
-            "mayer_multiple": 0.873
+            "mayer_multiple": 0.873,
+            "ma111": 157860351,
+            "pi_band": 295873023
           },
           {
             "date": "2025-12-07",
-            "mayer_multiple": 0.872
+            "mayer_multiple": 0.872,
+            "ma111": 156011829,
+            "pi_band": 295296269
           },
           {
             "date": "2025-12-14",
-            "mayer_multiple": 0.853
+            "mayer_multiple": 0.853,
+            "ma111": 154563351,
+            "pi_band": 294962617
           },
           {
             "date": "2025-12-21",
-            "mayer_multiple": 0.857
+            "mayer_multiple": 0.857,
+            "ma111": 153069063,
+            "pi_band": 294469840
           },
           {
             "date": "2025-12-28",
-            "mayer_multiple": 0.835
+            "mayer_multiple": 0.835,
+            "ma111": 151441090,
+            "pi_band": 293905691
           },
           {
             "date": "2026-01-04",
-            "mayer_multiple": 0.867
+            "mayer_multiple": 0.867,
+            "ma111": 149541766,
+            "pi_band": 293131446
           },
           {
             "date": "2026-01-11",
-            "mayer_multiple": 0.878
+            "mayer_multiple": 0.878,
+            "ma111": 147798640,
+            "pi_band": 292261669
           },
           {
             "date": "2026-01-18",
-            "mayer_multiple": 0.914
+            "mayer_multiple": 0.914,
+            "ma111": 146537649,
+            "pi_band": 291589903
           },
           {
             "date": "2026-01-25",
-            "mayer_multiple": 0.848
+            "mayer_multiple": 0.848,
+            "ma111": 144027676,
+            "pi_band": 290819646
           },
           {
             "date": "2026-02-01",
-            "mayer_multiple": 0.755
+            "mayer_multiple": 0.755,
+            "ma111": 140870216,
+            "pi_band": 289914646
           },
           {
             "date": "2026-02-08",
-            "mayer_multiple": 0.705
+            "mayer_multiple": 0.705,
+            "ma111": 137086198,
+            "pi_band": 288412863
           },
           {
             "date": "2026-02-15",
-            "mayer_multiple": 0.699
+            "mayer_multiple": 0.699,
+            "ma111": 132989279,
+            "pi_band": 287290371
           },
           {
             "date": "2026-02-22",
-            "mayer_multiple": 0.691
+            "mayer_multiple": 0.691,
+            "ma111": 128943604,
+            "pi_band": 286093291
           },
           {
             "date": "2026-03-01",
-            "mayer_multiple": 0.677
+            "mayer_multiple": 0.677,
+            "ma111": 125297081,
+            "pi_band": 285063423
           },
           {
             "date": "2026-03-08",
-            "mayer_multiple": 0.701
+            "mayer_multiple": 0.701,
+            "ma111": 122443171,
+            "pi_band": 284131349
           },
           {
             "date": "2026-03-15",
-            "mayer_multiple": 0.777
+            "mayer_multiple": 0.777,
+            "ma111": 120652532,
+            "pi_band": 283206217
           },
           {
             "date": "2026-03-22",
-            "mayer_multiple": 0.75
+            "mayer_multiple": 0.75,
+            "ma111": 118849820,
+            "pi_band": 282521394
           },
           {
             "date": "2026-03-29",
-            "mayer_multiple": 0.748
+            "mayer_multiple": 0.748,
+            "ma111": 116809793,
+            "pi_band": 281862297
           },
           {
             "date": "2026-04-05",
-            "mayer_multiple": 0.789
+            "mayer_multiple": 0.789,
+            "ma111": 114790730,
+            "pi_band": 281065280
           },
           {
             "date": "2026-04-12",
-            "mayer_multiple": 0.812
+            "mayer_multiple": 0.812,
+            "ma111": 113286171,
+            "pi_band": 279974211
           },
           {
             "date": "2026-04-19",
-            "mayer_multiple": 0.857
+            "mayer_multiple": 0.857,
+            "ma111": 112181459,
+            "pi_band": 278928029
           },
           {
             "date": "2026-04-26",
-            "mayer_multiple": 0.923
+            "mayer_multiple": 0.923,
+            "ma111": 111194919,
+            "pi_band": 277880737
           },
           {
             "date": "2026-05-03",
-            "mayer_multiple": 0.938
+            "mayer_multiple": 0.938,
+            "ma111": 110000495,
+            "pi_band": 276618520
           },
           {
             "date": "2026-05-10",
-            "mayer_multiple": 0.981
+            "mayer_multiple": 0.981,
+            "ma111": 108672351,
+            "pi_band": 275328006
           },
           {
             "date": "2026-05-17",
-            "mayer_multiple": 0.954
+            "mayer_multiple": 0.954,
+            "ma111": 107845081,
+            "pi_band": 274080726
           },
           {
             "date": "2026-05-24",
-            "mayer_multiple": 0.966
+            "mayer_multiple": 0.966,
+            "ma111": 107360550,
+            "pi_band": 272839617
           },
           {
             "date": "2026-05-31",
-            "mayer_multiple": 0.92
+            "mayer_multiple": 0.92,
+            "ma111": 107753541,
+            "pi_band": 271330263
           },
           {
             "date": "2026-06-07",
-            "mayer_multiple": 0.82
+            "mayer_multiple": 0.82,
+            "ma111": 107466288,
+            "pi_band": 269411949
           },
           {
             "date": "2026-06-14",
-            "mayer_multiple": 0.862
+            "mayer_multiple": 0.862,
+            "ma111": 107247694,
+            "pi_band": 267354526
           },
           {
             "date": "2026-06-21",
-            "mayer_multiple": 0.839
+            "mayer_multiple": 0.839,
+            "ma111": 107246468,
+            "pi_band": 265342223
           },
           {
             "date": "2026-06-28",
-            "mayer_multiple": 0.804
+            "mayer_multiple": 0.804,
+            "ma111": 106698658,
+            "pi_band": 262850257
           },
           {
             "date": "2026-07-05",
-            "mayer_multiple": 0.863
+            "mayer_multiple": 0.863,
+            "ma111": 105931396,
+            "pi_band": 260101383
           },
           {
             "date": "2026-07-12",
-            "mayer_multiple": 0.867
+            "mayer_multiple": 0.867,
+            "ma111": 105288955,
+            "pi_band": 257444091
           },
           {
             "date": "2026-07-19",
-            "mayer_multiple": 0.877
+            "mayer_multiple": 0.877,
+            "ma111": 104770631,
+            "pi_band": 254792011
           },
           {
             "date": "2026-07-26",
-            "mayer_multiple": 0.887
+            "mayer_multiple": 0.887,
+            "ma111": 104297982,
+            "pi_band": 252171137
           },
           {
             "date": "2026-08-02",
-            "mayer_multiple": 0.861
+            "mayer_multiple": 0.861,
+            "ma111": 103293946,
+            "pi_band": 249251737
           },
           {
             "date": "2026-08-09",
-            "mayer_multiple": 0.877
+            "mayer_multiple": 0.877,
+            "ma111": 102021090,
+            "pi_band": 246533989
           },
           {
             "date": "2026-08-16",
-            "mayer_multiple": 0.87
+            "mayer_multiple": 0.87,
+            "ma111": 100382892,
+            "pi_band": 243946423
           },
           {
             "date": "2026-08-23",
-            "mayer_multiple": 1.047
+            "mayer_multiple": 1.047,
+            "ma111": 99385396,
+            "pi_band": 241751131
           },
           {
             "date": "2026-08-30",
-            "mayer_multiple": 1.057
+            "mayer_multiple": 1.057,
+            "ma111": 98741495,
+            "pi_band": 239755497
           },
           {
             "date": "2026-09-06",
-            "mayer_multiple": 1.068
+            "mayer_multiple": 1.068,
+            "ma111": 98191613,
+            "pi_band": 237627280
           },
           {
             "date": "2026-09-13",
-            "mayer_multiple": 1.017
+            "mayer_multiple": 1.017,
+            "ma111": 97623297,
+            "pi_band": 235479154
           },
           {
             "date": "2026-09-20",
-            "mayer_multiple": 1.022
+            "mayer_multiple": 1.024,
+            "ma111": 97439802,
+            "pi_band": 234073034
           }
         ]
       },
@@ -2200,14 +2528,14 @@
             "o": 104852000,
             "h": 105630000,
             "l": 104785000,
-            "c": 105216000,
-            "v": 240,
-            "ma5": 104653000,
-            "ma20": 106783700,
-            "ma60": 99220100,
-            "ma120": 98571483,
-            "k": 18.48,
-            "d": 12.5
+            "c": 105335000,
+            "v": 244,
+            "ma5": 104676800,
+            "ma20": 106789650,
+            "ma60": 99222083,
+            "ma120": 98572475,
+            "k": 19.03,
+            "d": 12.68
           }
         ],
         "weekly": [
@@ -3294,14 +3622,14 @@
             "o": 104564000,
             "h": 107320000,
             "l": 102000000,
-            "c": 105216000,
-            "v": 3450,
-            "ma5": 106782600,
-            "ma20": 101295450,
-            "ma60": 123464017,
-            "ma120": 122239650,
-            "k": 86.99,
-            "d": 93.33
+            "c": 105335000,
+            "v": 3454,
+            "ma5": 106806400,
+            "ma20": 101301400,
+            "ma60": 123466000,
+            "ma120": 122240642,
+            "k": 87.16,
+            "d": 93.39
           }
         ],
         "monthly": [
@@ -3857,13 +4185,13 @@
             "o": 108304000,
             "h": 112000000,
             "l": 102000000,
-            "c": 105216000,
-            "v": 14557,
-            "ma5": 100323000,
-            "ma20": 125720150,
-            "ma60": 81987817,
-            "k": 16.06,
-            "d": 9.98
+            "c": 105335000,
+            "v": 14561,
+            "ma5": 100346800,
+            "ma20": 125726100,
+            "ma60": 81989800,
+            "k": 16.11,
+            "d": 10.0
           }
         ]
       }
