@@ -199,15 +199,18 @@ def fetch_overtime_prices(codes):
     return result
 
 
-def get_close_and_change(df, last_row):
+def get_close_and_change(df, last_row, name=""):
     """종가/등락률 계산. pykrx가 제공하는 등락률 컬럼을 우선 사용하고(가장 정확),
-    해당 컬럼이 없거나 비어 있을 때만 전일 종가 대비 직접 계산으로 대체한다."""
+    해당 컬럼이 없거나 비어 있을 때만 전일 종가 대비 직접 계산으로 대체한다.
+    어느 경로를 탔는지 로그로 남겨서(Actions 로그에서 확인 가능) 종목별로 왜 다르게 계산됐는지 추적할 수 있게 한다."""
     close = int(last_row["종가"])
     if "등락률" in df.columns and pd.notna(last_row.get("등락률")):
         change_pct = round(float(last_row["등락률"]), 2)
+        print(f"  [등락률:pykrx] {name} {change_pct}%")
     else:
         prev_close = df.iloc[-2]["종가"] if len(df) > 1 else last_row["종가"]
         change_pct = round((last_row["종가"] - prev_close) / prev_close * 100, 2)
+        print(f"  [등락률:대체계산] {name} {change_pct}% (pykrx 등락률 컬럼 없음/NaN, 전일종가={prev_close})")
     return close, change_pct
 
 
@@ -231,7 +234,7 @@ def fetch_stock_entry(code, name, start_str, end_str):
     history_monthly = build_history(monthly_df, monthly_stoch_series, n=48)
 
     last_row = df.iloc[-1]
-    close, change_pct = get_close_and_change(df, last_row)
+    close, change_pct = get_close_and_change(df, last_row, name=f"{name}({code})")
 
     return {
         "code": code,
@@ -275,7 +278,7 @@ def main():
             history_monthly = build_history(monthly_df, monthly_stoch_series, n=48)  # 약 4년치
 
             last_row = df.iloc[-1]
-            close, change_pct = get_close_and_change(df, last_row)
+            close, change_pct = get_close_and_change(df, last_row, name=f"{name}({code})")
 
             results.append({
                 "code": code,
