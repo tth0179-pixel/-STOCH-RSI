@@ -1298,7 +1298,50 @@ function classifyHoldingETF(s){
   };
 }
 
+function classifyHoldingBTC(s){
+  // 반감기 사이클(장기 보유) 관점 판정. 단기 Stoch RSI 대신 Mayer Multiple / Pi Cycle Top 사용.
+  const cycle = s.cycle;
+  if (!cycle){
+    return { label: '데이터 부족', cls: 'flat', lines: ['사이클 지표를 계산하기에 과거 데이터가 부족합니다(350일 이상 필요).'] };
+  }
+  const mm = cycle.mayer_multiple;
+  const piCross = cycle.pi_cross;
+  const piBand = cycle.pi_cycle_band;
+
+  if (piCross){
+    return {
+      label: '비추천', cls: 'avoid',
+      lines: [
+        `Pi Cycle Top 신호 발생: 111일 이동평균(${cycle.ma111.toLocaleString()})이 350일 이동평균의 2배(${piBand.toLocaleString()})를 상향 돌파했습니다. 과거 주요 사이클 고점(2013·2017·2021) 부근에서 나타났던 패턴이라, 반감기 사이클상 고점권에 가까울 수 있습니다.`,
+      ],
+    };
+  }
+  if (mm >= 2.4){
+    return {
+      label: '위험진입', cls: 'danger',
+      lines: [
+        `Mayer Multiple(${mm})이 2.4 이상으로 과열 구간입니다. 200일 이동평균(${cycle.ma200.toLocaleString()}) 대비 가격이 크게 높아, 역사적 과열 영역(평균 약 1.31)에 진입했습니다. 아직 Pi Cycle Top 교차는 발생하지 않았습니다.`,
+      ],
+    };
+  }
+  if (mm <= 0.8){
+    return {
+      label: '추천', cls: 'rec',
+      lines: [
+        `Mayer Multiple(${mm})이 0.8 이하로 역사적 저평가 구간입니다. 200일 이동평균(${cycle.ma200.toLocaleString()}) 대비 가격이 크게 낮아, 반감기 사이클상 저점권 매수 관심 구간에 해당합니다.`,
+      ],
+    };
+  }
+  return {
+    label: '중립', cls: 'flat',
+    lines: [
+      `Mayer Multiple(${mm})이 저평가(0.8)와 과열(2.4) 구간 사이에 있고, Pi Cycle Top도 미교차 상태라 반감기 사이클상 중립 구간입니다.`,
+    ],
+  };
+}
+
 function classifyHolding(s){
+  if (s.code === 'BTC-KRW') return classifyHoldingBTC(s);
   if (ETF_CODES.has(s.code)) return classifyHoldingETF(s);
 
   const h = s.history && s.history.daily;

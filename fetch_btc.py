@@ -88,6 +88,40 @@ def resample_ohlcv(df, rule):
     return df.resample(rule).agg(agg).dropna()
 
 
+def calc_cycle_indicators(df):
+    """반감기 사이클(장기 보유) 관점 지표.
+    - Mayer Multiple = 종가 / 200일 이동평균 (2.4 이상=과열/고점권, 0.8 이하=저평가/저점권, 평균 약 1.31)
+    - Pi Cycle Top = 111일 이동평균 vs 350일 이동평균×2 (111일선이 350일선×2를 상향 돌파하면 과거 주요 고점과 근접했던 이력)
+    데이터가 부족(최소 350일치 미만)하면 None을 반환한다."""
+    if df is None or len(df) < 350:
+        return None
+
+    close = df["종가"]
+    ma200 = close.rolling(200).mean()
+    ma111 = close.rolling(111).mean()
+    ma350 = close.rolling(350).mean()
+
+    last_close = close.iloc[-1]
+    last_ma200 = ma200.iloc[-1]
+    last_ma111 = ma111.iloc[-1]
+    last_ma350 = ma350.iloc[-1]
+
+    if pd.isna(last_ma200) or pd.isna(last_ma111) or pd.isna(last_ma350):
+        return None
+
+    mayer_multiple = round(float(last_close / last_ma200), 3)
+    pi_cycle_band = round(float(last_ma350 * 2), 0)
+    pi_cross = bool(last_ma111 >= last_ma350 * 2)
+
+    return {
+        "mayer_multiple": mayer_multiple,
+        "ma200": round(float(last_ma200)),
+        "ma111": round(float(last_ma111)),
+        "pi_cycle_band": pi_cycle_band,  # 350일선 x 2 (Pi Cycle Top 기준선)
+        "pi_cross": pi_cross,  # True면 111일선이 기준선을 이미 상향 돌파(고점 확정 신호)
+    }
+
+
 def fetch_upbit_daily_df(market="KRW-BTC", total_days=HISTORY_DAYS):
     """업비트 공개 API(무료, 키 불필요)로 일봉 OHLCV를 최대 total_days만큼 페이징하여 수집"""
     all_rows = []
@@ -137,6 +171,8 @@ def main():
     prev_close = df.iloc[-2]["종가"] if len(df) > 1 else last_row["종가"]
     change_pct = round((last_row["종가"] - prev_close) / prev_close * 100, 2)
 
+    cycle = calc_cycle_indicators(df)
+
     asset = {
         "code": "BTC-KRW",
         "name": "비트코인",
@@ -145,6 +181,7 @@ def main():
         "daily": daily,
         "weekly": weekly,
         "monthly": monthly,
+        "cycle": cycle,  # 반감기 사이클 지표 (Mayer Multiple, Pi Cycle Top) — 데이터 부족 시 null
         "history": {
             "daily": history_daily,
             "weekly": history_weekly,
@@ -160,7 +197,8 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print(f"저장 완료: {OUTPUT_FILE} (BTC-KRW, 종가={asset['close']:,})")
+    cycle_log = f", Mayer={cycle['mayer_multiple']}" if cycle else " (사이클 지표: 데이터 부족)"
+    print(f"저장 완료: {OUTPUT_FILE} (BTC-KRW, 종가={asset['close']:,}{cycle_log})")
 
 
 if __name__ == "__main__":
