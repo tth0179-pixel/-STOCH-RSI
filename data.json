@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-23 08:31",
+  "updated_at": "2026-09-23 08:41",
   "stocks": [
     {
       "code": "005930",
@@ -2922,10 +2922,10 @@
           }
         ]
       },
-      "over_price": 283000,
+      "over_price": 283500,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 1.98
+      "over_change_pct": 2.16
     },
     {
       "code": "000660",
@@ -5848,10 +5848,10 @@
           }
         ]
       },
-      "over_price": 1899000,
+      "over_price": 1902000,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 3.15
+      "over_change_pct": 3.31
     },
     {
       "code": "005935",
@@ -14622,10 +14622,10 @@
           }
         ]
       },
-      "over_price": 1534000,
+      "over_price": 1536000,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 3.02
+      "over_change_pct": 3.16
     },
     {
       "code": "373220",
@@ -17548,10 +17548,10 @@
           }
         ]
       },
-      "over_price": 352000,
+      "over_price": 353000,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 0.0
+      "over_change_pct": 0.28
     },
     {
       "code": "005380",
@@ -29252,10 +29252,10 @@
           }
         ]
       },
-      "over_price": 296000,
+      "over_price": 296500,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 1.89
+      "over_change_pct": 2.07
     },
     {
       "code": "028260",
@@ -32178,10 +32178,10 @@
           }
         ]
       },
-      "over_price": 371000,
+      "over_price": 372500,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 1.78
+      "over_change_pct": 2.19
     },
     {
       "code": "012450",
@@ -38030,10 +38030,10 @@
           }
         ]
       },
-      "over_price": 86500,
+      "over_price": 86600,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": -0.12
+      "over_change_pct": 0.0
     },
     {
       "code": "055550",
@@ -43882,10 +43882,10 @@
           }
         ]
       },
-      "over_price": 119300,
+      "over_price": 119400,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 0.25
+      "over_change_pct": 0.34
     },
     {
       "code": "329180",
@@ -46808,10 +46808,10 @@
           }
         ]
       },
-      "over_price": 452500,
+      "over_price": 451500,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": -0.33
+      "over_change_pct": -0.55
     },
     {
       "code": "006400",
@@ -55586,10 +55586,10 @@
           }
         ]
       },
-      "over_price": 378000,
+      "over_price": 377000,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 1.2
+      "over_change_pct": 0.94
     },
     {
       "code": "034730",
@@ -58512,10 +58512,10 @@
           }
         ]
       },
-      "over_price": 600000,
+      "over_price": 599000,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 2.04
+      "over_change_pct": 1.87
     },
     {
       "code": "086790",
@@ -61438,10 +61438,10 @@
           }
         ]
       },
-      "over_price": 136100,
+      "over_price": 136000,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 0.22
+      "over_change_pct": 0.15
     },
     {
       "code": "066570",
@@ -64364,10 +64364,10 @@
           }
         ]
       },
-      "over_price": 215000,
+      "over_price": 217000,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 0.0
+      "over_change_pct": 0.93
     },
     {
       "code": "035420",
@@ -70216,10 +70216,10 @@
           }
         ]
       },
-      "over_price": 213000,
+      "over_price": 213500,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 0.95
+      "over_change_pct": 1.18
     },
     {
       "code": "000810",
@@ -73142,10 +73142,10 @@
           }
         ]
       },
-      "over_price": 655000,
+      "over_price": 654000,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 0.46
+      "over_change_pct": 0.31
     },
     {
       "code": "267260",
@@ -78994,10 +78994,10 @@
           }
         ]
       },
-      "over_price": 2931000,
+      "over_price": 2930000,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 0.41
+      "over_change_pct": 0.38
     },
     {
       "code": "005490",
@@ -87772,10 +87772,10 @@
           }
         ]
       },
-      "over_price": 82000,
+      "over_price": 81900,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 0.0
+      "over_change_pct": -0.12
     }
   ],
   "extra_stocks": [
@@ -90700,10 +90700,10 @@
           }
         ]
       },
-      "over_price": 35850,
+      "over_price": 35750,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 0.0
+      "over_change_pct": -0.28
     },
     {
       "code": "024110",
@@ -93626,10 +93626,10 @@
           }
         ]
       },
-      "over_price": 20200,
+      "over_price": 20250,
       "over_session": "PRE_MARKET",
       "over_market_status": "OPEN",
-      "over_change_pct": 0.75
+      "over_change_pct": 1.0
     },
     {
       "code": "0177N0",
