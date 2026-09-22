@@ -1845,13 +1845,13 @@ function updateCandleSelection(idx){
   }
 
   const panel = document.getElementById('candle-info-panel');
-  if (panel) panel.outerHTML = buildCandleInfoHTML(h, idx, tfLabel);
+  if (panel) panel.outerHTML = buildCandleInfoHTML(h, idx, tfLabel, stock);
 
   const kdLegend = document.getElementById('stoch-kd-legend');
   if (kdLegend) kdLegend.outerHTML = buildKDLegendHTML(h[idx]);
 
   const priceNow = document.getElementById('chart-price-now');
-  if (priceNow) priceNow.outerHTML = buildPriceNowHTML(h, idx);
+  if (priceNow) priceNow.outerHTML = buildPriceNowHTML(h, idx, stock);
 }
 
 function candlePointerStart(e){
@@ -1974,9 +1974,9 @@ function buildChartHTML(stock){
   const infoIdx = (CHART_SELECTED_IDX !== null && CHART_SELECTED_IDX !== undefined) ? CHART_SELECTED_IDX : h.length - 1;
   const priceChart = renderCandleSVG(h, infoIdx);
   const stochChart = renderStochSVG(h, infoIdx);
-  const candleInfo = buildCandleInfoHTML(h, infoIdx, tfLabel);
+  const candleInfo = buildCandleInfoHTML(h, infoIdx, tfLabel, stock);
   const kdLegend = buildKDLegendHTML(h[infoIdx]);
-  const priceNow = buildPriceNowHTML(h, infoIdx);
+  const priceNow = buildPriceNowHTML(h, infoIdx, stock);
 
   return `
     <div class="chart-tabs">
@@ -2006,11 +2006,17 @@ function buildChartHTML(stock){
   `;
 }
 
-function buildPriceNowHTML(h, idx){
+function buildPriceNowHTML(h, idx, stock){
   const d = h[idx];
   const prev = idx > 0 ? h[idx - 1] : null;
+  const isLatest = idx === h.length - 1;
   let changeCls = 'flat', changeText = '-';
-  if (d && prev && prev.c){
+  if (isLatest && stock && stock.change_pct !== undefined && stock.change_pct !== null){
+    // 오늘(최신) 캔들은 카드와 동일하게 네이버 실시간 등락률(정확)을 사용 — 로컬 캔들 간 계산은 pykrx 전일종가 오류로 어긋날 수 있음
+    const change = fmtChange(stock.change_pct);
+    changeCls = change.cls;
+    changeText = change.text;
+  } else if (d && prev && prev.c){
     const pct = (d.c - prev.c) / prev.c * 100;
     const change = fmtChange(pct);
     changeCls = change.cls;
@@ -2030,13 +2036,22 @@ function buildKDLegendHTML(d){
     </div>`;
 }
 
-function buildCandleInfoHTML(h, idx, tfLabel){
+function buildCandleInfoHTML(h, idx, tfLabel, stock){
   const d = h[idx];
   if (!d) return '';
   const prev = idx > 0 ? h[idx - 1] : null;
   const prevClose = prev ? prev.c : null;
+  const isLatest = idx === h.length - 1;
+  const hasNaverPct = isLatest && stock && stock.change_pct !== undefined && stock.change_pct !== null;
 
-  const pct = (val) => {
+  const pct = (val, isClose) => {
+    // 오늘(최신) 캔들의 종가 등락률은 네이버 실시간 값(정확)을 우선 사용
+    if (isClose && hasNaverPct){
+      const p = stock.change_pct;
+      const sign = p > 0 ? '+' : '';
+      const cls = p > 0 ? 'up' : (p < 0 ? 'down' : 'flat');
+      return ` <span class="candle-info-pct ${cls}">${sign}${p.toFixed(2)}%</span>`;
+    }
     if (val === undefined || val === null || !prevClose) return '';
     const p = (val - prevClose) / prevClose * 100;
     const sign = p > 0 ? '+' : '';
@@ -2044,10 +2059,10 @@ function buildCandleInfoHTML(h, idx, tfLabel){
     return ` <span class="candle-info-pct ${cls}">${sign}${p.toFixed(2)}%</span>`;
   };
 
-  const row = (label, val, showPct) => {
+  const row = (label, val, showPct, isClose) => {
     if (val === undefined || val === null) return '';
     const valStr = typeof val === 'number' ? val.toLocaleString() : val;
-    return `<div class="candle-info-row"><span class="candle-info-label">${label}</span><span class="candle-info-value mono">${valStr}${showPct ? pct(val) : ''}</span></div>`;
+    return `<div class="candle-info-row"><span class="candle-info-label">${label}</span><span class="candle-info-value mono">${valStr}${showPct ? pct(val, isClose) : ''}</span></div>`;
   };
 
   const rsiRow = (d.k !== undefined && d.d !== undefined)
@@ -2059,10 +2074,10 @@ function buildCandleInfoHTML(h, idx, tfLabel){
       <div class="candle-info-date">${d.date} (${tfLabel})</div>
       <div class="candle-info-cols">
         <div class="candle-info-col">
-          ${row('종가', d.c, true)}
-          ${row('시가', d.o, true)}
-          ${row('고가', d.h, true)}
-          ${row('저가', d.l, true)}
+          ${row('종가', d.c, true, true)}
+          ${row('시가', d.o, true, false)}
+          ${row('고가', d.h, true, false)}
+          ${row('저가', d.l, true, false)}
         </div>
         <div class="candle-info-col">
           ${row('MA5', d.ma5, true)}
