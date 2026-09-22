@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-09-22 20:06",
+  "updated_at": "2026-09-23 08:22",
   "stocks": [
     {
       "code": "005930",
       "name": "삼성전자",
       "close": 277500,
-      "change_pct": 1.28,
+      "change_pct": 0.0,
       "daily": {
         "k": 87.52,
         "d": 66.13
@@ -2922,16 +2922,16 @@
           }
         ]
       },
-      "over_price": 277500,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 283500,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 2.16
     },
     {
       "code": "000660",
       "name": "SK하이닉스",
       "close": 1841000,
-      "change_pct": -1.45,
+      "change_pct": 0.0,
       "daily": {
         "k": 90.3,
         "d": 79.78
@@ -5848,16 +5848,16 @@
           }
         ]
       },
-      "over_price": 1842000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.05
+      "over_price": 1896000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 2.99
     },
     {
       "code": "005935",
       "name": "삼성전자우",
       "close": 212500,
-      "change_pct": 2.16,
+      "change_pct": 0.0,
       "daily": {
         "k": 88.75,
         "d": 75.24
@@ -8779,7 +8779,7 @@
       "code": "402340",
       "name": "SK스퀘어",
       "close": 1134000,
-      "change_pct": 0.62,
+      "change_pct": 0.0,
       "daily": {
         "k": 88.24,
         "d": 61.33
@@ -11696,16 +11696,16 @@
           }
         ]
       },
-      "over_price": 1134000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 1171000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 3.26
     },
     {
       "code": "009150",
       "name": "삼성전기",
       "close": 1489000,
-      "change_pct": 4.2,
+      "change_pct": 0.0,
       "daily": {
         "k": 86.12,
         "d": 63.47
@@ -14622,10 +14622,10 @@
           }
         ]
       },
-      "over_price": 1489000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 1533000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 2.96
     },
     {
       "code": "373220",
@@ -17548,16 +17548,16 @@
           }
         ]
       },
-      "over_price": 351500,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": -0.14
+      "over_price": 354500,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.71
     },
     {
       "code": "005380",
       "name": "현대차",
       "close": 362000,
-      "change_pct": 0.84,
+      "change_pct": 0.0,
       "daily": {
         "k": 14.51,
         "d": 14.14
@@ -20474,16 +20474,16 @@
           }
         ]
       },
-      "over_price": 362500,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.14
+      "over_price": 365000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.83
     },
     {
       "code": "207940",
       "name": "삼성바이오로직스",
       "close": 1392000,
-      "change_pct": -0.71,
+      "change_pct": 0.0,
       "daily": {
         "k": 3.22,
         "d": 4.13
@@ -23400,16 +23400,16 @@
           }
         ]
       },
-      "over_price": 1392000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 1397000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.36
     },
     {
       "code": "105560",
       "name": "KB금융",
       "close": 176200,
-      "change_pct": -0.73,
+      "change_pct": 0.0,
       "daily": {
         "k": 25.65,
         "d": 39.01
@@ -26326,16 +26326,16 @@
           }
         ]
       },
-      "over_price": 176200,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 175800,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": -0.23
     },
     {
       "code": "032830",
       "name": "삼성생명",
       "close": 290500,
-      "change_pct": -0.17,
+      "change_pct": 0.0,
       "daily": {
         "k": 30.91,
         "d": 16.58
@@ -29252,16 +29252,16 @@
           }
         ]
       },
-      "over_price": 291000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.17
+      "over_price": 295500,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 1.72
     },
     {
       "code": "028260",
       "name": "삼성물산",
       "close": 364500,
-      "change_pct": -0.82,
+      "change_pct": 0.0,
       "daily": {
         "k": 47.85,
         "d": 33.83
@@ -32178,16 +32178,16 @@
           }
         ]
       },
-      "over_price": 363500,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": -0.27
+      "over_price": 372500,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 2.19
     },
     {
       "code": "012450",
       "name": "한화에어로스페이스",
       "close": 1062000,
-      "change_pct": -0.47,
+      "change_pct": 0.0,
       "daily": {
         "k": 42.66,
         "d": 49.32
@@ -35104,16 +35104,16 @@
           }
         ]
       },
-      "over_price": 1062000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 1058000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": -0.38
     },
     {
       "code": "034020",
       "name": "두산에너빌리티",
       "close": 86600,
-      "change_pct": 1.52,
+      "change_pct": 0.0,
       "daily": {
         "k": 37.95,
         "d": 38.86
@@ -38030,16 +38030,16 @@
           }
         ]
       },
-      "over_price": 86600,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 86700,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.12
     },
     {
       "code": "055550",
       "name": "신한지주",
       "close": 112800,
-      "change_pct": -0.27,
+      "change_pct": 0.0,
       "daily": {
         "k": 15.38,
         "d": 18.31
@@ -40956,16 +40956,16 @@
           }
         ]
       },
-      "over_price": 112800,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 113100,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.27
     },
     {
       "code": "000270",
       "name": "기아",
       "close": 119000,
-      "change_pct": -0.83,
+      "change_pct": 0.0,
       "daily": {
         "k": 5.05,
         "d": 7.42
@@ -43882,16 +43882,16 @@
           }
         ]
       },
-      "over_price": 119000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 119400,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.34
     },
     {
       "code": "329180",
       "name": "HD현대중공업",
       "close": 454000,
-      "change_pct": 0.78,
+      "change_pct": 0.0,
       "daily": {
         "k": 67.5,
         "d": 72.63
@@ -46808,16 +46808,16 @@
           }
         ]
       },
-      "over_price": 454000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 455500,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.33
     },
     {
       "code": "006400",
       "name": "삼성SDI",
       "close": 531000,
-      "change_pct": -0.38,
+      "change_pct": 0.0,
       "daily": {
         "k": 4.17,
         "d": 9.69
@@ -49734,16 +49734,16 @@
           }
         ]
       },
-      "over_price": 530000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": -0.19
+      "over_price": 531000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.0
     },
     {
       "code": "068270",
       "name": "셀트리온",
       "close": 178300,
-      "change_pct": -1.71,
+      "change_pct": 0.0,
       "daily": {
         "k": 59.82,
         "d": 57.19
@@ -52660,16 +52660,16 @@
           }
         ]
       },
-      "over_price": 178400,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.06
+      "over_price": 179500,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.67
     },
     {
       "code": "012330",
       "name": "현대모비스",
       "close": 373500,
-      "change_pct": 0.13,
+      "change_pct": 0.0,
       "daily": {
         "k": 0.0,
         "d": 0.0
@@ -55586,16 +55586,16 @@
           }
         ]
       },
-      "over_price": 373500,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 379000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 1.47
     },
     {
       "code": "034730",
       "name": "SK",
       "close": 588000,
-      "change_pct": 2.26,
+      "change_pct": 0.0,
       "daily": {
         "k": 46.35,
         "d": 23.54
@@ -58512,16 +58512,16 @@
           }
         ]
       },
-      "over_price": 587000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": -0.17
+      "over_price": 600000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 2.04
     },
     {
       "code": "086790",
       "name": "하나금융지주",
       "close": 135800,
-      "change_pct": 0.07,
+      "change_pct": 0.0,
       "daily": {
         "k": 14.17,
         "d": 19.0
@@ -61438,16 +61438,16 @@
           }
         ]
       },
-      "over_price": 135800,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 136100,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.22
     },
     {
       "code": "066570",
       "name": "LG전자",
       "close": 215000,
-      "change_pct": 6.17,
+      "change_pct": 0.0,
       "daily": {
         "k": 54.39,
         "d": 33.48
@@ -64364,16 +64364,16 @@
           }
         ]
       },
-      "over_price": 215000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 216500,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.7
     },
     {
       "code": "035420",
       "name": "NAVER",
       "close": 201000,
-      "change_pct": 1.57,
+      "change_pct": 0.0,
       "daily": {
         "k": 12.12,
         "d": 4.86
@@ -67290,16 +67290,16 @@
           }
         ]
       },
-      "over_price": 201500,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.25
+      "over_price": 202000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.5
     },
     {
       "code": "010120",
       "name": "LS ELECTRIC",
       "close": 211000,
-      "change_pct": 0.96,
+      "change_pct": 0.0,
       "daily": {
         "k": 97.83,
         "d": 81.2
@@ -70216,16 +70216,16 @@
           }
         ]
       },
-      "over_price": 211500,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.24
+      "over_price": 213500,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 1.18
     },
     {
       "code": "000810",
       "name": "삼성화재",
       "close": 652000,
-      "change_pct": 0.15,
+      "change_pct": 0.0,
       "daily": {
         "k": 11.77,
         "d": 20.05
@@ -73142,16 +73142,16 @@
           }
         ]
       },
-      "over_price": 651000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": -0.15
+      "over_price": 655000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.46
     },
     {
       "code": "267260",
       "name": "HD현대일렉트릭",
       "close": 715000,
-      "change_pct": 0.14,
+      "change_pct": 0.0,
       "daily": {
         "k": 45.57,
         "d": 40.81
@@ -76068,16 +76068,16 @@
           }
         ]
       },
-      "over_price": 715000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 724000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 1.26
     },
     {
       "code": "298040",
       "name": "효성중공업",
       "close": 2919000,
-      "change_pct": 0.07,
+      "change_pct": 0.0,
       "daily": {
         "k": 87.24,
         "d": 73.79
@@ -78994,16 +78994,16 @@
           }
         ]
       },
-      "over_price": 2920000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.03
+      "over_price": 2943000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.82
     },
     {
       "code": "005490",
       "name": "POSCO홀딩스",
       "close": 317500,
-      "change_pct": 0.16,
+      "change_pct": 0.0,
       "daily": {
         "k": 6.04,
         "d": 15.22
@@ -81920,16 +81920,16 @@
           }
         ]
       },
-      "over_price": 317500,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.0
+      "over_price": 319500,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.63
     },
     {
       "code": "010130",
       "name": "고려아연",
       "close": 1116000,
-      "change_pct": -0.62,
+      "change_pct": 0.0,
       "daily": {
         "k": 2.34,
         "d": 2.38
@@ -84846,16 +84846,16 @@
           }
         ]
       },
-      "over_price": 1117000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.09
+      "over_price": 1118000,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.18
     },
     {
       "code": "042660",
       "name": "한화오션",
       "close": 82000,
-      "change_pct": 0.24,
+      "change_pct": 0.0,
       "daily": {
         "k": 23.02,
         "d": 29.95
@@ -87773,8 +87773,8 @@
         ]
       },
       "over_price": 82000,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
       "over_change_pct": 0.0
     }
   ],
@@ -87783,7 +87783,7 @@
       "code": "316140",
       "name": "우리금융지주",
       "close": 35850,
-      "change_pct": -1.65,
+      "change_pct": 0.0,
       "daily": {
         "k": 64.93,
         "d": 72.38
@@ -90700,16 +90700,16 @@
           }
         ]
       },
-      "over_price": 35900,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.14
+      "over_price": 35850,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.0
     },
     {
       "code": "024110",
       "name": "기업은행",
       "close": 20050,
-      "change_pct": 0.25,
+      "change_pct": 0.0,
       "daily": {
         "k": 0.0,
         "d": 0.0
@@ -93626,16 +93626,16 @@
           }
         ]
       },
-      "over_price": 20100,
-      "over_session": "AFTER_MARKET",
-      "over_market_status": "CLOSE",
-      "over_change_pct": 0.25
+      "over_price": 20200,
+      "over_session": "PRE_MARKET",
+      "over_market_status": "OPEN",
+      "over_change_pct": 0.75
     },
     {
       "code": "0177N0",
       "name": "KODEX 삼성전자SK하이닉스채권혼합50",
       "close": 14620,
-      "change_pct": 0.03,
+      "change_pct": 0.0,
       "daily": {
         "k": 0.0,
         "d": 10.94
@@ -95068,7 +95068,7 @@
       "code": "379810",
       "name": "KODEX 미국나스닥100",
       "close": 27420,
-      "change_pct": 0.48,
+      "change_pct": 0.0,
       "daily": {
         "k": 0.0,
         "d": 0.0
@@ -97990,7 +97990,7 @@
       "code": "411060",
       "name": "ACE KRX금현물",
       "close": 26445,
-      "change_pct": -2.24,
+      "change_pct": 0.0,
       "daily": {
         "k": 98.46,
         "d": 93.03
@@ -100912,7 +100912,7 @@
       "code": "458730",
       "name": "TIGER 미국배당다우존스",
       "close": 14520,
-      "change_pct": -1.56,
+      "change_pct": 0.0,
       "daily": {
         "k": 98.46,
         "d": 98.46
@@ -103687,7 +103687,7 @@
       "code": "484880",
       "name": "SOL 금융지주플러스고배당",
       "close": 23240,
-      "change_pct": -0.62,
+      "change_pct": 0.0,
       "daily": {
         "k": 0.0,
         "d": 0.0
