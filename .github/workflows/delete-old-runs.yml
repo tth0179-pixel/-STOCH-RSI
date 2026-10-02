@@ -1,0 +1,32 @@
+name: Delete Old Workflow Runs
+
+on:
+  schedule:
+    - cron: '0 18 * * *'   # 매일 03:00 KST
+  workflow_dispatch:        # 수동 실행 가능
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete runs older than 1 day (max 900 per run)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RETAIN_DAYS: 1
+          MAX_DELETE: 900
+        run: |
+          CUTOFF=$(date -u -d "${RETAIN_DAYS} days ago" +%Y-%m-%dT%H:%M:%SZ)
+          echo "Cutoff: $CUTOFF"
+          IDS=$(gh run list --limit 1000 --json databaseId,createdAt \
+            --jq "[.[] | select(.createdAt < \"$CUTOFF\")] | .[:${MAX_DELETE}] | .[].databaseId")
+          if [ -z "$IDS" ]; then
+            echo "Nothing to delete."
+            exit 0
+          fi
+          echo "Deleting $(echo "$IDS" | wc -l) runs"
+          echo "$IDS" | xargs -r -P 4 -I{} gh run delete {}
