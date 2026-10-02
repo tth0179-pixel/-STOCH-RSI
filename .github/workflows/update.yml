@@ -1,0 +1,54 @@
+name: Update KOSPI Stoch RSI Data
+
+on:
+  schedule:
+    # 매 평일 09:00~20:00(KST) 20분마다 -> UTC 00:00~11:00, 20분 간격
+    # 정각/20분/40분 정각은 전세계 스케줄 작업이 몰려 GitHub에서 이벤트가 지연/드롭되기 쉬워
+    # 03,23,43분으로 살짝 밀어서 등록 (비트코인 워크플로우는 13,33,53분이라 서로 겹치지 않음)
+    - cron: "3,23,43 0-10 * * 1-5"
+    - cron: "3 11 * * 1-5"
+  workflow_dispatch: {}
+
+# 같은 워크플로우가 동시에 두 개 돌지 않도록 하나씩만 실행.
+# (지연된 예약 실행이 몰려 들어와도 진행 중인 실행을 중간에 끊지 않고, 대기 중인 것만 최신 것으로 교체)
+concurrency:
+  group: update-kospi-data
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch data and calculate Stoch RSI
+        env:
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
+        run: python fetch_data.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json top30_codes.json
+          git diff --staged --quiet || git commit -m "Update KOSPI Stoch RSI data ($(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M') KST)"
+          # 비트코인 워크플로우가 그사이 먼저 push했으면 거부되므로, 최신 상태를 받아 위에 얹은 뒤 다시 push (최대 5회)
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "push 실패 - 재시도 $i/5"
+            sleep $((i * 5))
+          done
+          exit 1
